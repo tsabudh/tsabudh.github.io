@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Neonderthaw&family=Sora:wght@300&display=swap');
 body {
     margin: 0;
     padding: 0;
@@ -31,6 +32,17 @@ body {
     display: flex;
     justify-content: space-between;
     
+}
+
+.logo
+{   
+    font-size: 36px;
+    font-weight: bold; 
+    color: rgb(206, 194, 194);
+    font-family: 'Neonderthaw', cursive;
+    
+   
+
 }
 /* .nav :last-child{
 
