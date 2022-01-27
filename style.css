@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Neonderthaw&family=Sora:wght@300&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300&display=swap');
+
+*
+{
+    box-sizing: border-box;
+}
+
+
 html
 {
     scroll-behavior: smooth;
@@ -174,22 +181,37 @@ body {
 
 .form-wrapper
 {
-    border:1px solid rgb(255, 19, 19); 
+    border:1px solid rgb(68, 240, 0); 
+    background-image: radial-gradient(rgb(252, 252, 252), #ffffff);
+    border-radius: 20px;
     width: 400px;
-    max-height: 400px;
-    padding: 40px;
+    
+    padding:10px 40px;
     margin:10px auto;
 }
-.form-field > label,input 
+    .form-wrapper>h3
+    {
+        text-align: center;
+        margin:3px;
+    }
+.form-outline
 {
-    display: inline;
-    float: left;
-    padding:3px;
-    height:20px;
-    border:1px solid rgb(35, 19, 255); 
-    
+    /* border:1px solid rgb(237, 250, 235);  */
+    border-radius: 20px;
+    padding:30px 70px;
 }
-
+    .form-field input
+    {
+        border-radius: 20px;
+        height:2rem;
+        font-size: 18px;
+        padding-left: 15px;
+    }
+        .form-field small
+        {   
+            display: block;
+            visibility: hidden;
+        }
 
 /* ---------------------------------------------------------------------------- */
   .big-text
