@@ -45,24 +45,23 @@ body {
 
 
  /* ------------------------------------------------------------------NAVIGATION BAR------------------------------------------ */
-.everything .nav
+.everything div.nav
 {
-    /* background-color: black; */
-    /* position: relative;
-    min-height: 100; */
+    transition: all ease-in-out 0.5s;
+    position: inherit;
     width:100%;
     height:60px;
-    background-color: rgb(18, 93, 179);
-    /* border:1px solid greenyellow; */
+    background-color: rgb(58, 237, 250);
     display: flex;
     justify-content: space-between;
     transition: all ease 0.5s;
+    align-items: center;
 }
 
-.everything .nav.sticky
+.everything div.nav.sticky
 {   
     position:fixed;
-    top:50;
+    top:0;
     width:80vw;
     height:40px;
     
@@ -72,7 +71,8 @@ div.logo
 {
    border:1px solid rgb(255, 254, 253);
 }
-.logo *
+
+div.logo *:not(span)
 {   
     font-size: 36px;
     font-weight: bold; 
@@ -84,6 +84,13 @@ div.logo
     padding: 50px;
     /* font-family: 'Neonderthaw', cursive; */
     border:1px solid rgb(230, 39, 166);
+}
+
+
+.sticky .io
+{
+    color:rgb(224, 75, 5);
+    transition: all ease-in-out 1s;
 }
 .nav.sticky a.logo
 {
@@ -100,7 +107,7 @@ div.logo
 .nav-buttons
 {   
     display:inline-block;
-    border:1px solid pink;
+    border:3px solid rgb(204, 24, 54);
   
     /* float:right; */
 
@@ -111,12 +118,15 @@ div.logo
     color: rgb(255, 255, 255);
     padding: 20px 28px;
     font-size: 18px;
-   
     cursor: pointer;
     text-align: center;
     border:1px solid yellow;
   }
 
+  .sticky .block
+  {
+      padding:5px 28px;
+  }
 /* ----------------------------------------------FIRST PAGE----------------- */
     .first-page
     {
