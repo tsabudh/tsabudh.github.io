@@ -1,0 +1,62 @@
+<div class="form-wrapper">
+                    <div class="close-button"><i class="far fa-times-circle "></i></div>
+                    <div class="form-header">
+                     <div style="border: 2px solid aqua;"></div> 
+                        
+                    </div>  
+                     
+                    <form class="form-outline">
+                        <div class="form-field">
+                            <label class="field-title">Name </label><br>
+                            <input type="text" id="" value="" placeholder="Enter your name.">  <br>
+                            <small class="error-message">Error message</small>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="field-title">Phone </label><br>
+                            <input type="text" id="" value="" placeholder="Enter your phone number."> <br> 
+                            <small class="error-message">Error message</small>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="field-title">Organization </label><br>
+                            <input type="text" id="" value="" placeholder="Enter your organization's name."><br>  
+                            <small class="error-message">Error message</small>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="field-title">Address </label><br>
+                            <input type="text" id="" value="" placeholder="Enter your address."> <br> 
+                            <small class="error-message">Error message</small>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="field-title">Email </label><br>
+                            <input type="text" id="" value="" placeholder="Enter your email.">  <br>
+                            <small class="error-message">Error message</small>
+                        </div>
+
+                        
+                       
+                       
+                        
+                    </form>
+                </div>
+				
+				----------------------------------------------------------
+				  <div class="third-page-container"> 
+
+                    <div class="third-page-content content31">
+                        <img src="thirdcontent1.png">
+                        <h4>Responsive Website</h4>
+                    </div>
+                    <div class="third-page-content content32">
+                        <img src="thirdcontent2.png">
+                        <h4>Form Validator</h4>
+                    </div>
+                    <div class="third-page-content content33"></div>
+                    <div class="third-page-content content34"></div>
+
+                </div>
+				
+				----------------------------------------------------------

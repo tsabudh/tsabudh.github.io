@@ -43,7 +43,9 @@ body {
      font-family: 'Sora', sans-serif;
  }
 
-.nav
+
+ /* ------------------------------------------------------------------NAVIGATION BAR------------------------------------------ */
+.everything .nav
 {
     /* background-color: black; */
     /* position: relative;
@@ -54,22 +56,42 @@ body {
     /* border:1px solid greenyellow; */
     display: flex;
     justify-content: space-between;
+    transition: all ease 0.5s;
+}
+
+.everything .nav.sticky
+{   
+    position:fixed;
+    top:50;
+    width:80vw;
+    height:40px;
     
 }
 
-.logo
+div.logo
+{
+   border:1px solid rgb(255, 254, 253);
+}
+.logo *
 {   
     font-size: 36px;
     font-weight: bold; 
     color: rgb(255, 255, 255);
     font-family: 'Sora', sans-serif;
     text-decoration: none;
-    margin-left: 1em;
+    margin-left: 30px;
+    margin-top:0px;
+    padding: 50px;
     /* font-family: 'Neonderthaw', cursive; */
-    
-   
-
+    border:1px solid rgb(230, 39, 166);
 }
+.nav.sticky a.logo
+{
+    padding: 5px;
+   
+}
+
+
 /* .nav :last-child{
 
         margin-left: 10px;
@@ -78,13 +100,13 @@ body {
 .nav-buttons
 {   
     display:inline-block;
-    /* border:1px solid pink; */
+    border:1px solid pink;
   
     /* float:right; */
 
 }
 .block {
-    border: none;
+    /* border: none; */
     background:transparent;
     color: rgb(255, 255, 255);
     padding: 20px 28px;
@@ -92,7 +114,7 @@ body {
    
     cursor: pointer;
     text-align: center;
-    /* border:1px solid yellow; */
+    border:1px solid yellow;
   }
 
 /* ----------------------------------------------FIRST PAGE----------------- */
@@ -106,6 +128,7 @@ body {
      .image
     {  
         border-radius: 10px;
+        object-fit: cover;
         
         
         
@@ -121,7 +144,7 @@ body {
     }
 
     .big-text{
-        font-size: 48px;
+        font-size: 38px;
         color:rgb(26, 106, 197)
     }
     .intro-text
@@ -131,7 +154,7 @@ body {
     .intro-name
     {
         color:#0dcfe9;
-        font-size: 32px;
+        font-size: 48px;
     }
 /* ---------------------------------------------------SECOND PAGE--------------------------------------- */
             .second-page
