@@ -13,6 +13,7 @@ html
 * div:not(.nav)
 {
     border-radius: 10px;
+  
 }
 * a
 {
@@ -40,6 +41,11 @@ body {
     {
         display: none; /* for Chrome, Safari, and Opera */
     }
+
+h1
+{
+    /* margin-top: 10px; */
+}
 
  /* div
  {
@@ -150,6 +156,7 @@ div.logo *:not(span)
         display: flex;
         justify-content: space-between;
         margin-top: 90px;
+        padding: 10px;
         background-color: #dff1f3;
     }
    
@@ -188,6 +195,7 @@ div.logo *:not(span)
                 height:400px;
                 /* border:1px solid rgb(243, 19, 187); */
                 margin-top: 30px;
+                padding: 10px;
                 background-color: rgb(248, 226, 226);
             }
                 .second-page p
@@ -207,6 +215,7 @@ div.logo *:not(span)
         /* border:2px solid rgb(5, 5, 5); */
         height:400px;
         margin-top: 30px;
+        padding: 10px;
         background-color: azure;
     }
 
