@@ -5,8 +5,19 @@
 {
     box-sizing: border-box;
 }
-
-
+html
+{
+    scroll-padding-top: 40px;
+    
+}
+* div:not(.nav)
+{
+    border-radius: 10px;
+}
+* a
+{
+    text-decoration: none;
+}
 html
 {
     scroll-behavior: smooth;
@@ -48,10 +59,12 @@ body {
 .everything div.nav
 {
     transition: all ease-in-out 0.5s;
-    position: inherit;
-    width:100%;
+    position: fixed;
+    width:80%;
+    top:0;
+    
     height:60px;
-    background-color: rgb(58, 237, 250);
+    background-color: rgb(226, 247, 248);
     display: flex;
     justify-content: space-between;
     transition: all ease 0.5s;
@@ -64,26 +77,28 @@ body {
     top:0;
     width:80vw;
     height:40px;
+    background-color: rgb(10, 56, 59);
+    
     
 }
 
 div.logo
 {
-   border:1px solid rgb(255, 254, 253);
+   /* border:1px solid rgb(255, 254, 253); */
 }
 
 div.logo *:not(span)
 {   
     font-size: 36px;
     font-weight: bold; 
-    color: rgb(255, 255, 255);
+    color: rgb(136, 44, 15);
     font-family: 'Sora', sans-serif;
     text-decoration: none;
     margin-left: 30px;
     margin-top:0px;
     padding: 50px;
     /* font-family: 'Neonderthaw', cursive; */
-    border:1px solid rgb(230, 39, 166);
+    /* border:1px solid rgb(230, 39, 166); */
 }
 
 
@@ -107,40 +122,41 @@ div.logo *:not(span)
 .nav-buttons
 {   
     display:inline-block;
-    border:3px solid rgb(204, 24, 54);
+    /* border:3px solid rgb(204, 24, 54); */
   
     /* float:right; */
 
 }
 .block {
-    /* border: none; */
+    border: none;
     background:transparent;
-    color: rgb(255, 255, 255);
+    color: rgb(128, 12, 12);
     padding: 20px 28px;
     font-size: 18px;
     cursor: pointer;
+    transition: all ease 0.5s;
     text-align: center;
-    border:1px solid yellow;
+    /* border:1px solid yellow; */
   }
 
   .sticky .block
   {
       padding:5px 28px;
+      color: rgb(235, 208, 90);
   }
 /* ----------------------------------------------FIRST PAGE----------------- */
     .first-page
     {
         display: flex;
         justify-content: space-between;
-        margin-top: 30px;
+        margin-top: 90px;
+        background-color: #dff1f3;
     }
    
      .image
     {  
         border-radius: 10px;
-        object-fit: cover;
-        
-        
+        object-fit: cover;        
         
     }
    
@@ -172,6 +188,7 @@ div.logo *:not(span)
                 height:400px;
                 /* border:1px solid rgb(243, 19, 187); */
                 margin-top: 30px;
+                background-color: rgb(248, 226, 226);
             }
                 .second-page p
                 {
@@ -184,12 +201,13 @@ div.logo *:not(span)
                     text-align: center;
                 }
 
-/* ----------------------------------------------------------------THIRD PAGE-------------------------------------- */
+/* ----------------------------------------------------------THIRD PAGE----------------------------------------------- */
     .third-page
     {
         /* border:2px solid rgb(5, 5, 5); */
         height:400px;
         margin-top: 30px;
+        background-color: azure;
     }
 
     .third-page > h1
