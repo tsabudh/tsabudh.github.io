@@ -1,0 +1,22 @@
+{
+  "name": "tsabudh.github.io",
+  "version": "1.0.0",
+  "description": "Portfolio page at tsabudh.github.io",
+  "main": "index.js",
+  "scripts": {
+    "compile:sass": "node-sass works/scss/new-page.scss works/css/new-style.css -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsabudh/tsabudh.github.io.git"
+  },
+  "author": "Sabudh Bahadur Thapa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tsabudh/tsabudh.github.io/issues"
+  },
+  "homepage": "https://github.com/tsabudh/tsabudh.github.io#readme",
+  "devDependencies": {
+    "node-sass": "^7.0.1"
+  }
+}
