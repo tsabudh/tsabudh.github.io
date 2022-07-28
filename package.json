@@ -4,7 +4,7 @@
   "description": "Portfolio page at tsabudh.github.io",
   "main": "index.js",
   "scripts": {
-    "compile:sass": "node-sass works/scss/new-page.scss works/css/new-style.css -w"
+    "compile:sass": "node-sass works/newportfolio/sass/new-page-main.scss works/newportfolio/css/new-style.css -w"
   },
   "repository": {
     "type": "git",

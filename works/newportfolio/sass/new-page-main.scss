@@ -1,0 +1,40 @@
+@import 'abstract/functions';
+@import 'abstract/mixins';
+@import 'abstract/variables';
+
+@import 'base/animations';
+@import 'base/base';
+@import 'base/typography';
+@import 'base/utilities';
+
+@import 'components/buttons';
+@import 'components/composition';
+@import 'components/feature-box';
+
+@import 'layouts/header';
+@import 'layouts/grid';
+
+@import 'pages/home';
+
+html {
+  font-size: 62.5%; // 16px * 0.625 = 10px;
+}
+@keyframes moveInBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  100% {
+    transform: translate(0);
+    opacity: 100%;
+  }
+}
+
+@mixin clearfix {
+  .clearfix::after {
+    content: '';
+    clear: both;
+    display: table;
+  }
+}

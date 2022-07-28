@@ -1,0 +1,24 @@
+@keyframes experiment {
+  0% {
+    clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0%, 100% 100%, 0% 100%);
+  }
+}
+
+@mixin moveInHorizontal($nameOfKeyframe, $firstDirection, $secondDirection) {
+  @keyframes #{$nameOfKeyframe} {
+    0% {
+      transform: translateX($firstDirection);
+    }
+    80% {
+      transform: translateX($secondDirection);
+    }
+    100% {
+      transform: translate(0);
+    }
+  }
+}
+@include moveInHorizontal(moveInRight, -25px, 5px);
+@include moveInHorizontal(moveInLeft, 25px, -5px);
