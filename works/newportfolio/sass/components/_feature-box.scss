@@ -6,7 +6,9 @@
   box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.15);
   border-radius: 3px;
   transition: all ease-in-out 0.2s;
- 
+
+  height: 34rem; // CHANGING THIS HEIGHT CHANGES THE BACKGROUND IMAGE PROPERTY, ZOOMES UNWANTEDLY
+  //DEFINING PROPERTY BACKGROUND-SIZE:100% fixed that
 
   &__icon {
     font-size: 6rem;
@@ -24,6 +26,5 @@
     transform: translateY(-1.5rem) scale(1.03);
   }
   &__text {
-
   }
 }
