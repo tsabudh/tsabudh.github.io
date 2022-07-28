@@ -1,0 +1,97 @@
+.card {
+  //TO MAKE IT SPIN
+  perspective: 150rem;
+  -moz-perspective: 150rem;
+  position: relative;
+  height: 50rem;
+
+  &__side {
+    height: 50rem;
+    font-size: 2rem;
+    transition: all 0.9s ease-in-out;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    backface-visibility: hidden;
+    border-radius: 3px;
+    // box-shadow: 0 1.5rem 4rem rgba($color: $color-black, $alpha:0.15);
+    box-shadow: 0 1.5rem 4rem rgba($color-black, 0.15);
+    overflow: hidden;
+
+    &--front {
+      background-color: $color-white;
+    }
+
+    &--back {
+      transform: rotateY(180deg);
+
+      &-1 {
+        background-image: linear-gradient(
+          to right bottom,
+          #{$color-secondary-light},
+          #{$color-secondary-dark}
+        );
+      }
+      &-2 {
+        background-image: linear-gradient(
+          to right bottom,
+          #{$color-primary-light},
+          #{$color-primary-dark}
+        );
+      }
+      &-3 {
+        background-image: linear-gradient(
+          to right bottom,
+          #{$color-tertiary-light},
+          #{$color-tertiary-dark}
+        );
+      }
+    }
+  }
+
+  &:hover &__side--front {
+    transform: rotateY(-180deg);
+  }
+
+  &:hover &__side--back {
+    transform: rotateY(0deg);
+  }
+
+  // FRONT SIDE STYLING PICTURE HEADING DETAILS
+  &__picture {
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+    height: 23rem;
+    background-size: cover;
+    background-blend-mode: screen;
+    &--1 {
+      background-image: linear-gradient(
+          to right bottom,
+          #{$color-secondary-light},
+          #{$color-secondary-dark}
+        ),
+        url('../img/nat-5.jpg');
+    }
+    &--2 {
+      background-image: linear-gradient(
+          to right bottom,
+          #{$color-primary-light},
+          #{$color-primary-dark}
+        ),
+        url('../img/nat-5.jpg');
+    }
+    &--3 {
+      background-image: linear-gradient(
+          to right bottom,
+          #{$color-tertiary-light},
+          #{$color-tertiary-dark}
+        ),
+        url('../img/nat-5.jpg');
+    }
+  }
+}
+
+//IMAGE URL MUST BE RELATIVE TO THE CSS FILE THIS CODE IS TO BE COMPILED INTO
+//card:hover card__side{ transform: rotate();} we want to card side to transform when we hover the card.
+// we might have more sides so we want effect to occur on main component ie;card
