@@ -42,7 +42,7 @@
 
     &:hover,
     &:active {
-      color: $color-primary;
+      color: $color-primary-dark;
       box-shadow: 0 1rem 2rem rgba($color: #000000, $alpha: 0.5);
       transform: rotate(-5deg) scale(1.2);
     }
