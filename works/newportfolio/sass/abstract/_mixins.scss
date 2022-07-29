@@ -5,3 +5,12 @@
     display: table;
   }
 }
+@mixin clearfix100 {
+  &::after {
+    content: '';
+    width: 100%;
+    height: 100%;
+    clear: both;
+    display: block;
+  }
+}

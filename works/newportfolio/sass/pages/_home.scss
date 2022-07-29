@@ -13,11 +13,11 @@
       rgba($color-primary-dark, 0.4)
     ),
     url('../img/nat-4.jpg');
-  background-size: cover;
+  // background-size: cover;
   // background-position: center;
-  background-size: 100%;
+  background-size: fill;
   transform: skewY(-6deg);
-  margin-top: -10vh;
+  margin-top: -11vh;
 
   & > *.row {
     transform: skewY(6deg);
@@ -29,4 +29,11 @@
   background-color: $color-grey-light-1;
   padding: 25rem 0 50rem 0;
   margin-top: -10vh;
+}
+
+.section-stories {
+  position: relative;
+  width: 100%;
+  padding: 25rem 0;
+  margin-top: -20vh;
 }

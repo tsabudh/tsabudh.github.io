@@ -76,9 +76,10 @@
     font-size: $font-size-default;
     text-decoration: none;
     display: inline-block;
+    border-radius: 2px;
     color: $color-primary;
     border-bottom: 1px solid $color-primary-light;
-    padding: 3px 3px;
+    padding: 3px 5px;
     transition: all ease-in-out 0.2s;
   }
 

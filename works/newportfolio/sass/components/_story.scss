@@ -1,0 +1,69 @@
+.story {
+  margin: 0 auto;
+  background-color: rgba($color-grey-light-2,0.65);
+  width: 75%;
+  display: block;
+  height: 21rem;
+  border-radius: 3px;
+  padding: 3rem 6rem;
+  font-size: $font-size-default;
+  transform: skewX(-12deg);
+  box-shadow: 1rem 2rem 4rem rgba($color: #000000, $alpha: 0.3);
+
+  // all first child selector
+  //   &>*{transform: skewx(12deg);}
+  //this only skewed back the story__text but not the story__shape and story__img within because Story__shape already has
+  //a transform property inside it and that take precedence. so must do it individually
+
+  &__shape {
+    width: 15rem;
+    height: 15rem;
+    float: left;
+    background-color: orange;
+    position: relative;
+
+    -webkit-shape-outside: circle(50% at 50% 50%);
+    // shape-outside: circle(20% at 10% 50%);
+    shape-outside: circle(50% at 50% 50%);
+    -webkit-clip-path: circle(50% at 50% 50%);
+    clip-path: circle(50% at 50% 50%);
+
+    transform: translateX(-1.5rem) skewX(12deg); //Floated elements are better to be translated than margin-edited when shape-outside and clip path are done
+  }
+
+  &__text {
+    transform: skewX(12deg);
+  }
+
+  &__img {
+    height: 100%;
+
+    transition: all ease-in-out 0.2s;
+    transform: translateX(-3.5rem) scale(1.2); // scale for hover zoom out effect, translateX for centering rectangular image
+    //    object-fit: scale-down; // didnt work
+  }
+
+  &__caption {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    text-transform: uppercase;
+    color: $color-white;
+    font-size: 1.7rem;
+
+    opacity: 0;
+    transform: translate(-50%, 20%);
+    transition: all ease-in-out 0.3s;
+  }
+
+  &:hover &__img {
+    transform: translateX(-3.5rem) scale(1);
+    filter: blur(4px) brightness(80%);
+  }
+
+  &:hover &__caption {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+}

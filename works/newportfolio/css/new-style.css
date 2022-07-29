@@ -97,6 +97,20 @@ body {
 .u-margin-top-small {
   margin-top: 1.5rem; }
 
+.bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0.15;
+  z-index: -3;
+  overflow: hidden; }
+  .bg-video__content {
+    height: 100%;
+    width: 100%;
+    object-fit: cover; }
+
 .btn:link, .btn:visited {
   display: inline-block;
   text-transform: uppercase;
@@ -156,9 +170,10 @@ body {
   font-size: 1.6rem;
   text-decoration: none;
   display: inline-block;
+  border-radius: 2px;
   color: #55c57a;
   border-bottom: 1px solid #7ed56f;
-  padding: 3px 3px;
+  padding: 3px 5px;
   transition: all ease-in-out 0.2s; }
 
 .btn-text:hover {
@@ -216,6 +231,7 @@ body {
     .card__picture--3 {
       background-image: linear-gradient(to right bottom, #2998ff, #5643fa), url("../img/nat-7.jpg"); }
   .card__heading {
+    width: 75%;
     position: absolute;
     top: 12rem;
     right: 2rem;
@@ -225,8 +241,8 @@ body {
     color: #ffffff;
     font-weight: 300; }
   .card__heading-span {
-    width: 75%;
-    padding: 1rem 2.5rem;
+    width: fit-content;
+    padding: 1rem 0.5rem 1rem 2.5rem;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone; }
     .card__heading-span--1 {
@@ -314,6 +330,52 @@ body {
   .feature-box:hover {
     transform: translateY(-1.5rem) scale(1.03); }
 
+.story {
+  margin: 0 auto;
+  background-color: rgba(238, 238, 238, 0.65);
+  width: 75%;
+  display: block;
+  height: 21rem;
+  border-radius: 3px;
+  padding: 3rem 6rem;
+  font-size: 1.6rem;
+  transform: skewX(-12deg);
+  box-shadow: 1rem 2rem 4rem rgba(0, 0, 0, 0.3); }
+  .story__shape {
+    width: 15rem;
+    height: 15rem;
+    float: left;
+    background-color: orange;
+    position: relative;
+    -webkit-shape-outside: circle(50% at 50% 50%);
+    shape-outside: circle(50% at 50% 50%);
+    -webkit-clip-path: circle(50% at 50% 50%);
+    clip-path: circle(50% at 50% 50%);
+    transform: translateX(-1.5rem) skewX(12deg); }
+  .story__text {
+    transform: skewX(12deg); }
+  .story__img {
+    height: 100%;
+    transition: all ease-in-out 0.2s;
+    transform: translateX(-3.5rem) scale(1.2); }
+  .story__caption {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    text-transform: uppercase;
+    color: #ffffff;
+    font-size: 1.7rem;
+    opacity: 0;
+    transform: translate(-50%, 20%);
+    transition: all ease-in-out 0.3s; }
+  .story:hover .story__img {
+    transform: translateX(-3.5rem) scale(1);
+    filter: blur(4px) brightness(80%); }
+  .story:hover .story__caption {
+    transform: translate(-50%, -50%);
+    opacity: 1; }
+
 .header {
   height: 95vh;
   background-image: linear-gradient(to right bottom, rgba(55, 192, 28, 0.4), rgba(40, 180, 133, 0.4)), url("../img/hero.jpg");
@@ -373,10 +435,9 @@ body {
 .section-features {
   padding: 20rem 0;
   background-image: linear-gradient(to right bottom, rgba(55, 192, 28, 0.4), rgba(40, 180, 133, 0.4)), url("../img/nat-4.jpg");
-  background-size: cover;
-  background-size: 100%;
+  background-size: fill;
   transform: skewY(-6deg);
-  margin-top: -10vh; }
+  margin-top: -11vh; }
   .section-features > *.row {
     transform: skewY(6deg); }
 
@@ -385,6 +446,12 @@ body {
   background-color: #f7f7f7;
   padding: 25rem 0 50rem 0;
   margin-top: -10vh; }
+
+.section-stories {
+  position: relative;
+  width: 100%;
+  padding: 25rem 0;
+  margin-top: -20vh; }
 
 html {
   font-size: 62.5%; }
