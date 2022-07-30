@@ -2,10 +2,12 @@
   //TO MAKE IT SPIN
   perspective: 150rem;
   -moz-perspective: 150rem;
+  -ms-perspective: 150rem;
   position: relative;
   height: 50rem;
 
   &__side {
+    
     height: 50rem;
     font-size: 2rem;
     transition: all 0.9s ease-in-out;
@@ -64,7 +66,7 @@
     height: 23rem;
     background-size: cover;
     background-blend-mode: screen;
-    
+
     // backface-visibility: hidden;
 
     &--1 {
@@ -110,6 +112,7 @@
   &__heading-span {
     width: fit-content;
     padding: 1rem 0.5rem 1rem 2.5rem;
+    // padding: 1rem 2.5rem;
 
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
