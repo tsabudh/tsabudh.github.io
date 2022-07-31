@@ -4,13 +4,14 @@
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgba($color: #000000, $alpha: 0.5);
-  z-index: 9999;
-  transition: all ease-in-out 0.4s;
+  // background-color: rgba($color: #000000, $alpha: 0.2);
+ 
+  z-index: 3000;
+  // transition: all 02s ease-in-out;  TURNED OFF CUZ THIS WAS TURNING VISIBILITY:VISIBLE AFTER 2 SEC WHICH BLUR ANIMATION SUDDEN
 
-//   display: none;
-  opacity: 0;
+  //   display: none;
   visibility: hidden;
+  opacity: 0;
 
   &__left {
     width: 33.33333%;
@@ -50,11 +51,12 @@
     overflow: hidden;
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.5);
-    transition: all ease-in-out 02s;
+    transition: all 0.5s ease-in-out;
   }
 
+  //popup open states
+
   &:target {
-    // display: block;
     visibility: visible;
     opacity: 1;
   }
@@ -74,7 +76,7 @@
       font-size: 3rem;
       text-decoration: none;
       display: inline-block;
-      transition: all ease-in-out 03s;
+      transition: all 0.2s ease-in-out;
       line-height: 1;
 
       &:hover {
@@ -83,16 +85,27 @@
     }
   }
 
+  //FOR BACKGROUND BLUR DURING POPUP ACTIVE WITH LINK OUTSIDE THE POPUP_CONTENT 
+  &:target &__anchor {
+    animation-name: blur-background;
+    animation-duration: 2.5s;
+    animation-iteration-count: 1;
+    animation-delay: 0.3s;
+    animation-fill-mode: both;
+  }
+
   &__anchor {
     width: 100%;
     height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
-    // display: none;
-    // background-color: rgba($color: #000000, $alpha: 0.8);
-    backdrop-filter: blur(4px);
-    filter: blur(4px);
+
+    background-color: rgba($color: #000000, $alpha: 0.6);
+    opacity:0;
+
     cursor: default;
   }
 }
+
+//experiment

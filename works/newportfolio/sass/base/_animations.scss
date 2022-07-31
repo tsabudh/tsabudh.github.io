@@ -1,3 +1,64 @@
+// &&&&&&&&&&&&&&&     &&&&&&&&&&&&&&&&&&&          &&&&&&&&&&&&&&&&&&&&    &&&&&&&&&&&&&&&&&&&         &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//BACKGROUND FILTER BLUR
+.a-blur-background {
+  // -moz-animation: blur-background 3s;
+  // -webkit-animation: blur-background 3s;
+  // animation: blur-background 4s ease-in-out 1s;
+  animation-name: blur-background;
+  animation-duration: 4s;
+  animation-iteration-count: 1;
+  animation-delay: 2s;
+  animation-fill-mode: forwards;
+}
+@keyframes blur-background {
+  0% {
+    backdrop-filter: blur(0px);
+    opacity: 0;
+  }
+  100% {
+    backdrop-filter: blur(2px);
+    opacity: 1;
+  }
+}
+// &&&&&&&&&&&&&&&     &&&&&&&&&&&&&&&&&&&          &&&&&&&&&&&&&&&&&&&&    &&&&&&&&&&&&&&&&&&&         &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//BACKGROUND FILTER BLUR
+.a-bluring-background {
+  -moz-animation: bluring-background 3s;
+  -webkit-animation: bluring-background 3s;
+  animation: bluring-background 3s ease-in-out infinite;
+}
+@keyframes bluring-background {
+  0% {
+    backdrop-filter: blur(100px);
+  }
+  50% {
+    backdrop-filter: blur(100px);
+  }
+  100% {
+    backdrop-filter: blur(100px);
+  }
+}
+// &&&&&&&&&&&&&&&     &&&&&&&&&&&&&&&&&&&          &&&&&&&&&&&&&&&&&&&&    &&&&&&&&&&&&&&&&&&&         &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+.a-bluring {
+  -moz-animation: bluring 3s;
+  -webkit-animation: bluring 3s;
+  animation: bluring 3s ease-in-out infinite;
+}
+
+@keyframes bluring {
+  0% {
+    filter: blur(0px);
+  }
+  50% {
+    filter: blur(10px);
+  }
+  100% {
+    filter: blur(0px);
+  }
+}
+// &&&&&&&&&&&&&&&     &&&&&&&&&&&&&&&&&&&          &&&&&&&&&&&&&&&&&&&&    &&&&&&&&&&&&&&&&&&&         &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
 @keyframes experiment {
   0% {
     clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);

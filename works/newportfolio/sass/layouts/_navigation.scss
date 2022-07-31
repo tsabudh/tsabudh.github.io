@@ -42,8 +42,8 @@
     right: 0;
     z-index: 150;
     opacity: 0;
-
-    display: none;
+    visibility: hidden;
+    // display: none;
     transform: skew(-12deg, 0deg) scale(0.5) translate(50%, -50%);
 
     transition: all ease-in-out 0.3s;
@@ -97,7 +97,8 @@
   }
   &__checkbox:checked ~ &__nav {
     opacity: 1;
-    display: block;
+    // display: block;
+    visibility: visible;
     width: 100%;
     transform: skew(0deg, 0deg) scale(1) translate(0%, 0%);
   }

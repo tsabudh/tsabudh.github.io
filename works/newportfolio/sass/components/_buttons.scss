@@ -76,6 +76,7 @@
 }
 
 .btn-text {
+  &,
   &:link,
   &:visited {
     font-size: $font-size-default;

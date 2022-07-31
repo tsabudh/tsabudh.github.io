@@ -1,3 +1,44 @@
+.a-blur-background {
+  animation-name: blur-background;
+  animation-duration: 4s;
+  animation-iteration-count: 1;
+  animation-delay: 2s;
+  animation-fill-mode: forwards; }
+
+@keyframes blur-background {
+  0% {
+    backdrop-filter: blur(0px);
+    opacity: 0; }
+  100% {
+    backdrop-filter: blur(2px);
+    opacity: 1; } }
+
+.a-bluring-background {
+  -moz-animation: bluring-background 3s;
+  -webkit-animation: bluring-background 3s;
+  animation: bluring-background 3s ease-in-out infinite; }
+
+@keyframes bluring-background {
+  0% {
+    backdrop-filter: blur(100px); }
+  50% {
+    backdrop-filter: blur(100px); }
+  100% {
+    backdrop-filter: blur(100px); } }
+
+.a-bluring {
+  -moz-animation: bluring 3s;
+  -webkit-animation: bluring 3s;
+  animation: bluring 3s ease-in-out infinite; }
+
+@keyframes bluring {
+  0% {
+    filter: blur(0px); }
+  50% {
+    filter: blur(10px); }
+  100% {
+    filter: blur(0px); } }
+
 @keyframes experiment {
   0% {
     clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%); }
@@ -169,7 +210,7 @@ body {
   .btn--green::after {
     background-color: #55c57a; }
 
-.btn-text:link, .btn-text:visited {
+.btn-text, .btn-text:link, .btn-text:visited {
   font-size: 1.6rem;
   text-decoration: none;
   display: inline-block;
@@ -427,11 +468,9 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
-  transition: all ease-in-out 0.4s;
-  opacity: 0;
-  visibility: hidden; }
+  z-index: 3000;
+  visibility: hidden;
+  opacity: 0; }
   .popup__left {
     width: 33.33333%;
     display: table-cell; }
@@ -463,7 +502,7 @@ body {
     overflow: hidden;
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.5);
-    transition: all ease-in-out 02s; }
+    transition: all 0.5s ease-in-out; }
   .popup:target {
     visibility: visible;
     opacity: 1; }
@@ -478,18 +517,24 @@ body {
     font-size: 3rem;
     text-decoration: none;
     display: inline-block;
-    transition: all ease-in-out 03s;
+    transition: all 0.2s ease-in-out;
     line-height: 1; }
     .popup__close:link:hover, .popup__close:visited:hover {
       color: #55c57a; }
+  .popup:target .popup__anchor {
+    animation-name: blur-background;
+    animation-duration: 2.5s;
+    animation-iteration-count: 1;
+    animation-delay: 0.3s;
+    animation-fill-mode: both; }
   .popup__anchor {
     width: 100%;
     height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
-    backdrop-filter: blur(4px);
-    filter: blur(4px);
+    background-color: rgba(0, 0, 0, 0.6);
+    opacity: 0;
     cursor: default; }
 
 .story {
@@ -541,7 +586,8 @@ body {
 .footer {
   background-color: #3f3d3d;
   padding: 10rem 0;
-  font-size: 1.4rem; }
+  font-size: 1.4rem;
+  position: relative; }
   .footer__logo-box {
     text-align: center;
     margin-bottom: auto; }
@@ -652,7 +698,7 @@ body {
   right: 0;
   z-index: 150;
   opacity: 0;
-  display: none;
+  visibility: hidden;
   transform: skew(-12deg, 0deg) scale(0.5) translate(50%, -50%);
   transition: all ease-in-out 0.3s; }
 
@@ -691,7 +737,7 @@ body {
 
 .navigation__checkbox:checked ~ .navigation__nav {
   opacity: 1;
-  display: block;
+  visibility: visible;
   width: 100%;
   transform: skew(0deg, 0deg) scale(1) translate(0%, 0%); }
 
