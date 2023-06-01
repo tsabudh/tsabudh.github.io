@@ -1,0 +1,177 @@
+// &&&&&&&&&&&&&&&     &&&&&&&&&&&&&&&&&&&          &&&&&&&&&&&&&&&&&&&&    &&&&&&&&&&&&&&&&&&&         &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//BACKGROUND FILTER BLUR
+.a-blur-background {
+  // -moz-animation: blur-background 3s;
+  // -webkit-animation: blur-background 3s;
+  // animation: blur-background 4s ease-in-out 1s;
+  animation-name: blur-background;
+  animation-duration: 4s;
+  animation-iteration-count: 1;
+  animation-delay: 2s;
+  animation-fill-mode: forwards;
+}
+@keyframes blur-background {
+  0% {
+    backdrop-filter: blur(0px);
+    opacity: 0;
+  }
+  100% {
+    backdrop-filter: blur(2px);
+    opacity: 1;
+  }
+}
+// &&&&&&&&&&&&&&&     &&&&&&&&&&&&&&&&&&&          &&&&&&&&&&&&&&&&&&&&    &&&&&&&&&&&&&&&&&&&         &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//BACKGROUND FILTER BLUR
+.a-bluring-background {
+  -moz-animation: bluring-background 3s;
+  -webkit-animation: bluring-background 3s;
+  animation: bluring-background 3s ease-in-out infinite;
+}
+@keyframes bluring-background {
+  0% {
+    backdrop-filter: blur(100px);
+  }
+  50% {
+    backdrop-filter: blur(100px);
+  }
+  100% {
+    backdrop-filter: blur(100px);
+  }
+}
+// &&&&&&&&&&&&&&&     &&&&&&&&&&&&&&&&&&&          &&&&&&&&&&&&&&&&&&&&    &&&&&&&&&&&&&&&&&&&         &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+.a-bluring {
+  -moz-animation: bluring 3s;
+  -webkit-animation: bluring 3s;
+  animation: bluring 3s ease-in-out infinite;
+}
+
+@keyframes bluring {
+  0% {
+    filter: blur(0px);
+  }
+  50% {
+    filter: blur(10px);
+  }
+  100% {
+    filter: blur(0px);
+  }
+}
+// &&&&&&&&&&&&&&&     &&&&&&&&&&&&&&&&&&&          &&&&&&&&&&&&&&&&&&&&    &&&&&&&&&&&&&&&&&&&         &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+@keyframes experiment {
+  0% {
+    clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0%, 100% 100%, 0% 100%);
+  }
+}
+
+@mixin moveInHorizontal($nameOfKeyframe, $firstDirection, $secondDirection) {
+  @keyframes #{$nameOfKeyframe} {
+    0% {
+      transform: translateX($firstDirection);
+    }
+    80% {
+      transform: translateX($secondDirection);
+    }
+    100% {
+      transform: translate(0);
+    }
+  }
+}
+@include moveInHorizontal(moveInRight, -25px, 5px);
+@include moveInHorizontal(moveInLeft, 25px, -5px);
+
+@keyframes moveInBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  100% {
+    transform: translate(0);
+    opacity: 100%;
+  }
+}
+
+//LANDING PAGE ANIMATIONS
+@keyframes landingTextLeft {
+  0% {
+    right: 12rem;
+  }
+
+  100% {
+    right: 57vw;
+    // left: 2rem;
+  }
+}
+
+@keyframes solidGradient {
+  0% {
+    background-image: linear-gradient(
+      120deg,
+      rgba(183, 233, 127, 0.788) 00%,
+      rgba(129, 212, 208, 0.788) 50%,
+      rgba(0, 0, 0, 0.623) 50%,
+      rgba(209, 12, 183, 0.623) 100%
+    );
+  }
+
+  50% {
+    background-image: linear-gradient(
+      120deg,
+      rgba(183, 233, 127, 0.788) 00%,
+      rgba(129, 212, 208, 0.788) 5%,
+      rgba(0, 0, 0, 0.623) 5%,
+      rgba(209, 12, 183, 0.623) 100%
+    );
+  }
+  100% {
+    background-image: linear-gradient(
+      120deg,
+      rgba(183, 233, 127, 0.788) 00%,
+      rgba(129, 212, 208, 0.788) 50%,
+      rgba(0, 0, 0, 0.623) 50%,
+      rgba(209, 12, 183, 0.623) 100%
+    );
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+    background-size: 100% 100%;
+  }
+  50% {
+    background-position: 0% 50%;
+    background-size: 101% 101%;
+  }
+  100% {
+    background-position: 0% 50%;
+    background-size: 100% 100%;
+  }
+}
+
+//TYPOGRAPHY ANIMATIONS TYPOGRAPHY ANIMATIONS TYPOGRAPHY ANIMATIONS TYPOGRAPHY ANIMATIONS TYPOGRAPHY ANIMATIONS TYPOGRAPHY ANIMATIONS
+
+@keyframes text-glitch-noise-1 {
+  $steps: 20;
+
+  @for $i from 0 through $steps {
+    #{percentage($i * (1/ $steps)) } {
+      clip: rect(random($text-glitch-height-number-only) + rem, $text-glitch-max-width, random($text-glitch-height-number-only) + rem, 0);
+    }
+  }
+}
+@keyframes text-glitch-noise-2 {
+  $steps: 50;
+
+  @for $i from 0 through $steps {
+    #{percentage($i * (1/ $steps)) } {
+      clip: rect(random($text-glitch-height-number-only) + rem, $text-glitch-max-width, random($text-glitch-height-number-only) + rem, 0);
+    }
+  }
+}
+

@@ -1,0 +1,79 @@
+@mixin clearfix {
+  &::after {
+    content: '';
+    clear: both;
+    display: table;
+  }
+}
+@mixin clearfix100 {
+  &::after {
+    content: '';
+    width: 100%;
+    height: 100%;
+    clear: both;
+    display: block;
+  }
+}
+
+@mixin absolutecenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+//Media query manager
+/* 
+
+0-600px     phone
+600-900px   tab-port
+900-1200px  tab-land
+1200-1800px desktop where our normal styles apply
+1800px+     large screens
+
+ HOW @CONTENT IS USED
+@ mixin respond-phone {
+  @media (max-width: 600px) {
+    @content;
+  }
+}
+ @include respond-phone {
+  font-size: 50%;
+}
+
+Breakpoint argument choices
+:phone
+:tab-port
+:tab-land
+:big-screen
+
+*/
+
+@mixin respond($breakpoint) {
+  // 1em =16px
+  //In media queries 1rem or 1em is defined by browser
+
+  @if $breakpoint == phone {
+    @media (max-width: 37.5em) {
+      // 600 px / 16 px = 37.5
+      @content;
+    }
+  }
+  @if $breakpoint == tab-port {
+    //900px
+    @media (max-width: 56.25em) {
+      @content;
+    }
+  }
+  @if $breakpoint == tab-land {
+    //1200px
+    @media (max-width: 75em) {
+      @content;
+    }
+  }
+  @if $breakpoint == big-screen {
+    @media (min-width: 112.5em) {
+      @content;
+    }
+  }
+}

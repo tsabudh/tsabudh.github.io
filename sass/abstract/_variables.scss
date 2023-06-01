@@ -1,0 +1,43 @@
+$color-primary-light: #7ed56f;
+$color-primary: #55c57a;
+$color-primary-dark: #28b485;
+$color-primary2-dark: #059179;
+$color-grey: #777;
+$color-grey-dark: rgb(63, 61, 61);
+$color-grey-light: rgb(200, 200, 200);
+$color-grey-light-1: #f7f7f7;
+$color-grey-light-2: #eee;
+$color-white: #ffffff;
+$color-black: #000000;
+$color-error: orangered;
+
+$color-secondary-light: #ffb900;
+$color-secondary-dark: #ff7730;
+
+$color-tertiary-light: #2998ff;
+$color-tertiary-dark: #5643fa;
+
+//GRID
+$grid-width: 114rem;
+
+//GUTTER
+$gutter-vertical: 8rem;
+$gutter-vertical-small: 6rem;
+$gutter-horizontal: 6rem;
+
+//SECTION MEMORY
+
+$slides-max-width: 90rem; // 90rem
+$slide-min-width: 7rem; // 7rem
+$slide-min-height: calc(#{($slides-max-width) / 2}); //90 divided by 2 = 45rem
+$slide-label-height: 4rem; // 4rem
+
+//TYPOGRAPHY VARIABLES TYPOGRAPHY VARIABLES TYPOGRAPHY VARIABLES TYPOGRAPHY VARIABLES TYPOGRAPHY VARIABLES TYPOGRAPHY VARIABLES
+
+//FONT
+$font-size-default: 1.6rem;
+
+//GLITCH TEXT
+$text-glitch-height: 10rem;
+$text-glitch-max-width: 88rem;
+$text-glitch-height-number-only: 10;
