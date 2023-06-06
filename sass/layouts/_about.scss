@@ -87,6 +87,8 @@
 
     & h3 {
       font-family: 'Lovelyn';
+      font-feature-settings: 'swsh' 1;
+      font-variant-alternates: swash(fancy);
       margin-block: 1rem;
       @include fluidFont(3rem, 5rem);
     }
