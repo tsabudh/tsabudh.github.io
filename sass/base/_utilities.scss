@@ -45,3 +45,8 @@
   display: inline-block;
   max-width: 100%;
 }
+
+//* ------- LAYOUTS -----------
+.u-container {
+  margin-inline: $margin-container-inline;
+}

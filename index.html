@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 
 <head>
-    <title>it's me! Sabudh.</title>
+    <title>t.sabudh</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="css/style.css" type="text/css" rel="stylesheet" />
     <link rel="stylesheet" href="css/icon-font.css" />
@@ -11,136 +12,83 @@
 <body>
 
     <section class="hero1">
-
         <div class="wrapper">
-            <h1 class="username">
-                <span class="red">t.</span>
-                <span class="name">sabudh</span>
-            </h1>
+            <div id="tsabudh" class="username">
+                <h1 class="red">
+                    <span class="fill">t.</span>
+                    <span class="mask">t.</span>
+                </h1>
+                <h1 class="name">
+                    <span class="fill">sabudh</span>
+                    <span class="mask">sabudh</span>
+                </h1>
+            </div>
             <div class="make-visible">
-                <button class="btn" >Get to know him.</button>
+                <button class="hidden btn btn3 btn3--animated ">Get to know him.</button>
             </div>
         </div>
+
+
 
     </section>
+    <main>
 
-
-
-
-
-
-
-
-
-    <!-- checkbox to display professional or personal page  -->
-    <input type="radio" name="page-selector" class="checkbox__personal" id="personal-checkbox">
-    <input type="radio" name="page-selector" class="checkbox__professional" id="professional-checkbox">
-
-
-    <header class="landingPage2">
-
-        <div class="landingPage2__box">
-
-            <label for="professional-checkbox" onclick="goToLink('professional-page')" class="landingPage2__box--left  btn3">
-                PROFESSIONAL
-            </label>
-
-            <label for="personal-checkbox" onclick="goToLink('personal-page')" class="landingPage2__box--right btn2">
-                PERSONAL
-            </label>
-
-        </div>
-    </header>
-
-
-
-    <!-- PERSONAL PAGE STARTS HERE --------------------------- -------------------- ---------------  -->
-    <div class="personal-page" id="personal-page">
-        <section class="section-memory">
-            <div class="heading-primary-1 u-margin-top-medium u-wide-inline-block">
-                <h2 class="text-bg-clip" data-text="Some moments captured."> Some moments captured.</h2>
-
+        <section class="section section--about">
+            <div class="profile">
+                <figure>
+                    <img src="./img/profile-picture.jpg" alt="Sabudh Bahadur Thapa">
+                </figure>
             </div>
-            <div class="slides u-padding-top-big">
-
-                <div class="slide active" style="--slideBackground:url(./../../img/1.jpg);">
-
-                    <div class="slide__label">
-                        <div class="slide__label__icon">
-                            <i class="fa-solid fa-heart"></i>
+            <div class="description">
+                <h3>Sabudh Bahadur Thapa</h3>
+                <p> I make web applications that suit your demands. </p>
+            </div>
+        </section>
 
 
-                        </div>
-                        <div class="slide__label__info">
-                            <div class="slide__label__info__main">Blonkisoaz</div>
-                            <div class="slide__label__info__sub">Omuke trughte a otufta</div>
-                        </div>
+
+
+        <section class="section section--works u-container">
+            <h2 class="section-title">My works</h2>
+            <div class="works">
+                <a class="work work--natours" href="https://tsabudh.com.np/">
+                    <div class="work_title">
+                        <h3>
+                            Natours
+                        </h3>
                     </div>
-                </div>
-
-                <div class="slide" style="--slideBackground:url(./../../img/2.jpg);">
-
-                    <div class="slide__label">
-                        <div class="slide__label__icon">
-                            <!-- <i class="icon-basic-heart"></i> -->
-                            <i class="fa-solid fa-vihara u-center-text"></i>
-
-                        </div>
-                        <div class="slide__label__info">
-                            <div class="slide__label__info__main">Oretemauw</div>
-                            <div class="slide__label__info__sub">Omuke trughte a otufta</div>
-                        </div>
+                    <div class="work_description">
+                        <p>A static responsive web page I designed when studying scss.</p>
                     </div>
-                </div>
-                <div class="slide" style="--slideBackground:url(./../../img/3.jpg);">
 
-                    <div class="slide__label">
-                        <div class="slide__label__icon u-center-text">
-                            <i class="fa-solid fa-people-roof"></i>
-
-                        </div>
-                        <div class="slide__label__info">
-                            <div class="slide__label__info__main">Iteresuselle</div>
-                            <div class="slide__label__info__sub">Omuke trughte a otufta</div>
-                        </div>
+                </a>
+                <a class="work work--shree" href="https://github.com/tsabudh/Shree-Krishna-Dairy-Shop">
+                    <div class="work_title">
+                        <h3>
+                            Shree Krishna Dairy
+                        </h3>
                     </div>
-                </div>
-                <div class="slide" style="--slideBackground:url(./../../img/4.jpg);">
-
-                    <div class="slide__label">
-                        <div class="slide__label__icon">
-                            <i class="fa-solid fa-bookmark"></i>
-                        </div>
-                        <div class="slide__label__info">
-                            <div class="slide__label__info__main">Idiefe</div>
-                            <div class="slide__label__info__sub">Omuke trughte a otufta</div>
-                        </div>
+                    <div class="work_description">
+                        <p>Digitalizing local dairy shop.</p>
                     </div>
-                </div>
-                <div class="slide" style="--slideBackground:url(./../../img/4.jpg);">
 
-                    <div class="slide__label">
-                        <div class="slide__label__icon">
-                            <i class="fa-solid fa-clover"></i>
-                        </div>
-                        <div class="slide__label__info">
-                            <div class="slide__label__info__main">Inatethi</div>
-                            <div class="slide__label__info__sub">Omuke trughte a otufta</div>
-                        </div>
-                    </div>
-                </div>
+                </a>
             </div>
 
         </section>
+    </main>
 
-    </div>
 
-    <!-- PROFESSIONAL PAGE STARTS HERE ++++++++++++++++++++ +++++++++++++++++++++ ++++++++++++++++++++++  -->
-    <div class="professional-page" id="professional-page"> THIS IS PROFESSIONAL </div>
+
+
+
+
+
+
 
 </body>
 
 
-<script type="text/javascript" src="scripts/home.js"></script>
+<script type="module" src="scripts/main.js"></script>
 
 </html>

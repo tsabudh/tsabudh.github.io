@@ -6,6 +6,10 @@
   width: 100%;
   background-color: #2d3436;
   background-image: linear-gradient(315deg, #1a1c1d 0%, #000000 74%);
+  // cursor: url('../img/dotCursor.svg') 5 5, pointer;
+  // overflow-y: auto;
+  font-variant: no-common-ligatures proportional-nums;
+  // overflow-x: hidden;
 
   & .wrapper {
     position: absolute;
@@ -15,10 +19,48 @@
     text-align: center;
 
     & .username {
+      @include fluidFont(5rem, 7.5rem);
       color: white;
-      font-size: 7rem;
+      cursor: none;
+      white-space: nowrap;
+      padding-inline: 15px;
+
+      & .name {
+        position: relative;
+        display: inline;
+
+        & .mask {
+          -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text;
+          background-clip: text;
+          background-size: 100%;
+          // transition: clip-path 0.1s ease;
+          clip-path: circle(var(--clip-size) at var(--clip-position-sabudh));
+          background-image: linear-gradient(98.3deg, red, red);
+        }
+
+        & .fill {
+          position: absolute;
+        }
+      }
       & .red {
+        position: relative;
+        display: inline;
         color: red;
+
+        & .mask {
+          -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text;
+          background-clip: text;
+          background-size: 100%;
+
+          clip-path: circle(var(--clip-size) at var(--clip-position-t));
+          background-image: linear-gradient(98.3deg, white, white);
+        }
+
+        & .fill {
+          position: absolute;
+        }
       }
       & .focused {
         // text-decoration: underline;
@@ -28,31 +70,47 @@
       margin: 6rem;
       padding: -0.1rem;
 
+      & .btn {
+        white-space: nowrap;
+      }
       &:hover > button {
         visibility: visible;
-        color: red;
+        color: white;
       }
       &:hover ~ & h1 {
         text-decoration: underline;
         text-transform: capitalize;
       }
     }
-    & button {
-      // position: absolute;
-      // top: 70%;
-      // left: 50%;
-      // translate: -50% -50%;
+    & button.hidden {
       visibility: hidden;
       border: 1px solid transparent;
       background: transparent;
-opacity: 0;
+      opacity: 0;
+      transform: translateZ(2rem);
 
-transition: opacity 0.7s ease;
+      transition: opacity 0.7s ease;
+
       &:hover {
         //   visibility: visible;
         color: whitesmoke;
         opacity: 1;
       }
     }
+  }
+}
+
+// @property --clip-size {
+//   syntax: '<Number>';
+//   inherits: false;
+//   initial-value: 20;
+// }
+
+@keyframes clip-size-transition {
+  0% {
+    --clip-size: 10;
+  }
+  100% {
+    --clip-size: 30;
   }
 }

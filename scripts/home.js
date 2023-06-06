@@ -1,3 +1,8 @@
+// import './dot.js'
+// import './clock.js';
+
+import { deviceCode } from './global.js';
+
 //PERSONAL AND PROFESSIONAL CHECKBOX WITH TARGET TO RESPECTIVE IDS
 const goToLink = function (id) {
   //setTimeout is called because the javascript function seems to call first before the
@@ -9,8 +14,6 @@ const goToLink = function (id) {
 
 //SECTION MEMORY // EXPANDING CARDS SCRIPT
 const slides = document.getElementsByClassName('slide');
-console.log(slides);
-console.log([...slides]);
 
 [...slides].forEach(slide => {
   slide.addEventListener('click', function () {
@@ -23,11 +26,20 @@ console.log([...slides]);
 });
 
 //* Hero 1
-document
-  .getElementsByClassName('make-visible')[0]
-  .addEventListener('mouseover', elem => {
-    console.log('message')
-    document
-      .getElementsByClassName('name')[0]
-      .classList.add('focused');
+function getToKnowHimHandler() {
+  let getToKnowHimButton = document.getElementsByClassName('make-visible')[0];
+  if (deviceCode <= 2)
+    getToKnowHimButton.querySelector('button').classList.remove('hidden');
+
+  getToKnowHimButton.addEventListener('mouseover', event => {
+    document.getElementsByClassName('name')[0].classList.add('focused');
   });
+
+  getToKnowHimButton.addEventListener('click', event => {
+    document
+      .getElementsByClassName('section--about')[0]
+      .scrollIntoView({ behavior: 'smooth' });
+  });
+}
+
+getToKnowHimHandler();

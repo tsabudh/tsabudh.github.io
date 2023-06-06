@@ -1,0 +1,94 @@
+.section--about {
+  padding: 4rem;
+  min-height: 40vh;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+
+  & .profile {
+    flex-basis: 34rem;
+    flex-grow: 2;
+    // max-width: 60%;
+
+    & figure {
+      $accentColor: red;
+      min-width: 20rem;
+      border: 0.5rem solid red;
+      //   border-image: linear-gradient(to-right, red blue);
+      border-image: repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 5px,
+          #{$accentColor} 6px,
+          #{$accentColor} 15px,
+          transparent 16px,
+          transparent 20px
+        )
+        20/1rem;
+
+      --b: 0.8rem;
+      /* border width */
+      --c: 3em;
+      /* corner size */
+      --r: 0;
+      /* corner rounding */
+      position: relative;
+      margin: 1em auto;
+      border: solid var(--b) transparent;
+      //   padding: 1em;
+
+      &::before {
+        // transition: all 1s ease, mask 1s ease;
+        position: absolute;
+        z-index: -1;
+        inset: calc(-1 * var(--b));
+        border: inherit;
+        border-radius: var(--r);
+        background: linear-gradient(orange, deeppink, purple) border-box;
+
+        --corner: conic-gradient(
+            from -90deg at var(--c) var(--c),
+            red 25%,
+            #0000 0
+          )
+          0 0 / calc(100% - var(--c)) calc(100% - var(--c)) border-box;
+        --inner: conic-gradient(red 0 0) padding-box;
+        -webkit-mask: var(--corner), var(--inner);
+        -webkit-mask-composite: source-out;
+        mask-composite: source-out;
+        mask: var(--corner) subtract, var(--inner);
+        content: '';
+      }
+
+      &:hover::before {
+        --c: 7rem;
+        --corner: conic-gradient(
+            from -90deg at var(--c) var(--c),
+            red 25%,
+            #0000 0
+          )
+          0 0 / calc(100% - var(--c)) calc(100% - var(--c)) border-box;
+      }
+    }
+  }
+
+  & .description {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    // align-self: flex-start;
+    flex-grow: 1;
+    width: 40%;
+    flex-basis: 40rem;
+
+    margin-block: 8%;
+    margin-inline: 5%;
+
+    & h3 {
+      font-family: 'Lovelyn';
+      margin-block: 1rem;
+      @include fluidFont(3rem, 5rem);
+    }
+  }
+}

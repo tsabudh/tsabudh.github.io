@@ -49,6 +49,11 @@ Breakpoint argument choices
 
 */
 
+$phone-size: 37.5em;
+$tab-port-size: 56.25em;
+$tab-land-size: 75em;
+$big-screen-size: 112.5em;
+
 @mixin respond($breakpoint) {
   // 1em =16px
   //In media queries 1rem or 1em is defined by browser
@@ -76,4 +81,14 @@ Breakpoint argument choices
       @content;
     }
   }
+}
+
+@mixin fluidFont($min-size, $max-size) {
+  font-size: $max-size;
+  font-size: calc(
+    #{$min-size} + (#{strip-unit($max-size - $min-size)}) * ((
+            100vw - #{$phone-size}
+          ) / (#{strip-unit($tab-land-size + $phone-size)}))
+  );
+
 }

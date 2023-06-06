@@ -1,5 +1,6 @@
 @import 'abstract/mixins';
 @import 'abstract/variables';
+@import 'abstract/functions';
 
 @import 'base/animations';
 @import 'base/base';
@@ -8,9 +9,15 @@
 
 @import 'components/bg-video';
 @import 'components/buttons';
+@import 'components/card01';
+@import 'components/clock';
 @import 'components/expanding-cards';
 
+@import 'layouts/about';
 @import 'layouts/header';
 @import 'layouts/hero1';
+@import 'layouts/works';
 
 @import 'pages/home';
+
+@import 'vendors/fonts';

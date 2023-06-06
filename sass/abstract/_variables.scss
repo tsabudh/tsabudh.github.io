@@ -1,3 +1,11 @@
+// css variables
+:root {
+  --clip-size: 2rem;
+  --clip-position-t: 0% 0%;
+  --clip-position-sabudh: 0% 0%;
+  --mask-position: 50% 50%;
+}
+
 $color-primary-light: #7ed56f;
 $color-primary: #55c57a;
 $color-primary-dark: #28b485;
@@ -41,3 +49,6 @@ $font-size-default: 1.6rem;
 $text-glitch-height: 10rem;
 $text-glitch-max-width: 88rem;
 $text-glitch-height-number-only: 10;
+
+//CONTAINER LAYOUTS
+$margin-container-inline: 3rem;

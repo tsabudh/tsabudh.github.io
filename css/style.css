@@ -24,6 +24,12 @@ Breakpoint argument choices
 
 */
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,100;1,300;1,400;1,500&display=swap");
+:root {
+  --clip-size: 2rem;
+  --clip-position-t: 0% 0%;
+  --clip-position-sabudh: 0% 0%;
+  --mask-position: 50% 50%; }
+
 .a-blur-background {
   animation-name: blur-background;
   animation-duration: 4s;
@@ -122,156 +128,158 @@ Breakpoint argument choices
 
 @keyframes text-glitch-noise-1 {
   0% {
-    clip: rect(6rem, 88rem, 5rem, 0); }
-  5% {
-    clip: rect(9rem, 88rem, 5rem, 0); }
-  10% {
-    clip: rect(5rem, 88rem, 9rem, 0); }
-  15% {
     clip: rect(10rem, 88rem, 4rem, 0); }
+  5% {
+    clip: rect(6rem, 88rem, 8rem, 0); }
+  10% {
+    clip: rect(8rem, 88rem, 5rem, 0); }
+  15% {
+    clip: rect(9rem, 88rem, 4rem, 0); }
   20% {
-    clip: rect(8rem, 88rem, 9rem, 0); }
+    clip: rect(3rem, 88rem, 6rem, 0); }
   25% {
-    clip: rect(6rem, 88rem, 3rem, 0); }
+    clip: rect(10rem, 88rem, 4rem, 0); }
   30% {
-    clip: rect(10rem, 88rem, 3rem, 0); }
+    clip: rect(8rem, 88rem, 4rem, 0); }
   35% {
-    clip: rect(10rem, 88rem, 5rem, 0); }
+    clip: rect(4rem, 88rem, 2rem, 0); }
   40% {
-    clip: rect(1rem, 88rem, 1rem, 0); }
+    clip: rect(4rem, 88rem, 9rem, 0); }
   45% {
-    clip: rect(9rem, 88rem, 3rem, 0); }
+    clip: rect(2rem, 88rem, 4rem, 0); }
   50% {
-    clip: rect(5rem, 88rem, 6rem, 0); }
+    clip: rect(2rem, 88rem, 7rem, 0); }
   55% {
-    clip: rect(5rem, 88rem, 6rem, 0); }
-  60% {
-    clip: rect(9rem, 88rem, 8rem, 0); }
-  65% {
-    clip: rect(4rem, 88rem, 5rem, 0); }
-  70% {
-    clip: rect(8rem, 88rem, 3rem, 0); }
-  75% {
-    clip: rect(3rem, 88rem, 7rem, 0); }
-  80% {
-    clip: rect(6rem, 88rem, 2rem, 0); }
-  85% {
     clip: rect(8rem, 88rem, 8rem, 0); }
+  60% {
+    clip: rect(9rem, 88rem, 9rem, 0); }
+  65% {
+    clip: rect(5rem, 88rem, 6rem, 0); }
+  70% {
+    clip: rect(9rem, 88rem, 3rem, 0); }
+  75% {
+    clip: rect(9rem, 88rem, 4rem, 0); }
+  80% {
+    clip: rect(3rem, 88rem, 3rem, 0); }
+  85% {
+    clip: rect(2rem, 88rem, 9rem, 0); }
   90% {
-    clip: rect(3rem, 88rem, 1rem, 0); }
+    clip: rect(3rem, 88rem, 6rem, 0); }
   95% {
-    clip: rect(1rem, 88rem, 1rem, 0); }
+    clip: rect(6rem, 88rem, 8rem, 0); }
   100% {
-    clip: rect(2rem, 88rem, 5rem, 0); } }
+    clip: rect(10rem, 88rem, 8rem, 0); } }
 
 @keyframes text-glitch-noise-2 {
   0% {
-    clip: rect(7rem, 88rem, 10rem, 0); }
+    clip: rect(8rem, 88rem, 8rem, 0); }
   2% {
-    clip: rect(3rem, 88rem, 9rem, 0); }
+    clip: rect(1rem, 88rem, 8rem, 0); }
   4% {
-    clip: rect(6rem, 88rem, 5rem, 0); }
+    clip: rect(8rem, 88rem, 6rem, 0); }
   6% {
-    clip: rect(5rem, 88rem, 5rem, 0); }
+    clip: rect(5rem, 88rem, 1rem, 0); }
   8% {
-    clip: rect(5rem, 88rem, 7rem, 0); }
+    clip: rect(8rem, 88rem, 8rem, 0); }
   10% {
-    clip: rect(6rem, 88rem, 1rem, 0); }
-  12% {
-    clip: rect(5rem, 88rem, 1rem, 0); }
-  14% {
-    clip: rect(3rem, 88rem, 1rem, 0); }
-  16% {
-    clip: rect(7rem, 88rem, 8rem, 0); }
-  18% {
-    clip: rect(8rem, 88rem, 3rem, 0); }
-  20% {
-    clip: rect(4rem, 88rem, 5rem, 0); }
-  22% {
-    clip: rect(6rem, 88rem, 8rem, 0); }
-  24% {
-    clip: rect(5rem, 88rem, 8rem, 0); }
-  26% {
-    clip: rect(4rem, 88rem, 8rem, 0); }
-  28% {
-    clip: rect(2rem, 88rem, 10rem, 0); }
-  30% {
-    clip: rect(8rem, 88rem, 1rem, 0); }
-  32% {
-    clip: rect(3rem, 88rem, 4rem, 0); }
-  34% {
-    clip: rect(8rem, 88rem, 4rem, 0); }
-  36% {
-    clip: rect(8rem, 88rem, 4rem, 0); }
-  38% {
-    clip: rect(3rem, 88rem, 7rem, 0); }
-  40% {
-    clip: rect(4rem, 88rem, 5rem, 0); }
-  42% {
-    clip: rect(8rem, 88rem, 4rem, 0); }
-  44% {
-    clip: rect(9rem, 88rem, 3rem, 0); }
-  46% {
-    clip: rect(6rem, 88rem, 4rem, 0); }
-  48% {
-    clip: rect(3rem, 88rem, 7rem, 0); }
-  50% {
-    clip: rect(5rem, 88rem, 8rem, 0); }
-  52% {
-    clip: rect(9rem, 88rem, 1rem, 0); }
-  54% {
-    clip: rect(4rem, 88rem, 7rem, 0); }
-  56% {
-    clip: rect(2rem, 88rem, 8rem, 0); }
-  58% {
-    clip: rect(10rem, 88rem, 4rem, 0); }
-  60% {
-    clip: rect(5rem, 88rem, 9rem, 0); }
-  62% {
-    clip: rect(5rem, 88rem, 1rem, 0); }
-  64% {
-    clip: rect(6rem, 88rem, 4rem, 0); }
-  66% {
     clip: rect(4rem, 88rem, 1rem, 0); }
-  68% {
-    clip: rect(3rem, 88rem, 7rem, 0); }
-  70% {
-    clip: rect(8rem, 88rem, 3rem, 0); }
-  72% {
-    clip: rect(10rem, 88rem, 2rem, 0); }
-  74% {
-    clip: rect(7rem, 88rem, 7rem, 0); }
-  76% {
+  12% {
+    clip: rect(4rem, 88rem, 1rem, 0); }
+  14% {
+    clip: rect(1rem, 88rem, 5rem, 0); }
+  16% {
+    clip: rect(6rem, 88rem, 2rem, 0); }
+  18% {
     clip: rect(7rem, 88rem, 3rem, 0); }
-  78% {
-    clip: rect(2rem, 88rem, 1rem, 0); }
-  80% {
-    clip: rect(10rem, 88rem, 7rem, 0); }
-  82% {
-    clip: rect(3rem, 88rem, 8rem, 0); }
-  84% {
-    clip: rect(6rem, 88rem, 10rem, 0); }
-  86% {
-    clip: rect(8rem, 88rem, 4rem, 0); }
-  88% {
-    clip: rect(6rem, 88rem, 7rem, 0); }
-  90% {
-    clip: rect(7rem, 88rem, 6rem, 0); }
-  92% {
-    clip: rect(4rem, 88rem, 4rem, 0); }
-  94% {
-    clip: rect(7rem, 88rem, 10rem, 0); }
-  96% {
-    clip: rect(5rem, 88rem, 9rem, 0); }
-  98% {
+  20% {
+    clip: rect(2rem, 88rem, 8rem, 0); }
+  22% {
     clip: rect(4rem, 88rem, 5rem, 0); }
+  24% {
+    clip: rect(5rem, 88rem, 10rem, 0); }
+  26% {
+    clip: rect(7rem, 88rem, 9rem, 0); }
+  28% {
+    clip: rect(9rem, 88rem, 4rem, 0); }
+  30% {
+    clip: rect(6rem, 88rem, 7rem, 0); }
+  32% {
+    clip: rect(1rem, 88rem, 8rem, 0); }
+  34% {
+    clip: rect(4rem, 88rem, 8rem, 0); }
+  36% {
+    clip: rect(3rem, 88rem, 3rem, 0); }
+  38% {
+    clip: rect(5rem, 88rem, 4rem, 0); }
+  40% {
+    clip: rect(4rem, 88rem, 1rem, 0); }
+  42% {
+    clip: rect(9rem, 88rem, 9rem, 0); }
+  44% {
+    clip: rect(5rem, 88rem, 3rem, 0); }
+  46% {
+    clip: rect(6rem, 88rem, 6rem, 0); }
+  48% {
+    clip: rect(7rem, 88rem, 9rem, 0); }
+  50% {
+    clip: rect(7rem, 88rem, 4rem, 0); }
+  52% {
+    clip: rect(3rem, 88rem, 9rem, 0); }
+  54% {
+    clip: rect(5rem, 88rem, 7rem, 0); }
+  56% {
+    clip: rect(5rem, 88rem, 10rem, 0); }
+  58% {
+    clip: rect(5rem, 88rem, 3rem, 0); }
+  60% {
+    clip: rect(7rem, 88rem, 6rem, 0); }
+  62% {
+    clip: rect(5rem, 88rem, 3rem, 0); }
+  64% {
+    clip: rect(10rem, 88rem, 10rem, 0); }
+  66% {
+    clip: rect(10rem, 88rem, 2rem, 0); }
+  68% {
+    clip: rect(5rem, 88rem, 2rem, 0); }
+  70% {
+    clip: rect(5rem, 88rem, 2rem, 0); }
+  72% {
+    clip: rect(5rem, 88rem, 2rem, 0); }
+  74% {
+    clip: rect(4rem, 88rem, 6rem, 0); }
+  76% {
+    clip: rect(6rem, 88rem, 6rem, 0); }
+  78% {
+    clip: rect(10rem, 88rem, 8rem, 0); }
+  80% {
+    clip: rect(9rem, 88rem, 4rem, 0); }
+  82% {
+    clip: rect(10rem, 88rem, 7rem, 0); }
+  84% {
+    clip: rect(9rem, 88rem, 6rem, 0); }
+  86% {
+    clip: rect(2rem, 88rem, 8rem, 0); }
+  88% {
+    clip: rect(4rem, 88rem, 1rem, 0); }
+  90% {
+    clip: rect(6rem, 88rem, 1rem, 0); }
+  92% {
+    clip: rect(3rem, 88rem, 8rem, 0); }
+  94% {
+    clip: rect(10rem, 88rem, 2rem, 0); }
+  96% {
+    clip: rect(4rem, 88rem, 9rem, 0); }
+  98% {
+    clip: rect(3rem, 88rem, 7rem, 0); }
   100% {
-    clip: rect(6rem, 88rem, 5rem, 0); } }
+    clip: rect(1rem, 88rem, 10rem, 0); } }
 
 * {
   border: 0;
   margin: 0;
-  box-sizing: border-box; }
+  box-sizing: border-box;
+  margin-block: 0;
+  margin-inline: 0; }
 
 html {
   font-size: 62.5%;
@@ -279,10 +287,28 @@ html {
 
 body {
   position: relative;
-  font-family: Roboto; }
+  font-family: Roboto;
+  font-size: 1.6rem; }
+
+@media (max-width: 37.5em) {
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow-x: hidden; } }
 
 a {
   text-decoration: none; }
+
+img {
+  display: block;
+  width: 100%;
+  object-fit: cover; }
+
+a:link, a:visited {
+  text-decoration: none;
+  color: inherit; }
 
 .text-glitch {
   font-size: 7rem;
@@ -352,6 +378,9 @@ a {
   display: inline-block;
   max-width: 100%; }
 
+.u-container {
+  margin-inline: 3rem; }
+
 .bg-video {
   position: absolute;
   top: 0;
@@ -372,7 +401,8 @@ a {
   text-decoration: none;
   padding: 1.4rem 4rem;
   cursor: pointer;
-  background: black; }
+  background: black;
+  font-size: inherit; }
 
 .btn1, .btn1:link, .btn1:visited {
   border: none;
@@ -550,6 +580,24 @@ a {
   opacity: 1;
   transition: height 0.5s linear, width 0.5s linear; }
 
+.card01 {
+  display: flex; }
+
+#cursorClockBox {
+  width: 100%;
+  height: 100%;
+  position: absolute; }
+
+#cursorClock {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border: 3px solid black;
+  background: transparent;
+  cursor: none; }
+
 .slides {
   display: flex;
   /* max-height: 40rem; */
@@ -648,6 +696,71 @@ a {
 .slides .slide:nth-of-type(5) .slide__label__icon > i {
   color: #630b79; }
 
+.section--about {
+  padding: 4rem;
+  min-height: 40vh;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start; }
+  .section--about .profile {
+    flex-basis: 34rem;
+    flex-grow: 2; }
+    .section--about .profile figure {
+      min-width: 20rem;
+      border: 0.5rem solid red;
+      border-image: repeating-linear-gradient(45deg, transparent, transparent 5px, red 6px, red 15px, transparent 16px, transparent 20px) 20/1rem;
+      --b: 0.8rem;
+      /* border width */
+      --c: 3em;
+      /* corner size */
+      --r: 0;
+      /* corner rounding */
+      position: relative;
+      margin: 1em auto;
+      border: solid var(--b) transparent; }
+      .section--about .profile figure::before {
+        position: absolute;
+        z-index: -1;
+        inset: calc(-1 * var(--b));
+        border: inherit;
+        border-radius: var(--r);
+        background: linear-gradient(orange, deeppink, purple) border-box;
+        --corner: conic-gradient(
+            from -90deg at var(--c) var(--c),
+            red 25%,
+            #0000 0
+          )
+          0 0 / calc(100% - var(--c)) calc(100% - var(--c)) border-box;
+        --inner: conic-gradient(red 0 0) padding-box;
+        -webkit-mask: var(--corner), var(--inner);
+        -webkit-mask-composite: source-out;
+        mask-composite: source-out;
+        mask: var(--corner) subtract, var(--inner);
+        content: ''; }
+      .section--about .profile figure:hover::before {
+        --c: 7rem;
+        --corner: conic-gradient(
+            from -90deg at var(--c) var(--c),
+            red 25%,
+            #0000 0
+          )
+          0 0 / calc(100% - var(--c)) calc(100% - var(--c)) border-box; }
+  .section--about .description {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-grow: 1;
+    width: 40%;
+    flex-basis: 40rem;
+    margin-block: 8%;
+    margin-inline: 5%; }
+    .section--about .description h3 {
+      font-family: 'Lovelyn';
+      margin-block: 1rem;
+      font-size: 5rem;
+      font-size: calc( 3rem + (2) * (( 100vw - 37.5em ) / (112.5))); }
+
 .landingPage1 {
   display: block;
   height: 100vh;
@@ -713,7 +826,8 @@ a {
   min-height: fit-content;
   width: 100%;
   background-color: #2d3436;
-  background-image: linear-gradient(315deg, #1a1c1d 0%, #000000 74%); }
+  background-image: linear-gradient(315deg, #1a1c1d 0%, #000000 74%);
+  font-variant: no-common-ligatures proportional-nums; }
   .hero1 .wrapper {
     position: absolute;
     top: 50%;
@@ -721,28 +835,120 @@ a {
     translate: -50% -30%;
     text-align: center; }
     .hero1 .wrapper .username {
+      font-size: 7.5rem;
+      font-size: calc( 5rem + (2.5) * (( 100vw - 37.5em ) / (112.5)));
       color: white;
-      font-size: 7rem; }
+      cursor: none;
+      white-space: nowrap;
+      padding-inline: 15px; }
+      .hero1 .wrapper .username .name {
+        position: relative;
+        display: inline; }
+        .hero1 .wrapper .username .name .mask {
+          -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text;
+          background-clip: text;
+          background-size: 100%;
+          clip-path: circle(var(--clip-size) at var(--clip-position-sabudh));
+          background-image: linear-gradient(98.3deg, red, red); }
+        .hero1 .wrapper .username .name .fill {
+          position: absolute; }
       .hero1 .wrapper .username .red {
+        position: relative;
+        display: inline;
         color: red; }
+        .hero1 .wrapper .username .red .mask {
+          -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text;
+          background-clip: text;
+          background-size: 100%;
+          clip-path: circle(var(--clip-size) at var(--clip-position-t));
+          background-image: linear-gradient(98.3deg, white, white); }
+        .hero1 .wrapper .username .red .fill {
+          position: absolute; }
     .hero1 .wrapper .make-visible {
       margin: 6rem;
       padding: -0.1rem; }
+      .hero1 .wrapper .make-visible .btn {
+        white-space: nowrap; }
       .hero1 .wrapper .make-visible:hover > button {
         visibility: visible;
-        color: red; }
+        color: white; }
       .hero1 .wrapper .make-visible:hover ~ .hero1 .wrapper .make-visible h1 {
         text-decoration: underline;
         text-transform: capitalize; }
-    .hero1 .wrapper button {
+    .hero1 .wrapper button.hidden {
       visibility: hidden;
       border: 1px solid transparent;
       background: transparent;
       opacity: 0;
+      transform: translateZ(2rem);
       transition: opacity 0.7s ease; }
-      .hero1 .wrapper button:hover {
+      .hero1 .wrapper button.hidden:hover {
         color: whitesmoke;
         opacity: 1; }
+
+@keyframes clip-size-transition {
+  0% {
+    --clip-size: 10; }
+  100% {
+    --clip-size: 30; } }
+
+.section--works {
+  min-height: 50vh;
+  border: 1px solid green;
+  padding-inline: 2rem; }
+  .section--works .works {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 1rem; }
+    .section--works .works .work {
+      position: relative;
+      flex-basis: 4rem;
+      color: #979797;
+      display: flex;
+      flex-direction: column;
+      flex: 0 0 16rem;
+      border: 2px solid #efefef;
+      aspect-ratio: 1/1;
+      align-items: stretch;
+      transition: border-color 0.5s ease-in, color 0.4s ease; }
+      .section--works .works .work_title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        margin-block: 0.5rem;
+        min-height: 2.5lh;
+        border-bottom: 2px solid #efefef;
+        padding-inline: 0.5rem; }
+      .section--works .works .work_description {
+        padding-inline: 0.5rem;
+        text-align: justify;
+        align-self: flex-end;
+        flex-grow: 1; }
+      .section--works .works .work_sample-image {
+        overflow-y: scroll;
+        max-height: 100%;
+        overflow-y: scroll;
+        align-self: flex-end;
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */ }
+        .section--works .works .work_sample-image::-webkit-scrollbar {
+          display: none; }
+      .section--works .works .work:hover {
+        border-color: #9badad;
+        color: #777777; }
+
+.section--works .works .work--natours {
+  background-repeat: no-repeat;
+  background-attachment: local;
+  background-size: cover; }
 
 .personal-page {
   display: none; }
@@ -769,3 +975,14 @@ a {
   max-width: 100vw;
   height: 100vh;
   background-image: linear-gradient(to bottom, wheat, white); }
+
+.section {
+  padding-block: 3rem; }
+  .section-title {
+    margin-block: 3rem;
+    text-transform: uppercase;
+    color: #3d3d3d; }
+
+@font-face {
+  font-family: 'Lovelyn';
+  src: url("../fonts/lovelyn.otf") format("opentype"), url("../fonts/lovelyn.ttf") format("truetype"); }
