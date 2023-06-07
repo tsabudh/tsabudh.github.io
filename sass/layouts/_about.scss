@@ -58,10 +58,11 @@
         mask-composite: source-out;
         mask: var(--corner) subtract, var(--inner);
         content: '';
+        // transition: --b 1s ease ;
       }
 
       &:hover::before {
-        --c: 7rem;
+        // --c: 7rem;
         --corner: conic-gradient(
             from -90deg at var(--c) var(--c),
             red 25%,
@@ -77,7 +78,7 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    // align-self: flex-start;
+    align-self: stretch;
     flex-grow: 1;
     width: 40%;
     flex-basis: 40rem;
@@ -90,7 +91,33 @@
       font-feature-settings: 'swsh' 1;
       font-variant-alternates: swash(fancy);
       margin-block: 1rem;
+      line-height: 1em;
       @include fluidFont(3rem, 5rem);
+    }
+    & p {
+      flex-grow: 2;
+    }
+    & .links {
+      display: flex;
+      justify-content: center;
+      align-self: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+
+      margin-top: 1rem;
+      & .link {
+        &--linkedin {
+          &:hover {
+            filter: drop-shadow(0 1px 4px rgb(10,102,194));
+          }
+        }
+        &--github {
+          &:hover {
+            filter: drop-shadow(0 1px 4px rgb(21, 23, 26));
+          }
+        }
+      }
     }
   }
 }

@@ -1,4 +1,4 @@
-import { deviceCode } from './global.js';
+import { deviceCode, cursorType } from './global.js';
 
 let rootEL = document.querySelector(':root');
 let tsabudh = document.getElementById('tsabudh') || document.body;
@@ -130,6 +130,11 @@ function followingDotCursor(options) {
 
     rootEL.style.setProperty('--clip-size', `${dotRadius * 0.5}px`);
   }
+
+  function checkCursorType() {
+    console.log(document.elementFromPoint(cursor.x, cursor.y));
+  }
+
   function loop() {
     moveTowards(cursor.x, cursor.y);
     animationFrame = requestAnimationFrame(loop);
