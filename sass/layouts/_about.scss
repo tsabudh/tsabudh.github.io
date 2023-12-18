@@ -4,6 +4,7 @@
   display: flex;
   justify-content: space-around;
   align-items: flex-start;
+  background: rgb(223, 68, 12);
 
   & .profile {
     flex-basis: 34rem;
@@ -57,7 +58,7 @@
         -webkit-mask-composite: source-out;
         mask-composite: source-out;
         mask: var(--corner) subtract, var(--inner);
-        content: '';
+        content: "";
         // transition: --b 1s ease ;
       }
 
@@ -82,17 +83,18 @@
     flex-grow: 1;
     width: 40%;
     flex-basis: 40rem;
+    color: wheat;
 
     margin-block: 8%;
     margin-inline: 5%;
 
     & h3 {
-      font-family: 'Lovelyn';
-      font-feature-settings: 'swsh' 1;
+      font-family: "Lovelyn";
+      font-feature-settings: "swsh" 1;
       font-variant-alternates: swash(fancy);
       margin-block: 1rem;
       line-height: 1em;
-      @include fluidFont(3rem, 5rem);
+      @include fluidFont(3rem, 9rem);
     }
     & p {
       flex-grow: 2;
@@ -109,7 +111,7 @@
       & .link {
         &--linkedin {
           &:hover {
-            filter: drop-shadow(0 1px 4px rgb(10,102,194));
+            filter: drop-shadow(0 1px 4px rgb(10, 102, 194));
           }
         }
         &--github {
