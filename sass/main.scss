@@ -1,23 +1,24 @@
-@import 'abstract/mixins';
-@import 'abstract/variables';
-@import 'abstract/functions';
+@import "abstract/mixins.scss";
+@import "abstract/variables.scss";
+@import "abstract/functions.scss";
 
-@import 'base/animations';
-@import 'base/base';
-@import 'base/typography';
-@import 'base/utilities';
+@import "base/animations.scss";
+@import "base/base.scss";
+@import "base/typography.scss";
+@import "base/utilities.scss";
 
-@import 'components/bg-video';
-@import 'components/buttons';
-@import 'components/card01';
-@import 'components/clock';
-@import 'components/expanding-cards';
+@import "components/bg-video.scss";
+@import "components/buttons.scss";
+@import "components/card01.scss";
+@import "components/clock.scss";
+@import "components/expanding-cards.scss";
+@import "components/slides.scss";
 
-@import 'layouts/about';
-@import 'layouts/header';
-@import 'layouts/hero1';
-@import 'layouts/works';
+@import "layouts/about.scss";
+@import "layouts/header.scss";
+@import "layouts/hero1.scss";
+@import "layouts/works.scss";
 
-@import 'pages/home';
+@import "pages/home.scss";
 
-@import 'vendors/fonts';
+@import "vendors/fonts.scss";
