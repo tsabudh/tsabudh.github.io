@@ -41,13 +41,13 @@
             </div>
             <div class="description">
                 <h3>SABUDH BAHADUR THAPA</h3>
-                <p> I make web applications that suit your demands. </p>
+                <p> A computer engineer with profession in full-stack development.</p>
                 <div class="links">
                     <a class="link link--linkedin" href="https://www.linkedin.com/in/tsabudh/" target="_blank">
-                        <img src="./img/icon_linkedin.svg"  alt="linked.com/in/tsabudh">
+                        <img src="./img/icon_linkedin.svg" alt="linked.com/in/tsabudh">
                     </a>
                     <a class="link link--github" href="https://github.com/tsabudh/" target="_blank">
-                        <img src="./img/icon_github.svg"  alt="github.com/tsabudh">
+                        <img src="./img/icon_github.svg" alt="github.com/tsabudh">
                     </a>
                 </div>
             </div>
@@ -59,17 +59,49 @@
         <section class="section section--works ">
             <h2 class="section-title">My works</h2>
             <div class="works">
-                <a class="work work--natours" href="https://tsabudh.com.np/natours-static" target="_blank">
+                <div class="work work--natours" href="https://tsabudh.com.np/natours-static" target="_blank">
                     <div class="work_title">
                         <h3>
                             Natours | Static
                         </h3>
                     </div>
-                    <div class="work_description">
-                        <p>A static responsive web page I designed when studying scss.</p>
+                    <div class="wrapper">
+
+                        <div class="work_description">
+                            <p>A static responsive web page I designed when studying scss.</p>
+                        </div>
+                        <div class="slide_container slide_container-type-1">
+                            <h1>Explore.</h1>
+                            <div class="slider">
+                                <div class="slider__btn-container">
+                                    <button class="slider__btn slider__btn--left" data-target-slide-id="slide-type-1:1" aria-label="Move to previous slide">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+                                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                                            <polyline points="12 19 5 12 12 5"></polyline>
+                                        </svg>
+                                    </button>
+                                    <button class="slider__btn slider__btn--right" data-target-slide-id="slide-type-1:1" aria-label="Move to next slide">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right">
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            <polyline points="12 5 19 12 12 19"></polyline>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="slide slide-type-1 " id="slide-type-1:1">
+                                    <img src="./images/image-1.jpg" alt="alt">
+                                    <img src="./images/image-2.jpg" alt="alt">
+                                    <img src="./images/image-3.jpg" alt="alt">
+                                    <img src="./images/image-4.jpg" alt="alt">
+                                    <img src="./images/image-5.jpg" alt="alt">
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                </a>
+
+                </div>
+
+                
                 <a class="work work--natours" href="https://natours-tsabudh.netlify.app/.netlify/functions/api" target="_blank">
                     <div class="work_title">
                         <h3>
@@ -94,6 +126,38 @@
                 </a>
             </div>
 
+        </section>
+        <section class="section">
+
+        </section>
+        <section>
+            <div class="slide_container-type-1">
+                <h1>More.</h1>
+                <div class="slider">
+                    <!-- <div class="slider__progress"></div> -->
+                    <div class="slider__btn-container">
+                        <button class="slider__btn slider__btn--left" data-target-slide-id="slide-type-1:2" aria-label="Move to previous slide">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+                                <line x1="19" y1="12" x2="5" y2="12"></line>
+                                <polyline points="12 19 5 12 12 5"></polyline>
+                            </svg>
+                        </button>
+                        <button class="slider__btn slider__btn--right" data-target-slide-id="slide-type-1:2" aria-label="Move to next slide">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="slide slide-type-1" id="slide-type-1:2">
+                        <img src="./images/image-1.jpg" alt="alt">
+                        <img src="./images/image-2.jpg" alt="alt">
+                        <img src="./images/image-3.jpg" alt="alt">
+                        <img src="./images/image-4.jpg" alt="alt">
+                        <img src="./images/image-5.jpg" alt="alt">
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 
