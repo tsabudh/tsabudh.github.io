@@ -1,5 +1,3 @@
-// import './dot.js'
-// import './clock.js';
 
 import { deviceCode } from './global.js';
 
