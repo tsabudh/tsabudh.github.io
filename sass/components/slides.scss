@@ -18,11 +18,10 @@
     place-items: center;
     max-width: 800px;
     overflow: hidden;
-    box-shadow: 20px 20px 50px hsla(210, 50%, 40%, 0.4),
-      -20px -20px 50px hsla(210, 50%, 80%, 0.2);
-
+    box-shadow: 1rem 1rem 2rem hsla(210, 50%, 40%, 0.4),
+      -1rem -1rem 2rem hsla(210, 50%, 80%, 0.2);
+    // object-fit: contain;
     & .slide {
-      // height: 400px;
       max-height: 100vh;
       display: flex;
 
@@ -58,7 +57,7 @@
           transform: translate(50%, -50%);
         }
         &--left:is(:hover, :focus) {
-          animation: 850ms infinite moveLeft cubic-bezier(0.25, -0.5, 0.17, 1.2);
+          // animation: 850ms moveLeft cubic-bezier(0.25, -0.5, 0.17, 1.2);
         }
 
         &--right {
@@ -66,8 +65,8 @@
           transform: translate(-50%, -50%);
         }
         &--right:is(:hover, :focus) {
-          animation: 850ms infinite moveRight
-            cubic-bezier(0.25, -0.5, 0.17, 1.2);
+          // animation: 850ms moveRight
+          // cubic-bezier(0.25, -0.5, 0.17, 1.2);
         }
       }
     }
