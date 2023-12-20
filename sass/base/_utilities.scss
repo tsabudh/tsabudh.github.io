@@ -71,3 +71,11 @@
   }
   scrollbar-face-color: #000000;
 }
+
+
+//* Image utilities
+.u-img-contain{
+  &  img{
+    object-fit: contain;
+  }
+}
