@@ -58,6 +58,7 @@
         min-height: 5rem;
         overflow: hidden;
         flex: 2.5;
+        padding-bottom: 3rem;
         & .slider {
           width: 70%;
           & .slide {
@@ -81,6 +82,7 @@
       & .wrapper {
         display: flex;
         flex-direction: row;
+        margin-block: 1rem;
       }
 
       &_description {
