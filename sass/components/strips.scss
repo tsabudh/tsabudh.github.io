@@ -1,0 +1,17 @@
+.icon-strip {
+  // a div
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  gap: 1.5rem;
+
+  & .icon-item {
+    // a figure tag
+
+    & img {
+    }
+  }
+}

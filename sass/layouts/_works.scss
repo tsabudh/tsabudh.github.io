@@ -110,18 +110,33 @@
         // display: flex;
         // flex-direction: column;
         // gap: 3rem;
+        color: #12242b;
         text-align: center;
 
-        color: #12242b;
+        @include fluidFont(1.8rem, 2.5rem);
 
         @include respond(tab-port) {
           margin-top: 1.5rem;
         }
         & p {
-          text-align: center;
+          text-align: left;
           margin-bottom: 3rem;
         }
         & a {
+        }
+
+        & .tech-stack {
+          // border: 1px solid red;
+          margin-block: 1.5rem;
+          & .tech-logo {
+            width: 4rem;
+            @include respond(tab-port) {
+              width: 3rem;
+            }
+            @include respond(phone) {
+              width: 2.5rem;
+            }
+          }
         }
       }
       &_sample-image {

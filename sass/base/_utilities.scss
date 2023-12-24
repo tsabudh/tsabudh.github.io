@@ -72,10 +72,15 @@
   scrollbar-face-color: #000000;
 }
 
-
 //* Image utilities
-.u-img-contain{
-  &  img{
+.u-img-contain {
+  & img {
     object-fit: contain;
+  }
+}
+.u-img-logo-small {
+  display: inline-block;
+  & img {
+    max-width: 1.5em;
   }
 }
