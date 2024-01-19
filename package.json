@@ -1,7 +1,7 @@
 {
-  "name": "portfolio",
+  "name": "tsabudh",
   "version": "1.0.0",
-  "description": "an effort to portfolio design.",
+  "description": "A showcase to my projects.",
   "main": "index.js",
   "scripts": {
     "sass": "node-sass sass/main.scss css/style.css -w"
