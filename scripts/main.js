@@ -1,4 +1,6 @@
+import "./dot.js";
 import "./global.js";
 import "./home.js";
-import "./dot.js";
+import "./carousel.js";
+import "./tracker.js";
 import "./slider.js";
