@@ -1,0 +1,14 @@
+.feature-gallery {
+  // display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  // overflow: hidden;
+
+  & .feature-section {
+    display: inline-block;
+    height: 100vh;
+    flex-basis: 100vw;
+    // flex-shrink: 0;
+  }
+}

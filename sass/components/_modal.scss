@@ -1,0 +1,57 @@
+.modal-type-1 {
+  position: fixed;
+  inset: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: 1100; // Leaflet Map'x navigation buttons has z-index of 999
+  background: rgba(42, 44, 51, 0.842);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &--hidden {
+    display: none;
+  }
+  & .modal-wrapper {
+    flex: 1;
+    max-width: 80rem;
+    //   max-height: 90%;
+
+    border-radius: 2rem;
+    overflow: hidden;
+    // overflow: auto;
+    margin-inline: 3rem;
+    cursor: default;
+
+    & .modal {
+      background: white;
+
+      border: 1px solid gray;
+      border-radius: 1.5rem;
+
+      padding: 0.5rem 1rem 2rem;
+
+      max-height: 90vh;
+      // overflow: hidden;
+      overflow: auto;
+
+      &-header {
+        text-align: right;
+
+        & .close-button {
+          font-size: 3rem;
+          & svg {
+            cursor: pointer;
+
+            color: rgb(9, 129, 79);
+
+            &:active {
+              color: rgb(16, 167, 104);
+            }
+          }
+        }
+      }
+    }
+  }
+}
