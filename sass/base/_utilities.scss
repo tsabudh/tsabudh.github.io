@@ -63,3 +63,103 @@
     max-width: 1.5em;
   }
 }
+
+//* PERCENTAGES UTILS
+
+$percentages: (10%, 20%, 30%, 40%, 50%, 60%, 70%, 80%, 90%, 100%);
+$rems: (
+  1rem,
+  2rem,
+  3rem,
+  4rem,
+  5rem,
+  6rem,
+  7rem,
+  8rem,
+  9rem,
+  10rem,
+  11rem,
+  12rem,
+  13rem,
+  14rem
+);
+$rems-decimal: (
+  0.1rem,
+  0.2rem,
+  0.3rem,
+  0.4rem,
+  0.5rem,
+  0.6rem,
+  0.7rem,
+  0.8rem,
+  0.9rem
+);
+
+@for $i from 1 through 10 {
+  .u-width-#{$i}0 {
+    width: nth($list: $percentages, $n: $i);
+  }
+}
+@for $i from 1 through 9 {
+  .u-margin-block-0#{$i} {
+    margin-block: nth($list: $rems-decimal, $n: $i);
+  }
+  .u-margin-inline-0#{$i} {
+    margin-inline: nth($list: $rems-decimal, $n: $i);
+  }
+  .u-padding-block-0#{$i} {
+    padding-block: nth($list: $rems-decimal, $n: $i);
+  }
+  .u-padding-inline-0#{$i} {
+    padding-inline: nth($list: $rems-decimal, $n: $i);
+  }
+}
+@for $i from 1 through 14 {
+
+  .u-font-size-#{$i}{
+    font-size: nth($list: $rems, $n: $i);
+  }
+  .u-margin-#{$i} {
+    margin: nth($list: $rems, $n: $i);
+  }
+  .u-margin-block-#{$i} {
+    margin-block: nth($list: $rems, $n: $i);
+  }
+
+  .u-margin-inline-#{$i} {
+    margin-inline: nth($list: $rems, $n: $i);
+  }
+  .u-padding-inline-#{$i} {
+    margin-inline: nth($list: $rems, $n: $i);
+  }
+}
+
+//- FLEXBOX UTILITIES
+//- Class name in order .u-flex-<flex-direction>-<justify-content>-<align-items> example: .u-flex-row-center-center
+
+$flex-direction: (row, column);
+$justify-content: (center, space-between, space-around, flex-start, flex-end);
+$align-items: (center, flex-start, flex-end, stretch);
+
+@for $i from 1 through 2 {
+  @for $j from 1 through 5 {
+    @for $k from 1 through 4 {
+      .u-flex-#{nth($list:$flex-direction,$n:$i)}-#{nth($list:$justify-content,$n:$j)}-#{nth($list:$align-items,$n:$k)} {
+        display: flex;
+        flex-direction: nth($list: $flex-direction, $n: $i);
+        justify-content: nth($list: $justify-content, $n: $j);
+        align-items: nth($list: $align-items, $n: $k);
+      }
+    }
+  }
+}
+
+
+//- FONT SIZE
+
+
+//- VISIBILITY
+
+.u-hidden {
+  visibility: hidden;
+}

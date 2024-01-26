@@ -1,0 +1,216 @@
+.section--works-v2 {
+  .section-title {
+  }
+}
+
+.section--works-v2 {
+  // overflow-x: hidden;
+  .works {
+    // overflow-x: auto;
+    .work {
+      // overflow-x: hidden;
+
+      &_feature {
+        height: 100%;
+        width: 100%;
+        padding: 1rem 3rem;
+        color: white;
+        position: relative;
+        // overflow: auto;
+        overflow: hidden;
+
+        & .feature_title {
+          @include fluidFont(6rem, 7rem);
+          &--intro {
+            @include fluidFont(6rem, 12rem);
+          }
+        }
+
+        &--intro {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+
+          // @include fluid("padding-top", 10rem, 15rem);
+          // @include fluid("padding-left", 10rem, 15rem);
+
+          background: linear-gradient(
+            to right,
+            rgb(223, 68, 12),
+            rgb(70, 18, 16)
+          );
+          & .feature_title {
+            background-image: url("../img/asd.png");
+          }
+        }
+
+        &--second {
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: flex-end;
+
+          @include fluid("padding-inline", 3rem, 7rem);
+          background: linear-gradient(
+            to right,
+            rgb(10, 40, 80),
+            rgb(10, 45, 80)
+          );
+          // background: linear-gradient(to right, rgb(119, 14, 11), #770707);
+
+          & .illustrations {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+
+            & .illustration {
+              display: flex;
+              object-fit: cover;
+              flex-flow: column;
+              // flex-basis: 10rem;
+              flex-basis: 2vh;
+              height: 100%;
+              max-width: 20rem;
+              max-height: 20rem;
+              margin-inline: 1rem;
+
+              & img {
+                object-fit: contain;
+                height: 100%;
+              }
+
+              & figcaption {
+                text-align: center;
+              }
+            }
+          }
+          & .floating_icons {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            right: 0;
+            // height: 100vh;
+            padding: 0rem 1rem;
+            margin-inline: 1rem;
+            max-height: 50vh;
+
+            & .scroller {
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+
+              --_animation-duration: 10s;
+
+              border: 1px dashed rgba(160, 206, 160, 0.432);
+              overflow-y: hidden;
+              mask: linear-gradient(
+                to bottom,
+                transparent,
+                white 20%,
+                white 80%,
+                transparent
+              );
+              // opacity: 0.2;
+
+              &[data-animated="true"] .icon-strip {
+                width: fit-content;
+                // height: fit-content;
+                justify-content: center;
+                animation: scroll var(--_animation-duration) linear infinite
+                  var(--_animation-direction, forwards);
+              }
+              &[data-direction="reverse"] .icon-strip {
+                --_animation-direction: reverse;
+              }
+            }
+
+            @keyframes scroll {
+              0% {
+                transform: translateY(calc(-50% - 0.75rem));
+              }
+              100% {
+                transform: translateY(
+                  calc(0%)
+                ); //0.75rem to compensate for flex gap of 1.5rem
+              }
+            }
+          }
+
+          & .description {
+            width: 100%;
+            cursor: pointer;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            position: relative;
+            // word-break: break-all;
+
+            &:hover .floating_figure--filter {
+              height: 25rem;
+              padding: 1rem 1.3rem;
+            }
+            & li {
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+            & .floating_figure {
+              position: absolute;
+              background-color: rgb(0, 0, 0);
+              // overflow-y: auto;
+              // overflow-x: auto;
+              overflow: hidden;
+              transition: height 0.2s ease;
+              padding-inline: 1rem;
+
+              &--filter {
+                right: 50%;
+                bottom: 100%;
+
+                height: 0rem;
+                // max-width: 20rem;
+                // max-height: 30rem;
+
+                font-size: 1rem;
+              }
+            }
+          }
+
+          & .feature_content {
+            flex-grow: 1;
+          }
+        }
+
+        &--third {
+          background: linear-gradient(
+            to right,
+            rgb(0, 124, 124) 50%,
+            rgb(10, 40, 80)
+          );
+
+          & .illustration {
+            max-height: 15rem;
+            & img {
+              height: 100%;
+            }
+          }
+
+          & .break {
+            word-break: break-all;
+          }
+        }
+        &--first {
+          background: linear-gradient(
+            to right,
+            rgb(10, 40, 80),
+            rgb(10, 40, 80) 50%
+          );
+
+          padding-left: 2rem;
+        }
+      }
+    }
+  }
+}

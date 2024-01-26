@@ -1,0 +1,48 @@
+.card-01 {
+  min-width: 20rem;
+  max-width: 40rem;
+  //   height: 500px;
+
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 32px -10px rgba(0, 0, 0, 0.08);
+  border: 2px solid white;
+  text-align: left;
+
+  padding: 1rem;
+
+  & .header {
+    text-transform: capitalize;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  & .content {
+  }
+
+  &:hover .footer {
+    // top: '';
+    bottom: 0;
+  }
+  & .footer {
+    // background: url("./../img/wave.svg");
+
+    background: red;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    position: relative;
+    // top: 100%;
+    bottom: -100%;
+    width: 100%;
+    padding-top: 3rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    transition: all 0.2s ease-in;
+  }
+}
