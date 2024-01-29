@@ -1,4 +1,5 @@
 //GLOBALS
+const rootEl = document.querySelector(":root");
 
 //* 1. variable to check device type
 export let deviceCode = checkDeviceType();
@@ -9,7 +10,7 @@ export let deviceCode = checkDeviceType();
 
 function checkDeviceType() {
   if (/Android|iphone/i.test(navigator.userAgent)) return 1;
-  else if (navigator.maxTouchPoints > 0 && matchMedia('(pointer:fine)').matches)
+  else if (navigator.maxTouchPoints > 0 && matchMedia("(pointer:fine)").matches)
     return 3;
   else if (navigator.maxTouchPoints > 0) return 2;
   else return 4;
@@ -19,6 +20,12 @@ function checkDeviceType() {
 export let cursorType;
 // 1 for default
 // 2 fpr pointer
-export const setCursorType = typeNumber => {
+export const setCursorType = (typeNumber) => {
   cursorType = parseInt(typeNumber || 1);
 };
+
+//* CSS variables
+window.addEventListener("mousemove", (e) => {
+  rootEl.style.setProperty("--cursor-x", `${e.clientX}`);
+  rootEl.style.setProperty("--cursor-y", `${e.clientY}`);
+});
