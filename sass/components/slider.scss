@@ -18,6 +18,8 @@
       justify-content: flex-start;
       align-items: center;
 
+      overflow: auto;
+
       &_item {
         scroll-snap-align: start;
         height: 100%;
