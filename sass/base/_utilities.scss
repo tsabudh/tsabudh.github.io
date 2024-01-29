@@ -115,8 +115,7 @@ $rems-decimal: (
   }
 }
 @for $i from 1 through 14 {
-
-  .u-font-size-#{$i}{
+  .u-font-size-#{$i} {
     font-size: nth($list: $rems, $n: $i);
   }
   .u-margin-#{$i} {
@@ -131,6 +130,9 @@ $rems-decimal: (
   }
   .u-padding-inline-#{$i} {
     margin-inline: nth($list: $rems, $n: $i);
+  }
+  .u-padding-block-#{$i} {
+    padding-block: nth($list: $rems, $n: $i);
   }
 }
 
@@ -154,9 +156,7 @@ $align-items: (center, flex-start, flex-end, stretch);
   }
 }
 
-
 //- FONT SIZE
-
 
 //- VISIBILITY
 

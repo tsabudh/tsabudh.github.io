@@ -23,10 +23,13 @@
           @include fluidFont(6rem, 7rem);
           &--intro {
             @include fluidFont(6rem, 12rem);
+            // transition: transform 0.5s ease in;
           }
         }
 
         &--intro {
+          position: relative;
+
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -42,21 +45,152 @@
           & .feature_title {
             background-image: url("../img/asd.png");
           }
+
+          & .intro_logo {
+            max-width: 30rem;
+            position: absolute;
+            right: -35rem;
+            opacity: 0.7;
+            &img {
+              height: 100%;
+            }
+          }
+
+          & .floating_button {
+            display: inline-block;
+            align-self: flex-start;
+            margin-block: 1.5rem;
+            margin-inline: 0.5rem;
+            padding: 0.2rem 0.1rem;
+            border-bottom: 2px solid rgb(234, 234, 241);
+
+            &:hover {
+              &::after {
+                filter: brightness(0) invert(1) hue-rotate(-0.25turn);
+                mix-blend-mode: overlay;
+              }
+            }
+            &::after {
+              display: inline-block;
+              color: white;
+              content: "";
+              background: url("/img/icon-newtab.svg");
+              filter: brightness(0) invert(1);
+              height: 100%;
+              width: 1em;
+              background-size: contain;
+              background-repeat: no-repeat;
+              background-position: 0 110%;
+            }
+          }
+        }
+
+        &--first {
+          background: linear-gradient(to bottom, red, rgb(240, 0, 0));
         }
 
         &--second {
+          // background-color: rgb(108, 109, 109);
+
+          background: linear-gradient(
+            to right,
+            rgb(10, 40, 80),
+            rgb(10, 40, 80) 50%
+          );
+
+          padding-left: 2rem;
+
+          & .feature_content {
+            // height: 80vh;
+          }
+
+          & .description_text {
+            @include fluidFont(1.6rem, 2rem);
+          }
+
+          & .transaction_image {
+            width: fit-content;
+            max-width: 100%;
+            margin-bottom: 1rem;
+            overflow: hidden;
+
+            height: 100%;
+            // max-height: 6rem;
+
+            opacity: 0;
+            transform: translate3d(0, -100%, 0);
+
+            --delay: 0s;
+            --delay-opacity: 0s;
+            transition: opacity 0.3s ease var(--delay-opacity),
+              transform 0.3s ease var(--delay);
+
+            &.show {
+              opacity: 1;
+              transform: translate3d(0, 0, 0);
+              &:nth-of-type(2) {
+                // --delay: 0.7s;
+                --delay: 0.3s;
+                --delay-opacity: 0.3s;
+              }
+              &:nth-of-type(3) {
+                // --delay: 0.9s;
+                --delay: 0.6s;
+                --delay-opacity: 0.6s;
+              }
+            }
+
+            & img {
+              border-radius: 1rem;
+              width: 100%;
+              height: 100%;
+              // object-fit: contain;
+              box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+            }
+          }
+          & .record_image {
+            width: fit-content;
+            max-width: 100%;
+            margin-bottom: 1rem;
+            overflow: hidden;
+
+            height: 100%;
+            flex-basis: 100%;
+            // max-height: 100rem;
+
+            opacity: 0;
+            filter: grayscale(100);
+            transition: opacity 1s ease 1s, filter 1.5s ease 1s;
+
+            &.show {
+              opacity: 1;
+              filter: grayscale(0);
+            }
+            & img {
+              width: 100%;
+              border-radius: 1rem;
+              box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+              // height: 100%;
+              // object-fit: contain;
+            }
+          }
+        }
+
+        &--third {
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
           align-items: flex-end;
 
           @include fluid("padding-inline", 3rem, 7rem);
-          background: linear-gradient(
-            to right,
-            rgb(10, 40, 80),
-            rgb(10, 45, 80)
-          );
-          // background: linear-gradient(to right, rgb(119, 14, 11), #770707);
+          // background: linear-gradient(
+          //   to right,
+          //   rgb(10, 40, 80),
+          //   rgb(10, 45, 80)
+          // );
+          // background: linear-gradient(to right, rgb(1, 39, 46), #073503);
+          background-color: rgb(108, 109, 109);
+          // color: rgb(22, 21, 21);
 
           & .illustrations {
             display: flex;
@@ -91,20 +225,14 @@
             align-items: center;
             position: absolute;
             right: 0;
-            // height: 100vh;
+            height: 100vh;
             padding: 0rem 1rem;
             margin-inline: 1rem;
-            max-height: 50vh;
 
             & .scroller {
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-              align-items: center;
+              --_animation-duration: 15s;
+              max-height: 50vh;
 
-              --_animation-duration: 10s;
-
-              border: 1px dashed rgba(160, 206, 160, 0.432);
               overflow-y: hidden;
               mask: linear-gradient(
                 to bottom,
@@ -113,14 +241,20 @@
                 white 80%,
                 transparent
               );
-              // opacity: 0.2;
 
               &[data-animated="true"] .icon-strip {
                 width: fit-content;
-                // height: fit-content;
                 justify-content: center;
                 animation: scroll var(--_animation-duration) linear infinite
                   var(--_animation-direction, forwards);
+                & .icon-item {
+                  filter: grayscale(2);
+                  opacity: 0.5;
+                  &:hover {
+                    opacity: 1;
+                    filter: grayscale(0);
+                  }
+                }
               }
               &[data-direction="reverse"] .icon-strip {
                 --_animation-direction: reverse;
@@ -183,13 +317,14 @@
           }
         }
 
-        &--third {
-          background: linear-gradient(
-            to right,
-            rgb(0, 124, 124) 50%,
-            rgb(10, 40, 80)
-          );
+        &--fourth {
+          // background: linear-gradient(
+          //   to left bottom,
+          //   rgb(0, 124, 124) 50%,
+          //   rgb(10, 40, 80)
+          // );
 
+          background-color: rgb(247, 139, 1);
           & .illustration {
             max-height: 15rem;
             & img {
@@ -201,14 +336,91 @@
             word-break: break-all;
           }
         }
-        &--first {
+
+        &--fifth {
           background: linear-gradient(
-            to right,
-            rgb(10, 40, 80),
-            rgb(10, 40, 80) 50%
+            to right bottom,
+            rgb(0, 124, 124) 50%,
+            rgb(4, 83, 103)
           );
 
-          padding-left: 2rem;
+          & .demo_container {
+            // background: url("/img/mackbook_pro.svg");
+            background-position: 0% 0%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-origin: content-box;
+
+            margin: 0 auto;
+            width: fit-content;
+            // width: 100%;
+            height: 80%;
+            position: relative;
+            aspect-ratio: 1.71;
+
+            & img {
+              position: absolute;
+              top: 0;
+              left: 0;
+              height: 100%;
+              // width: 100%;
+              aspect-ratio: 1.71;
+              object-fit: contain;
+            }
+
+            // display: none;
+            & .video_container {
+              height: 84%;
+              width: 77%;
+              position: absolute;
+              top: 6%;
+              left: 11.6%;
+
+              & video {
+                height: 100%;
+                width: 100%;
+                object-fit: fill;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+//- Visit Button
+.section--works-v2 {
+  // overflow-x: hidden;
+  .works {
+    // overflow-x: auto;
+    .work {
+      & .visit_work--skd {
+        position: absolute;
+        right: 1%;
+        bottom: 1%;
+        width: fit-content;
+        max-width: 8rem;
+        z-index: 100;
+
+        translate: 0 -50%;
+
+        padding: 0.5rem 1rem;
+
+        font-size: 1.8rem;
+        font-family: "Lovelyn";
+        text-align: center;
+        text-transform: uppercase;
+
+        overflow: hidden;
+
+        background: black;
+        color: white;
+
+        transition: translate 0.5s ease;
+
+        &.hidden {
+          translate: 150% -50%;
         }
       }
     }
