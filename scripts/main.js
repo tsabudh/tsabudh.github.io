@@ -9,3 +9,5 @@ import "./locomotive.js";
 import "./tracker.js";
 import "./slider.js";
 import "./work-skd.js";
+
+import "./modal.js";

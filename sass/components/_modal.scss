@@ -1,46 +1,54 @@
 .modal-type-1 {
   position: fixed;
   inset: 0;
-  height: 100vh;
+  // height: 100vh;
   width: 100vw;
-  z-index: 1100; // Leaflet Map'x navigation buttons has z-index of 999
-  background: rgba(42, 44, 51, 0.842);
+  z-index: 100; // Leaflet Map'x navigation buttons has z-index of 999
+  background: rgba(42, 44, 51, 0.267);
 
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
+
+  @extend .scrollbar-17;
 
   &--hidden {
-    display: none;
+    visibility: hidden;
   }
   & .modal-wrapper {
     flex: 1;
-    max-width: 80rem;
+    // max-width: 80rem;
     //   max-height: 90%;
 
-    border-radius: 2rem;
-    overflow: hidden;
-    // overflow: auto;
+    // border-radius: 2rem;
+    // overflow: hidden;
+    // overflow-x: auto;
+    // overflow-y: hidden;
     margin-inline: 3rem;
     cursor: default;
 
     & .modal {
       background: white;
 
-      border: 1px solid gray;
-      border-radius: 1.5rem;
+      // border: 1px solid gray;
+      // border-radius: 1.5rem;
 
-      padding: 0.5rem 1rem 2rem;
-
-      max-height: 90vh;
+      // padding: 0.5rem 1rem 2rem;
+      height: 100vh;
+      // max-height: 90vh;
       // overflow: hidden;
       overflow: auto;
 
       &-header {
         text-align: right;
+        position: absolute;
+        top: 0;
+        right: 0;
 
-        & .close-button {
+        z-index: 100;
+        & .close-modal-button {
           font-size: 3rem;
+          cursor: pointer;
           & svg {
             cursor: pointer;
 

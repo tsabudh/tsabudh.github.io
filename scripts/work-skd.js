@@ -2,6 +2,9 @@
 let visitButton = document.querySelector(".visit_work--skd");
 
 let stickySection = document.querySelector(".scroll_section--skd");
+let modal = stickySection.parentElement;
+
+
 window.addEventListener("scroll", () => {
   let left = stickySection.getBoundingClientRect().left;
   if (left < -900) {
