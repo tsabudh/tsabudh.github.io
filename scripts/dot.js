@@ -1,15 +1,12 @@
-import { deviceCode, cursorType } from "./global.js";
+import { deviceCode, cursorType } from "./global.js"; 
 
-let rootEl = document.querySelector(":root");
-let tsabudh = document.getElementById("tsabudh") || document.body;
-let heroPage = document.getElementById("hero");
 
-const DOT_SIZE = 40;
-const CLIP_SIZE = 46;
-
-let cursorOnHeroPage ; // Initially, cursor is NOT presumed to be on hero page
-let dotRadius = DOT_SIZE;
-let expectedDotRadius = dotRadius; // Defines the final value that dotRadius interpolate to
+export const DOT_SIZE = 40;
+export const CLIP_SIZE = 46;
+export let expectedDotRadius;
+expectedDotRadius = DOT_SIZE; // Defines the final value that dotRadius interpolate to
+ 
+export let dotRadius = DOT_SIZE;
 
 //- Initializing dotEl as global variable
 export const dotEl = document.createElement("div");
@@ -25,13 +22,7 @@ dotEl.style.pointerEvents = "none";
 
 document.body.appendChild(dotEl);
 
-//- Setting event listeners when cursor enters or leaves hero page
-heroPage.addEventListener("mouseenter", () => {
-  cursorOnHeroPage = true;
-});
-heroPage.addEventListener("mouseleave", () => {
-  cursorOnHeroPage = false;
-});
+
 
 function followingDotCursor(options) {
   let width = window.innerWidth;
@@ -67,8 +58,7 @@ function followingDotCursor(options) {
   function bindEvents() {
     document.addEventListener("mousemove", onMouseMove);
     window.addEventListener("resize", onWindowResize);
-    tsabudh.addEventListener("mouseover", onMouseOverTsabudh);
-    tsabudh.addEventListener("mouseleave", onMouseLeaveTsabudh);
+
   }
   function onWindowResize(e) {
     width = window.innerWidth;
@@ -80,18 +70,7 @@ function followingDotCursor(options) {
     // console.log(cursor.x, cursor.y, 'mousemove')
   }
 
-  function onMouseOverTsabudh(e) {
-    // isHoveringOverName = 1;
-    expectedDotRadius = CLIP_SIZE;
-    console.log(expectedDotRadius);
-    dotEl.style.background = "#45454500";
-  }
-  function onMouseLeaveTsabudh(e) {
-    // isHoveringOverName = null;
-    expectedDotRadius = DOT_SIZE;
-    // dotEl.style.background = "#45454587";
-    dotEl.style.background = null;
-  }
+
 
   const moveTowards = function (x, y) {
     let { left, top } = dotEl.getBoundingClientRect();
@@ -112,30 +91,6 @@ function followingDotCursor(options) {
       top - offsetDifferenceInRadius + (y - top - dotRadius * 0.5) / lag + "px";
   };
 
-  function clipMask() {
-    let { left, top } = dotEl.getBoundingClientRect();
-
-    let { left: tLeft, top: tTop } = tsabudh
-      .getElementsByClassName("red")[0]
-      .getBoundingClientRect();
-    let { left: nameLeft, top: nameTop } = tsabudh
-      .getElementsByClassName("name")[0]
-      .getBoundingClientRect();
-
-    rootEl.style.setProperty(
-      "--clip-position-t",
-      `${left + dotRadius * 0.5 - tLeft}px ${top + dotRadius * 0.5 - tTop}px`
-    );
-    rootEl.style.setProperty(
-      "--clip-position-sabudh",
-      `${left + dotRadius * 0.5 - nameLeft}px ${
-        top + dotRadius * 0.5 - nameTop
-      }px`
-    );
-
-    rootEl.style.setProperty("--clip-size", `${dotRadius * 0.5}px`);
-  }
-
   function loop() {
     moveTowards(cursor.x, cursor.y);
 
@@ -144,9 +99,6 @@ function followingDotCursor(options) {
 
     requestAnimationFrame(loop);
     // cursorOnHeroPage == true && isHoveringOverName == 1
-    cursorOnHeroPage == true
-      ? clipMask()
-      : rootEl.style.setProperty("--clip-size", `0`);
   }
 
   init();
@@ -157,7 +109,6 @@ if (deviceCode >= 3)
     new followingDotCursor({ element: document.body });
   });
 
-tsabudh.addEventListener("mouseleave", (e) => {});
 
 //- Changing dotCursor's behavior on hovering certain elements
 
@@ -177,4 +128,8 @@ blendAppliedEls.forEach((el) => {
 
 function lerp(start, end, t) {
   return start * (1 - t) + end * t;
+}
+
+export function updateDotSize(value){
+  expectedDotRadius = value;
 }

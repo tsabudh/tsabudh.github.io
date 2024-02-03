@@ -10,33 +10,21 @@
   justify-content: center;
   align-items: stretch;
 
-  @extend .scrollbar-17;
-
   &--hidden {
     visibility: hidden;
   }
   & .modal-wrapper {
     flex: 1;
-    // max-width: 80rem;
-    //   max-height: 90%;
 
-    // border-radius: 2rem;
-    // overflow: hidden;
-    // overflow-x: auto;
-    // overflow-y: hidden;
-    margin-inline: 3rem;
     cursor: default;
 
     & .modal {
       background: white;
+      overscroll-behavior: contain;
+      @extend .scrollbar-17;
 
-      // border: 1px solid gray;
-      // border-radius: 1.5rem;
-
-      // padding: 0.5rem 1rem 2rem;
       height: 100vh;
-      // max-height: 90vh;
-      // overflow: hidden;
+
       overflow: auto;
 
       &-header {
@@ -46,17 +34,26 @@
         right: 0;
 
         z-index: 100;
+
         & .close-modal-button {
+          margin-inline: 2rem;
+          margin-block: 1rem;
           font-size: 3rem;
-          cursor: pointer;
-          & svg {
+
+          // border: 2px solid red;
+          border-radius: 5rem;
+
+          background-color: white;
+
+          &:hover,
+          &:active {
+            background-color: gray;
+          }
+          & img {
             cursor: pointer;
+            width: 2.5rem;
 
             color: rgb(9, 129, 79);
-
-            &:active {
-              color: rgb(16, 167, 104);
-            }
           }
         }
       }

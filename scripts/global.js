@@ -1,5 +1,7 @@
-//GLOBALS
+// GLOBALS
 const rootEl = document.querySelector(":root");
+
+// GLOBAL CONSTANTS
 
 //* 1. variable to check device type
 export let deviceCode = checkDeviceType();

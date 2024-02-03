@@ -1,48 +1,53 @@
 .card-01 {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
   min-width: 20rem;
-  max-width: 40rem;
+  max-width: 30rem;
   //   height: 500px;
+  // padding: 0.5rem 0.4rem;
+  padding-block: 1.5rem;
 
   position: relative;
   overflow: hidden;
-  box-shadow: 0 0 32px -10px rgba(0, 0, 0, 0.08);
-  border: 2px solid white;
+
+  background-color: #2e7799;
+  box-shadow: 1px 1px 4px rgba(158, 157, 157, 0.74);
+  // border: 2px solid red;
+  border-radius: 0.8rem;
+
+  color: white;
   text-align: left;
 
-  padding: 1rem;
-
-  & .header {
+  & .title {
     text-transform: capitalize;
     font-size: 2rem;
+    letter-spacing: 0.1rem;
     text-align: center;
-    margin-bottom: 1rem;
+
+    margin-block: 1rem;
   }
 
   & .content {
+    height: 40%;
+    flex-basis: 40%;
+    flex-grow: 1;
+    flex-shrink: 3;
+
+    & .media {
+      width: 100%;
+      max-width: 20rem;
+    }
   }
 
-  &:hover .footer {
-    // top: '';
-    bottom: 0;
-  }
-  & .footer {
-    // background: url("./../img/wave.svg");
-
-    background: red;
-    background-repeat: no-repeat;
-    background-size: cover;
-
-    position: relative;
-    // top: 100%;
-    bottom: -100%;
-    width: 100%;
-    padding-top: 3rem;
-
+  & .description {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 
-    transition: all 0.2s ease-in;
+    letter-spacing: 1px;
   }
 }

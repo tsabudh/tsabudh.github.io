@@ -4,9 +4,9 @@ let visitButton = document.querySelector(".visit_work--skd");
 let stickySection = document.querySelector(".scroll_section--skd");
 let modal = stickySection.parentElement;
 
-
+//todo FIX VISIT BUTTON, MAKE IT AVAILABLE FOR EVERY SLIDERS
 window.addEventListener("scroll", () => {
-  let left = stickySection.getBoundingClientRect().left;
+let left = stickySection.getBoundingClientRect().left;
   if (left < -900) {
     visitButton.classList.remove("hidden");
   } else {
