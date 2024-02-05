@@ -40,6 +40,7 @@
 
       & .highlighted {
         color: gray;
+        letter-spacing: 0.5px;
       }
     }
 
@@ -72,12 +73,17 @@
 
         & .fill {
           position: absolute;
+          // filter: drop-shadow(2px 3px 3px #a8a8a8);
         }
       }
       & .red {
         position: relative;
         display: inline;
         color: red;
+
+        & .white {
+          color: white;
+        }
       }
       & .focused {
         // text-decoration: underline;
