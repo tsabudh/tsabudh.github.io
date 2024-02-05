@@ -130,739 +130,116 @@
 
 
 
-        <section class="section section--works-v2 ">
+        <section class="section section--works ">
             <h2 class="section-title">
                 <span>
                     My works
                 </span>
             </h2>
 
-            <button class="toggle-modal-type-1" data-target-modal="modal-type-1:1">
-                MODAL 1 TOGGLE
-            </button>
-            <button class="toggle-modal-type-1" data-target-modal="modal-type-1:2">
-                MODAL 2 TOGGLE
-            </button>
-
-            <div class="card-02">
-                <div class="main">
-
-                    <div class="title">
-                        Shree Krishna Dairy
-                        <a href="/skd.html">skd</a>
-                    </div>
-                    <div class="description">
-                        This is for digital record keeping of a local dairy shop. This tool simplifies the process of logging transactions, customer information, and product inventory. The React application is deployed at Netlify while the server is maintained using Nginx at AWS EC2. User data like profile picture is stored at AWS S3. Visit for hands on experience!
-                    </div>
-                    <div class="footer">
-                        footer, tags
-                    </div>
-                </div>
-
-                <div class="media">
-                    <div class="browser-window">
-                        <img src="/img/browser-window.svg" alt="browser">
-                    </div>
-                    <video src="/img/demo.mp4"> </video>
-                </div>
-            </div>
-
-            <div class="card-01">
-                <section class="content">
-                    <figure class="media">
-
-                        <img src="/img/shree-krishna-dairy-trans.png" alt="Shree Krishna Dairy Logo">
-                    </figure>
-                </section>
-                <section class="title">
-                    <h3>
-                        Shree Krishna Dairy
-                    </h3>
-                </section>
-
-                <section class="description">
-                    <p>
-                        Digitalizing locals.
-                    </p>
-                    <div class="cta">
-                        <a href="#">Learn more</a>
-                        <a href="#">Visit</a>
-                    </div>
-                </section>
-
-            </div>
-
-            <!-- //- content here  -->
             <div class="works">
                 <!-- SHREE KRISHNA DAIRY -->
                 <div class="work">
-                    <!--//- MODAL -->
-                    <div class='modal-type-1 modal-type-1--hidden' id="modal-type-1:1">
-                        <div class='modal-wrapper'>
-                            <div class='modal'>
-                                <div class='modal-header'>
-                                    <div class='close-modal-button' data-dch-blend="difference">
-                                        <img src="/img/close.svg" alt="Close">
-                                    </div>
+                    <div class="work_title">
+                        <h3>
+                            Shree Krishna Dairy
+
+                        </h3>
+                    </div>
+                    <div class="wrapper">
+
+                        <div class="work_description">
+                            <p>This is for digital record keeping of a local dairy shop. This tool simplifies the process of logging transactions, customer information, and product inventory.
+                                The React application is deployed at Netlify while the server is maintained using Nginx at AWS EC2.
+                                User data like profile picture is stored at AWS S3. Visit for hands on experience!
+
+                            </p>
+
+                            <div class="tech-stack icon_strip">
+
+                                <figure class="tech-logo icon_item">
+                                    <img src="./img/logo-react.svg" alt="React" title="React">
+                                </figure>
+
+                                <figure class="tech-logo icon_item">
+                                    <img src="./img/logo-sass.svg" alt="SASS" title="SASS">
+                                </figure>
+
+                                <figure class="tech-logo icon_item">
+                                    <img src="./img/logo-nodejs.svg" alt="Nodejs" title="Nodejs">
+                                </figure>
+
+                                <figure class="tech-logo icon_item">
+                                    <img src="./img/logo-mongodb.svg" alt="MongoDB" title="MongoDB">
+                                </figure>
+
+                                <figure class="tech-logo icon_item">
+                                    <img src="./img/logo-nginx.svg" alt="Nginx" title="Nginx">
+                                </figure>
+                                <figure class="tech-logo icon_item">
+                                    <img src="./img/logo-aws.svg" alt="AWS" title="AWS">
+                                </figure>
+                                <figure class="tech-logo icon_item">
+                                    <img src="./img/logo-leaflet.svg" alt="Leaflet.js" title="Leaflet.js">
+                                </figure>
+
+
+                            </div>
+                            <a class="btn btn2" href="https://shreekrishnadairy.netlify.app/" target="_blank">Visit</a>
+
+                        </div>
+                        <div class="slide_container slide_container-type-1">
+                            <div class="slider">
+                                <div class="slider__btn-container">
+                                    <button class="slider__btn slider__btn--left" data-target-slide-id="slide-type-1:1" aria-label="Move to previous slide">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+                                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                                            <polyline points="12 19 5 12 12 5"></polyline>
+                                        </svg>
+                                    </button>
+                                    <button class="slider__btn slider__btn--right" data-target-slide-id="slide-type-1:1" aria-label="Move to next slide">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right">
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            <polyline points="12 5 19 12 12 19"></polyline>
+                                        </svg>
+                                    </button>
                                 </div>
-                                <div class="sticky_slider ">
-                                    <div class="sticky_section">
-                                        <a class="visit_work visit_work--skd hidden " href="https://shreekrishnadairy.netlify.app/" target="_blank">
-                                            visit
-                                        </a>
-                                        <div class="scroll_section scroll_section--skd ">
-                                            <div class="scroll_section_item scroll_section_item--1">
-                                                <div class="work_feature work_feature--intro">
+                                <div class="slide slide-type-1 " id="slide-type-1:1">
+                                    <img src="./img/skd-1.png" alt="Shree-Krishna-Dairy-Shop">
+                                    <img src="./img/skd-2.png" alt="Shree-Krishna-Dairy-Shop">
+                                    <img src="./img/skd-3.png" alt="Shree-Krishna-Dairy-Shop">
+                                    <img src="./img/skd-4.png" alt="Shree-Krishna-Dairy-Shop">
 
-
-                                                    <div class="feature_title feature_title--intro text-bg-clip ">
-                                                        Shree Krishna Dairy
-                                                    </div>
-                                                    <p>
-                                                        Shree Krishna Dairy web application is built for digital record keeping of a local dairy shop.
-                                                    </p>
-                                                    <p>
-                                                        This tool simplifies the process of logging transactions, customer information, and product inventory.
-                                                    </p>
-
-                                                    <figure class="intro_logo">
-                                                        <img src="/img/shree-krishna-dairy-black.png" alt="Shree Krishna Dairy Logo">
-                                                    </figure>
-
-                                                    <a class="floating_button" href="https://shreekrishnadairy.netlify.app/" target="_blank" data-dch-blend="difference">
-                                                        visit
-                                                    </a>
-                                                </div>
-
-                                            </div>
-                                            <div class="scroll_section_item scroll_section_item--2">
-                                                <div class="work_feature work_feature--first">
-
-                                                    <div class="feature_title">
-                                                        The Problem
-                                                    </div>
-                                                    <p class="u-font-size-2 u-padding-inline-2">
-                                                        " Logging and searching for customer purchases in a logbook is tedious and time consuming. "
-                                                    </p>
-
-
-                                                </div>
-                                            </div>
-                                            <div class="scroll_section_item scroll_section_item--3">
-                                                <div class="work_feature work_feature--second">
-                                                    <div class="feature_title">
-                                                        The Solution
-                                                    </div>
-
-                                                    <div class="bt-container feature_content">
-                                                        <div class="row">
-                                                            <div class="col-6 ">
-                                                                <p class="description_text">
-                                                                    Transition from a physical logbook to a digital system.
-                                                                </p>
-                                                                <div class="u-padding-block-1">
-                                                                    <figure class="transaction_image">
-                                                                        <img src="/img/skd-intro-1.png" alt="Transaction">
-                                                                    </figure>
-                                                                    <figure class="transaction_image">
-                                                                        <img src="/img/skd-intro-2.png" alt="Transaction">
-                                                                    </figure>
-                                                                    <figure class="transaction_image">
-                                                                        <img src="/img/skd-intro-3.png" alt="Transaction">
-                                                                    </figure>
-                                                                </div>
-
-                                                            </div>
-                                                            <div class="col-6 ">
-                                                                <p class="description_text">
-                                                                    Sort and filter through the records. </p>
-                                                                <div class="u-padding-block-1 u-flex-column-center-center">
-                                                                    <figure class="record_image">
-                                                                        <img src="/img/skd-second-5.png" alt="Customer record">
-                                                                    </figure>
-
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-12">
-
-                                                            </div>
-
-                                                            <div class="col-6">
-                                                                <p class="description_text">
-                                                                    Keep records of customers details.
-                                                                </p>
-                                                                <figure class="record_image">
-                                                                    <img src="/img/skd-second-6.png" alt="Customer record">
-                                                                </figure>
-                                                            </div>
-                                                            <div class="col-6">
-                                                                <p class="description_text">
-                                                                    Along with their locations.
-                                                                </p>
-                                                                <figure class="record_image">
-                                                                    <img src="/img/skd-second-7.png" alt="Customer record">
-                                                                </figure>
-                                                            </div>
-
-
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="scroll_section_item scroll_section_item--4">
-                                                <div class="work_feature work_feature--third">
-
-                                                    <div class="floating_icons ">
-                                                        <div class="scroller" data-animated="true">
-                                                            <div class="icon-strip icon-strip--column">
-
-                                                                <figure class="icon-item">
-                                                                    <img src="/img/logo-mongodb.svg" alt="MongoDB">
-                                                                </figure>
-                                                                <figure class="icon-item">
-                                                                    <img src="/img/logo-express.svg" alt="Express">
-                                                                </figure>
-                                                                <figure class="icon-item">
-                                                                    <img src="/img/logo-react.svg" alt="React">
-                                                                </figure>
-                                                                <figure class="icon-item">
-                                                                    <img src="/img/logo-nodejs.svg" alt="Nodejs">
-                                                                </figure>
-                                                                <figure class="icon-item">
-                                                                    <img src="/img/logo-aws.svg" alt="AWS">
-                                                                </figure>
-                                                                <figure class="icon-item">
-                                                                    <img src="/img/logo-leaflet.svg" alt="Leaflet">
-                                                                </figure>
-                                                                <figure class="icon-item">
-                                                                    <img src="/img/logo-sass.svg" alt="SASS">
-                                                                </figure>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="bt-container">
-                                                        <div class="row u-margin-block-2">
-                                                            <div class="col-12 u-margin-block-05">
-                                                                <h3>Authentication and Security</h3>
-                                                            </div>
-                                                            <div class="col-6 u-padding-inline-1">
-                                                                <p>Json Web Tokens</p>
-                                                                <p>Protected routes</p>
-                                                                <p>Input sanitization</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row u-margin-block-2">
-                                                            <div class="col-12 u-margin-block-05">
-                                                                <h3>Deployment Choices</h3>
-                                                            </div>
-                                                            <div class="col-6  u-padding-inline-1">
-                                                                <p>React app at Netlify</p>
-                                                                <p>Server at AWS EC2 Instance</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row u-margin-block-2">
-                                                            <div class="col-12 u-margin-block-05">
-                                                                <h3>Database & Storage Choices</h3>
-                                                            </div>
-                                                            <div class="col-6  u-padding-inline-1">
-                                                                <p>Database at MongoDB Atlas</p>
-                                                                <p>Caching at Redis Lab</p>
-                                                                <p>File storage at AWS S3 Bucket</p>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="bt-container">
-                                                        <div class="row">
-                                                            <div class="col-12">
-
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="scroll_section_item scroll_section_item--5">
-                                                <div class="work_feature work_feature--fourth">
-                                                    <div class="feature_title  ">
-                                                        Database & API
-                                                    </div>
-
-
-                                                    <div class="bt-container">
-                                                        <div class="row u-margin-block-1">
-
-                                                            <div class="col-2 col-lg-4">
-                                                                <h3>Models</h3>
-                                                                <ul>
-                                                                    <li> <span> Customer </span> </li>
-                                                                    <li> <span> Transaction </span> </li>
-                                                                    <li> <span> Product </span> </li>
-                                                                    <li> <span> Admin </span> </li>
-
-                                                                </ul>
-                                                            </div>
-                                                            <div class="col-2 col-lg-4">
-                                                                <h3>Routes</h3>
-                                                                <ul>
-                                                                    <li> <span> api/v1/products </span> </li>
-                                                                    <li> <span> api/v1/customers </span> </li>
-                                                                    <li> <span> api/v1/transactions </span> </li>
-                                                                    <li> <span> api/v1/admins </span> </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row u-margin-block-1">
-
-
-                                                        </div>
-
-                                                        <div class="row u-margin-block-1">
-
-                                                            <div class="col-12 ">
-                                                                <h3>Complex Queries</h3>
-                                                                <div class="description">
-                                                                    <ul>
-                                                                        <li>
-                                                                            api/v1/transactions/?filter=
-                                                                            eyJzb3J0QnkiOnsiaXNzdWVkVGltZSI6LTEsIml0ZW1zVmFyaWV0eSI6LTF9LCJjdXN0b21lckFycmF5IjpbInNhYnVkaCBiYWhhZHVyIHRoYXBhIiwiYWJoaXNoZWsiXSwidG90YWxRdWFudGl0eSI6eyJmcm9tIjoxLCJ0byI6Mn0sIml0ZW1zVmFyaWV0eSI6eyJmcm9tIjowLCJ0byI6M319
-                                                                        </li>
-
-                                                                    </ul>
-                                                                    <figure class="floating_figure floating_figure--filter">
-                                                                        <pre>
-{
-"sortBy": {
-    "issuedTime": -1,
-    "itemsVariety": -1
-},
-"customerArray": [
-    "sabudh bahadur thapa",
-    "abhishek"
-],
-"totalQuantity": {
-    "from": 1,
-    "to": 2
-},
-"itemsVariety": {
-    "from": 0,
-    "to": 3
-}
-}
-                                                       </pre>
-                                                                    </figure>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row u-margin-block-1">
-                                                            <div class="col-4">
-                                                                <h3>Error handling</h3>
-                                                                <ul>
-                                                                    <li>Global Error handling middleware</li>
-                                                                    <li>Semantic status codes</li>
-                                                                    <li>Meaningful responses back to client</li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row u-margin-block-1">
-                                                            <div class="col-4">
-                                                                <h3>Authentication & Security</h3>
-                                                                <ul>
-                                                                    <li>JWT for logins</li>
-                                                                    <li>Payload sanitization </li>
-                                                                    <li>Payload validation using express validator</li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="scroll_section_item scroll_section_item--6">
-                                                <div class="work_feature work_feature--fifth">
-                                                    <div class="feature_title  ">
-                                                        UI
-                                                    </div>
-                                                    <!-- <div class="u-flex-row-center-center" style="width: fit-content;"> -->
-                                                    <div class="demo_container">
-                                                        <img src="/img/mackbook_pro.svg" alt="mackBook_pro">
-                                                        <div class="video_container">
-                                                            <video autoplay loop preload="auto" muted>
-                                                                <source src="/img/demo.mp4" type="video/mp4">
-                                                                <p>
-                                                                    Your browser does not support the video tag.
-                                                                    Here is the <a href="/img/demo.mp4"> link</a> instead.
-                                                                </p>
-                                                            </video>
-                                                        </div>
-
-                                                    </div>
-                                                    <!-- </div> -->
-
-
-
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
 
-
-                </div>
-                <!-- NATOURS -->
-                <div class="work">
-                    <!--//- MODAL -->
-                    <div class='modal-type-1 modal-type-1--hidden' id="modal-type-1:2">
-                        <div class='modal-wrapper'>
-                            <div class='modal'>
-                                <div class='modal-header'>
-                                    <div class='close-modal-button' data-dch-blend="difference">
-                                        <img src="/img/close.svg" alt="Close">
-                                    </div>
-                                </div>
-                                <div class="sticky_slider ">
-                                    <div class="sticky_section">
-                                        <a class="visit_work visit_work--skd hidden " href="https://shreekrishnadairy.netlify.app/" target="_blank">
-                                            visit
-                                        </a>
-                                        <div class="scroll_section scroll_section--skd ">
-                                            <div class="scroll_section_item scroll_section_item--1">
-                                                <div class="work_feature work_feature--intro">
-
-
-                                                    <div class="feature_title feature_title--intro text-bg-clip ">
-                                                        Shree Krishna Dairy 2
-                                                    </div>
-                                                    <p>
-                                                        Shree Krishna Dairy web application is built for digital record keeping of a local dairy shop.
-                                                    </p>
-                                                    <p>
-                                                        This tool simplifies the process of logging transactions, customer information, and product inventory.
-                                                    </p>
-
-                                                    <figure class="intro_logo">
-                                                        <img src="/img/shree-krishna-dairy-black.png" alt="Shree Krishna Dairy Logo">
-                                                    </figure>
-
-                                                    <a class="floating_button" href="https://shreekrishnadairy.netlify.app/" target="_blank" data-dch-blend="difference">
-                                                        visit
-                                                    </a>
-                                                </div>
-
-                                            </div>
-                                            <div class="scroll_section_item scroll_section_item--2">
-                                                <div class="work_feature work_feature--first">
-
-                                                    <div class="feature_title">
-                                                        The Problem
-                                                    </div>
-                                                    <p class="u-font-size-2 u-padding-inline-2">
-                                                        " Logging and searching for customer purchases in a logbook is tedious and time consuming. "
-                                                    </p>
-
-
-                                                </div>
-                                            </div>
-                                            <div class="scroll_section_item scroll_section_item--3">
-                                                <div class="work_feature work_feature--second">
-                                                    <div class="feature_title">
-                                                        The Solution
-                                                    </div>
-
-                                                    <div class="bt-container feature_content">
-                                                        <div class="row">
-                                                            <div class="col-6 ">
-                                                                <p class="description_text">
-                                                                    Transition from a physical logbook to a digital system.
-                                                                </p>
-                                                                <div class="u-padding-block-1">
-                                                                    <figure class="transaction_image">
-                                                                        <img src="/img/skd-intro-1.png" alt="Transaction">
-                                                                    </figure>
-                                                                    <figure class="transaction_image">
-                                                                        <img src="/img/skd-intro-2.png" alt="Transaction">
-                                                                    </figure>
-                                                                    <figure class="transaction_image">
-                                                                        <img src="/img/skd-intro-3.png" alt="Transaction">
-                                                                    </figure>
-                                                                </div>
-
-                                                            </div>
-                                                            <div class="col-6 ">
-                                                                <p class="description_text">
-                                                                    Sort and filter through the records. </p>
-                                                                <div class="u-padding-block-1 u-flex-column-center-center">
-                                                                    <figure class="record_image">
-                                                                        <img src="/img/skd-second-5.png" alt="Customer record">
-                                                                    </figure>
-
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-12">
-
-                                                            </div>
-
-                                                            <div class="col-6">
-                                                                <p class="description_text">
-                                                                    Keep records of customers details.
-                                                                </p>
-                                                                <figure class="record_image">
-                                                                    <img src="/img/skd-second-6.png" alt="Customer record">
-                                                                </figure>
-                                                            </div>
-                                                            <div class="col-6">
-                                                                <p class="description_text">
-                                                                    Along with their locations.
-                                                                </p>
-                                                                <figure class="record_image">
-                                                                    <img src="/img/skd-second-7.png" alt="Customer record">
-                                                                </figure>
-                                                            </div>
-
-
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="scroll_section_item scroll_section_item--4">
-                                                <div class="work_feature work_feature--third">
-
-                                                    <div class="floating_icons ">
-                                                        <div class="scroller" data-animated="true">
-                                                            <div class="icon-strip icon-strip--column">
-
-                                                                <figure class="icon-item">
-                                                                    <img src="/img/logo-mongodb.svg" alt="MongoDB">
-                                                                </figure>
-                                                                <figure class="icon-item">
-                                                                    <img src="/img/logo-express.svg" alt="Express">
-                                                                </figure>
-                                                                <figure class="icon-item">
-                                                                    <img src="/img/logo-react.svg" alt="React">
-                                                                </figure>
-                                                                <figure class="icon-item">
-                                                                    <img src="/img/logo-nodejs.svg" alt="Nodejs">
-                                                                </figure>
-                                                                <figure class="icon-item">
-                                                                    <img src="/img/logo-aws.svg" alt="AWS">
-                                                                </figure>
-                                                                <figure class="icon-item">
-                                                                    <img src="/img/logo-leaflet.svg" alt="Leaflet">
-                                                                </figure>
-                                                                <figure class="icon-item">
-                                                                    <img src="/img/logo-sass.svg" alt="SASS">
-                                                                </figure>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="bt-container">
-                                                        <div class="row u-margin-block-2">
-                                                            <div class="col-12 u-margin-block-05">
-                                                                <h3>Authentication and Security</h3>
-                                                            </div>
-                                                            <div class="col-6 u-padding-inline-1">
-                                                                <p>Json Web Tokens</p>
-                                                                <p>Protected routes</p>
-                                                                <p>Input sanitization</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row u-margin-block-2">
-                                                            <div class="col-12 u-margin-block-05">
-                                                                <h3>Deployment Choices</h3>
-                                                            </div>
-                                                            <div class="col-6  u-padding-inline-1">
-                                                                <p>React app at Netlify</p>
-                                                                <p>Server at AWS EC2 Instance</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row u-margin-block-2">
-                                                            <div class="col-12 u-margin-block-05">
-                                                                <h3>Database & Storage Choices</h3>
-                                                            </div>
-                                                            <div class="col-6  u-padding-inline-1">
-                                                                <p>Database at MongoDB Atlas</p>
-                                                                <p>Caching at Redis Lab</p>
-                                                                <p>File storage at AWS S3 Bucket</p>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="bt-container">
-                                                        <div class="row">
-                                                            <div class="col-12">
-
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="scroll_section_item scroll_section_item--5">
-                                                <div class="work_feature work_feature--fourth">
-                                                    <div class="feature_title  ">
-                                                        Database & API
-                                                    </div>
-
-
-                                                    <div class="bt-container">
-                                                        <div class="row u-margin-block-1">
-
-                                                            <div class="col-2 col-lg-4">
-                                                                <h3>Models</h3>
-                                                                <ul>
-                                                                    <li> <span> Customer </span> </li>
-                                                                    <li> <span> Transaction </span> </li>
-                                                                    <li> <span> Product </span> </li>
-                                                                    <li> <span> Admin </span> </li>
-
-                                                                </ul>
-                                                            </div>
-                                                            <div class="col-2 col-lg-4">
-                                                                <h3>Routes</h3>
-                                                                <ul>
-                                                                    <li> <span> api/v1/products </span> </li>
-                                                                    <li> <span> api/v1/customers </span> </li>
-                                                                    <li> <span> api/v1/transactions </span> </li>
-                                                                    <li> <span> api/v1/admins </span> </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row u-margin-block-1">
-
-
-                                                        </div>
-
-                                                        <div class="row u-margin-block-1">
-
-                                                            <div class="col-12 ">
-                                                                <h3>Complex Queries</h3>
-                                                                <div class="description">
-                                                                    <ul>
-                                                                        <li>
-                                                                            api/v1/transactions/?filter=
-                                                                            eyJzb3J0QnkiOnsiaXNzdWVkVGltZSI6LTEsIml0ZW1zVmFyaWV0eSI6LTF9LCJjdXN0b21lckFycmF5IjpbInNhYnVkaCBiYWhhZHVyIHRoYXBhIiwiYWJoaXNoZWsiXSwidG90YWxRdWFudGl0eSI6eyJmcm9tIjoxLCJ0byI6Mn0sIml0ZW1zVmFyaWV0eSI6eyJmcm9tIjowLCJ0byI6M319
-                                                                        </li>
-
-                                                                    </ul>
-                                                                    <figure class="floating_figure floating_figure--filter">
-                                                                        <pre>
-{
-"sortBy": {
-    "issuedTime": -1,
-    "itemsVariety": -1
-},
-"customerArray": [
-    "sabudh bahadur thapa",
-    "abhishek"
-],
-"totalQuantity": {
-    "from": 1,
-    "to": 2
-},
-"itemsVariety": {
-    "from": 0,
-    "to": 3
-}
-}
-                                                       </pre>
-                                                                    </figure>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row u-margin-block-1">
-                                                            <div class="col-4">
-                                                                <h3>Error handling</h3>
-                                                                <ul>
-                                                                    <li>Global Error handling middleware</li>
-                                                                    <li>Semantic status codes</li>
-                                                                    <li>Meaningful responses back to client</li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row u-margin-block-1">
-                                                            <div class="col-4">
-                                                                <h3>Authentication & Security</h3>
-                                                                <ul>
-                                                                    <li>JWT for logins</li>
-                                                                    <li>Payload sanitization </li>
-                                                                    <li>Payload validation using express validator</li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="scroll_section_item scroll_section_item--6">
-                                                <div class="work_feature work_feature--fifth">
-                                                    <div class="feature_title  ">
-                                                        UI
-                                                    </div>
-                                                    <!-- <div class="u-flex-row-center-center" style="width: fit-content;"> -->
-                                                    <div class="demo_container">
-                                                        <img src="/img/mackbook_pro.svg" alt="mackBook_pro">
-                                                        <div class="video_container">
-                                                            <video autoplay loop preload="auto" muted>
-                                                                <source src="/img/demo.mp4" type="video/mp4">
-                                                                <p>
-                                                                    Your browser does not support the video tag.
-                                                                    Here is the <a href="/img/demo.mp4"> link</a> instead.
-                                                                </p>
-                                                            </video>
-                                                        </div>
-
-                                                    </div>
-                                                    <!-- </div> -->
-
-
-
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-
                 </div>
             </div>
-            </div>
+
+
+
 
 
         </section>
 
 
 
-        <div class="" style="height:1000px;background-color: rgba(0, 255, 255, 0.438);">
 
-        </div>
     </main>
-    <!-- <section class="section section--footer">
+    <section class="section section--footer">
         <a href="./img/natours-1.png" download="Sabudh Bahadur Thapa Resume">
             Download Resume
-            
+
             <figure class="u-img-logo-small">
 
                 <img src="/img/logo-pdf.svg" alt="PDF icon" title="Download Resume">
             </figure>
         </a>
 
-    </section> -->
+    </section>
 
 
 
