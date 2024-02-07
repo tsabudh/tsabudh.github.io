@@ -56,6 +56,19 @@
   -webkit-background-clip: text;
 }
 
-.h3-primary--1 {
-  @include fluidFont(2rem, 3rem);
+.h2-primary--01 {
+  font-family: "Lovelyn";
+  font-feature-settings: "swsh" 1;
+  font-variant-alternates: swash(fancy);
+  margin-block: 1rem;
+  // line-height: 1em;
+  @include fluidFont(4rem, 9rem);
+}
+.h3-primary--01 {
+  font-family: "Lovelyn";
+  font-feature-settings: "swsh" 1;
+  font-variant-alternates: swash(fancy);
+  margin-block: 1rem;
+  // line-height: 1em;
+  @include fluidFont(4rem, 9rem);
 }
