@@ -55,10 +55,18 @@
       white-space: nowrap;
       line-height: 86%;
 
+      @include respond(phone) {
+        line-height: 115%;
+      }
       & .to-mask {
         position: relative;
         display: inline;
         margin-left: 30%;
+
+        @include respond(phone) {
+          margin-left: 20%;
+          color: red;
+        }
 
         & .mask {
           -webkit-text-fill-color: transparent;
