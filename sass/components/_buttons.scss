@@ -1,266 +1,215 @@
-// [class^='btn'] {
-//   &::before,
-//   &::after {
-//     position: absolute;
-//     content: '';
-//   }
-// }
-.btn {
-  &,
-  &:link,
-  &:visited {
+button,
+a {
+  cursor: pointer;
+  text-align: center;
+
+  &.primary01 {
+    padding: 0.7rem 1rem;
     border: none;
-    display: inline-block;
-    text-decoration: none;
-    padding: 1.4rem 4rem;
-    // border-radius: 0.2rem;
-    cursor: pointer;
-    background: black;
-    font-size: inherit;
-  }
-}
-
-.btn1 {
-  &,
-  &:link,
-  &:visited {
-    border: none;
-    display: inline-block;
-    text-transform: uppercase;
-    text-decoration: none;
-    // color: $color-grey;
-    // background-color: #ffffff;
-    padding: 1.4rem 4rem;
-    border-radius: 3rem;
-    // transition: all 0.2s;
-    position: relative;
-    cursor: pointer;
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.2);
-    backface-visibility: hidden;
-
-    &::after {
-      transform: scalex(1.4) scaleY(1.5);
-      opacity: 0;
-      backface-visibility: hidden;
-    }
-  }
-
-  &:focus,
-  &:active {
-    outline: none;
-    transform: translateY(-1px);
-    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
-  }
-
-  &::after {
-    content: '';
-    display: inline-block;
-    z-index: -1;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    border-radius: 100px;
-    opacity: 1;
-    transition: all 0.4s;
-  }
-
-  &--animated {
-    animation-name: moveInBottom;
-    animation-duration: 0.5s;
-    animation-delay: 0.5s;
-    animation-timing-function: ease-out;
-    animation-fill-mode: backwards;
-  }
-  &--white {
-    background-color: #ffffff;
-    color: #777;
-    backface-visibility: hidden;
-
-    &::after {
-      background-color: #ffffff;
-    }
-  }
-  &--green {
-    background-color: $color-primary;
-    color: $color-white;
-    backface-visibility: hidden;
-
-    &::after {
-      background-color: $color-primary;
-    }
-  }
-}
-
-.btn-text {
-  &,
-  &:link,
-  &:visited {
-    font-size: $font-size-default;
-    text-decoration: none;
-    display: inline-block;
-    border-radius: 2px;
-    color: $color-primary;
-    border-bottom: 1px solid $color-primary-light;
-    padding: 3px 5px;
-    transition: all ease-in-out 0.2s;
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-    color: $color-white;
-    background-color: $color-primary;
-    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
-  }
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 1rem 0.8rem rgba(0, 0, 0, 0.2);
-    background-color: $color-primary-dark;
-  }
-}
-
-.btn2 {
-  &,
-  &:link,
-  &:visited {
-    display: inline-block;
-    padding: 1.4rem 4rem;
-    position: relative;
-    cursor: pointer;
-    background-color: transparent;
-    color: rgb(0, 0, 0);
-    // border: 1px solid rgb(7, 7, 7);
-    transition: color 0.1s ease, border 0.1s linear 0.3s;
-    z-index: 1;
-  }
-
-  &:hover {
-    color: rgb(255, 255, 255);
-    // background-color: black;
-    // border: 1px solid rgb(255, 255, 255);
-  }
-  &::before {
-    background-color: rgb(247, 248, 247);
-    position: absolute;
-    content: '';
-    height: 100%;
-    width: 100%;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    transition: height 0.5s ease;
-  }
-  &:hover::before {
-    height: 0%;
-  }
-  &::after {
-    background-color: rgb(2, 2, 2);
-    position: absolute;
-    content: '';
-    height: 100%;
-    width: 100%;
-    z-index: -1;
-    bottom: 0;
-    left: 0;
-    transition: height 0.5s ease;
-    height: 0%;
-  }
-  &:hover::after {
-    height: 100%;
-  }
-}
-
-.btn3 {
-  &,
-  &:link,
-  &:visited {
-    display: inline-block;
-    padding: 1.4rem 4rem;
-    position: relative;
-    cursor: pointer;
-    color: rgb(0, 0, 0);
-    // border: 1px solid rgb(255, 255, 255);
-
-    outline: none;
-
+    border-radius: 0.8rem;
+    color: white;
     background: linear-gradient(
       to right,
-      white 0%,
-      white 35%,
-
-      black 35%,
-      black 70%,
-      white 70%,
-      white 100%
+      rgb(230, 30, 77) 0%,
+      rgb(227, 28, 95) 50%,
+      rgb(215, 4, 102) 100%
     );
-
-    background-position: 300% 0%;
-    background-size: 301% 100%;
-    background-repeat: repeat;
-    transition: background-size 01s ease 0.5s, color 0s 0.8s ease;
-
-    // transition: background-position 1s ease 1s;
-
-    // background-position: 0% 0%;
-    // background-size: 900%;
   }
-  &:hover {
-    // transition: height 0.5s linear, width 0.5s linear;
+  &.primary02 {
+    padding: 0.7rem 1rem;
+    border: none;
+    border-radius: 0.8rem;
+
     color: white;
-    // background-color: rgb(5, 0, 0);
-    // background-position: 0% 100%;
-    //
-    background-size: 600% 600%;
+    background-color: #0a9e0a;
   }
-  &::before {
-    // content: none;
-    content: '';
-    position: absolute;
-    border-top: 1px solid black;
-    border-left: 1px solid black;
-    z-index: 2;
-    left: -1px;
-    top: -1px;
+  &.primary03 {
+    padding: 0.8rem 1.2rem;
 
-    opacity: 0;
-    height: 0%;
-    width: 0%;
-
-    transition: height 0.3s linear, width 0.3s linear, opacity 0s 0.29s;
+    border: none;
+    border-radius: 1rem;
+    color: white;
+    background: linear-gradient(to right, #0c332e, #0b2d29);
   }
 
-  &:hover::before {
-    width: calc(100% + 1px);
-    height: 100%;
-    opacity: 1;
-
-    transition: height 0.5s linear, width 0.5s linear;
+  &.stylish01 {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 1rem;
+    &.loading {
+      pointer-events: none;
+      background: rgb(255, 255, 255);
+    }
+    &:active {
+      background: #6c7c7a;
+      color: #1bc59b;
+    }
   }
-  &::after {
-    content: '';
-    position: absolute;
-    z-index: 2;
-    border-bottom: 1px solid black;
-    border-right: 1px solid black;
-    right: -1px;
-    bottom: -1px;
-
-    height: 0%;
-    width: 0%;
-    opacity: 0;
-
-    transition: height 0.3s linear, width 0.3s linear, opacity 0s 0.29s;
+  &.stylish02 {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 1rem;
+    color: white;
+    background: #eb2852;
+    &:active {
+      background: #b60407;
+    }
   }
-  &:hover::after {
-    width: calc(100% + 1px);
-    height: 100%;
-    opacity: 1;
+  &.stylish03 {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 1rem;
+    background: #a2f0a2;
+    &:active {
+      background: #33f801;
+    }
+  }
+  &.stylish04 {
+    //- TRANSPARENT STYLE
+    background: transparent;
+    border: none;
+    color: inherit;
+    filter: drop-shadow(0px 0px 24px rgb(2, 229, 245));
 
-    transition: height 0.5s linear, width 0.5s linear;
+    &.large-text {
+      font-size: 3rem;
+    }
+  }
+  &.stylish05 {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 1rem;
+    color: white;
+    background: #eb5628;
+    &:active {
+      background: #b60404;
+    }
+  }
+
+  &.stylish06 {
+    background-color: #fff;
+    border: 1px solid #d5d9d9;
+    border-radius: 8px;
+    box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
+    color: #0f1111;
+    cursor: pointer;
+    display: inline-block;
+    font-family: sans-serif;
+    font-size: 1.3rem;
+    padding: 0.5rem 1rem;
+    text-align: center;
+
+    &:hover {
+      background-color: #f7fafa;
+    }
+
+    &:focus {
+      border-color: #008296;
+      box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
+      outline: 0;
+    }
+  }
+  &.stylish07 {
+    padding: 0.5rem 1rem;
+
+    display: inline-block;
+    background-color: #107750;
+    color: white;
+
+    border-radius: 0.5rem;
+    // box-shadow: 0 2px 5px 0 rgba(213, 217, 217, 0.5);
+
+    font-family: sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.2rem;
+    text-align: center;
+
+    cursor: pointer;
+
+    transition: background-color 0.2s ease, letter-spacing 0.2s ease;
+
+    &:hover {
+      background-color: #0a5c3d;
+      letter-spacing: 0.3rem;
+    }
+
+    &:focus {
+      border-color: #008296;
+      box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
+      outline: 0;
+    }
+  }
+
+  //- ACTIONS HAVE MODIFIERS BASED ON TRAFFIC SIGNALS {STOP,WAIT,GO}
+  &.action01 {
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.8rem;
+    color: white;
+
+    &.wait {
+      background: orangered;
+    }
+    &.stop {
+      background: red;
+    }
+    &.go {
+      background: green;
+      &:disabled {
+        background: rgba(156, 247, 156, 0.473);
+        cursor: default;
+      }
+    }
+  }
+  &.action02 {
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.8rem;
+    color: white;
+    background: rgb(98, 98, 116);
+
+    &.wait {
+      background: rgb(15, 13, 133);
+    }
+    &.stop {
+      background: rgb(173, 7, 7);
+    }
+    &.go {
+      background: rgb(12, 136, 12);
+      &:disabled {
+        background: rgba(156, 247, 156, 0.473);
+        cursor: default;
+      }
+    }
+  }
+
+  &.sharp01 {
+    border: none;
+    padding: 0.5rem 1rem;
+    background: #0b2d29;
+    color: white;
+    font-size: 1rem;
+  }
+
+  /* CSS */
+
+  //- FOR ICONS
+  &.icon01 {
+    background-color: transparent;
+    border: none;
+    font-size: 2rem;
+  }
+  &.icon02 {
+    background-color: rgb(160, 172, 169);
+    border: none;
+    border-radius: 100%;
+    aspect-ratio: 1/1;
+    padding: 0.1rem 0.2rem;
+    color: rgb(209, 13, 13);
+    font-size: 2rem;
+    & svg {
+      margin: 0 auto;
+      vertical-align: text-bottom;
+    }
   }
 }

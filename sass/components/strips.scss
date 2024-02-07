@@ -1,17 +1,43 @@
-.icon-strip {
+.icon_strip {
   // a div
   display: flex;
   flex-direction: row;
+  justify-content: space-around;
   flex-wrap: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
 
   gap: 1.5rem;
 
-  & .icon-item {
-    // a figure tag
+  &--column {
+    flex-direction: column;
+  }
 
-    & img {
+  & .icon_item {
+    width: 6rem;
+
+    &.prioritized {
+      filter: grayscale(100%);
+
+      &--1 {
+        filter: grayscale(0);
+      }
+      &--2 {
+        filter: grayscale(25%);
+      }
+      &--3 {
+        filter: grayscale(50%);
+      }
+      &--4 {
+        filter: grayscale(75%);
+      }
+      &--5 {
+        filter: grayscale(100%);
+      }
+
+      &:hover {
+        filter: grayscale(0);
+      }
     }
   }
 }

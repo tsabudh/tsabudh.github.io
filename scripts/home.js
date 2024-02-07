@@ -23,21 +23,3 @@ const slides = document.getElementsByClassName('slide');
   });
 });
 
-//* Hero 1
-function getToKnowHimHandler() {
-  let getToKnowHimButton = document.getElementsByClassName('make-visible')[0];
-  if (deviceCode <= 2)
-    getToKnowHimButton.querySelector('button').classList.remove('hidden');
-
-  getToKnowHimButton.addEventListener('mouseover', event => {
-    document.getElementsByClassName('name')[0].classList.add('focused');
-  });
-
-  getToKnowHimButton.addEventListener('click', event => {
-    document
-      .getElementsByClassName('section--about')[0]
-      .scrollIntoView({ behavior: 'smooth' });
-  });
-}
-
-getToKnowHimHandler();

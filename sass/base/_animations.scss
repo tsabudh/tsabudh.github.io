@@ -161,7 +161,12 @@
 
   @for $i from 0 through $steps {
     #{percentage($i * (1/ $steps)) } {
-      clip: rect(random($text-glitch-height-number-only) + rem, $text-glitch-max-width, random($text-glitch-height-number-only) + rem, 0);
+      clip: rect(
+        random($text-glitch-height-number-only) + rem,
+        $text-glitch-max-width,
+        random($text-glitch-height-number-only) + rem,
+        0
+      );
     }
   }
 }
@@ -170,8 +175,27 @@
 
   @for $i from 0 through $steps {
     #{percentage($i * (1/ $steps)) } {
-      clip: rect(random($text-glitch-height-number-only) + rem, $text-glitch-max-width, random($text-glitch-height-number-only) + rem, 0);
+      clip: rect(
+        random($text-glitch-height-number-only) + rem,
+        $text-glitch-max-width,
+        random($text-glitch-height-number-only) + rem,
+        0
+      );
     }
   }
 }
 
+//- ANIMATION CLASSES
+
+.a-slide-from-top {
+  transform: translateY(-60vh);
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.08, 0.6, 0.26, 1), filter 0.5s ease,
+    opacity 0.5s ease;
+  filter: blur(20);
+  &.triggered {
+    transform: translateY(0);
+    filter: blur(0);
+    opacity: 1;
+  }
+}

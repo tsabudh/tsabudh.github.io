@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 
 <head>
-    <title>t.sabudh</title>
+    <title>t.sabudh | Sabudh Bahadur Thapa</title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Sabudh Bahadur Thapa">
+    <meta name="description" content="Sabudh Bahadur Thapa's portfolio ">
+    <meta name="keywords" content="tsabudh, sabudh, engineer, nepal ">
 
     <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
@@ -13,62 +17,42 @@
 
 </head>
 
-<body class="u-scrollbar-design-1">
+<body class="scrollbar-1">
 
-    <section class="hero1">
+    <section class="hero1" id="hero">
+
+        <fig class="floating_image">
+            <img src="/img/standing-picture.png" alt="Sabudh Bahadur Thapa" draggable="false">
+        </fig>
         <div class="wrapper">
-            <div id="tsabudh" class="username">
+            <p class="greeting">Hlw! I am <span class="highlighted">Sabudh Bahadur Thapa, </span></p>
+
+            <div id="maskingText" class="title">
                 <h1 class="red">
-                    <span class="fill">t.</span>
-                    <span class="mask">t.</span>
+                    <span class="white">a</span>
+                    <span class="fill">full-stack</span>
+                    <!-- <span class="mask">A full-stack</span> -->
                 </h1>
-                <h1 class="name">
-                    <span class="fill">sabudh</span>
-                    <span class="mask">sabudh</span>
+                <br>
+                <h1 class="to-mask">
+                    <span class="fill">web developer</span>
+                    <span class="mask">web developer.</span>
                 </h1>
             </div>
-            <div class="make-visible">
-                <button class="hidden btn btn3 btn3--animated ">Get to know him.</button>
-            </div>
+
         </div>
 
 
 
     </section>
+
     <main>
-
-        <section class="section section--about">
-            <div class="profile">
-                <figure>
-                    <img src="./img/profile-picture.jpg" alt="Sabudh Bahadur Thapa">
-                </figure>
-            </div>
-            <div class="description">
-                <h3>SABUDH BAHADUR THAPA</h3>
-                <p> A computer engineer with profession in full-stack development.</p>
-                <div class="links">
-                    <a class="link link--linkedin" href="https://www.linkedin.com/in/tsabudh/" target="_blank">
-                        <img src="./img/icon_linkedin.svg" alt="linked.com/in/tsabudh">
-                    </a>
-                    <a class="link link--github" href="https://github.com/tsabudh/" target="_blank">
-                        <img src="./img/icon_github.svg" alt="github.com/tsabudh">
-                    </a>
-                    <a class="link link--resume" href="/img/resume-2024.pdf" download="Sabudh Bahadur Thapa CV" target="_blank" title="Download CV">
-                        <img src="./img/icon_pdf.svg" alt="github.com/tsabudh">
-                    </a>
-                </div>
-            </div>
-        </section>
-
-
-
-
         <section class="section section--works ">
-            <h2 class="section-title">
-                <span>
+            <div class="section-title">
+                <h2 class="h2-primary--01">
                     My works
-                </span>
-            </h2>
+                </h2>
+            </div>
             <div class="works">
                 <!-- SHREE KRISHNA DAIRY -->
                 <div class="work">
@@ -82,42 +66,44 @@
 
                         <div class="work_description">
                             <p>This is for digital record keeping of a local dairy shop. This tool simplifies the process of logging transactions, customer information, and product inventory.
-                                The React application is deployed at Netlify while the server is maintained using Nginx at AWS EC2. 
+                            </p>
+                            <p>
+                                The React application is deployed at Netlify while the server is maintained using Nginx at AWS EC2.
                                 User data like profile picture is stored at AWS S3. Visit for hands on experience!
 
                             </p>
 
-                            <div class="tech-stack icon-strip">
+                            <div class="tech_stack icon_strip">
 
-                                <figure class="tech-logo icon-item">
+                                <figure class="tech_logo icon_item">
                                     <img src="./img/logo-react.svg" alt="React" title="React">
                                 </figure>
 
-                                <figure class="tech-logo icon-item">
+                                <figure class="tech_logo icon_item">
                                     <img src="./img/logo-sass.svg" alt="SASS" title="SASS">
                                 </figure>
 
-                                <figure class="tech-logo icon-item">
+                                <figure class="tech_logo icon_item">
                                     <img src="./img/logo-nodejs.svg" alt="Nodejs" title="Nodejs">
                                 </figure>
 
-                                <figure class="tech-logo icon-item">
+                                <figure class="tech_logo icon_item">
                                     <img src="./img/logo-mongodb.svg" alt="MongoDB" title="MongoDB">
                                 </figure>
 
-                                <figure class="tech-logo icon-item">
+                                <figure class="tech_logo icon_item">
                                     <img src="./img/logo-nginx.svg" alt="Nginx" title="Nginx">
                                 </figure>
-                                <figure class="tech-logo icon-item">
+                                <figure class="tech_logo icon_item">
                                     <img src="./img/logo-aws.svg" alt="AWS" title="AWS">
                                 </figure>
-                                <figure class="tech-logo icon-item">
+                                <figure class="tech_logo icon_item">
                                     <img src="./img/logo-leaflet.svg" alt="Leaflet.js" title="Leaflet.js">
                                 </figure>
 
 
                             </div>
-                            <a class="btn btn2" href="https://shreekrishnadairy.netlify.app/" target="_blank">Visit</a>
+                            <a class="stylish07" href="https://shreekrishnadairy.netlify.app/" target="_blank">Visit</a>
 
                         </div>
                         <div class="slide_container slide_container-type-1">
@@ -160,33 +146,35 @@
 
                         <div class="work_description">
                             <p>Embark on hassle-free adventures with our group tour booking app! Explore predefined routes with expert guides, creating unforgettable moments with like-minded travelers.
-                                Discover the world effortlessly—join the journey now! 
+                                Discover the world effortlessly—join the journey now!
+                            </p>
+                            <p>
                                 This is built using Node.js with templates using pug. It is server-side rendered website deployed at Netlify Serverless.
                             </p>
 
-                            <div class="tech-stack icon-strip">
-                                <figure class="tech-logo icon-item">
+                            <div class="tech_stack icon_strip">
+                                <figure class="tech_logo icon_item">
                                     <img src="./img/logo-nodejs.svg" alt="Node.js" title="Node.js">
                                 </figure>
-                                <figure class="tech-logo icon-item">
+                                <figure class="tech_logo icon_item">
                                     <img src="./img/logo-mongodb.svg" alt="MongoDB" title="MongoDB">
                                 </figure>
-                                <figure class="tech-logo icon-item">
+                                <figure class="tech_logo icon_item">
                                     <img src="./img/logo-javascript.svg" alt="Javascript" title="Javascript">
                                 </figure>
-                                <figure class="tech-logo icon-item">
+                                <figure class="tech_logo icon_item">
                                     <img src="./img/logo-html.svg" alt="HTML" title="HTML">
                                 </figure>
-                                <figure class="tech-logo icon-item">
+                                <figure class="tech_logo icon_item">
                                     <img src="./img/logo-sass.svg" alt="SASS" title="SASS">
                                 </figure>
-                                <figure class="tech-logo icon-item">
+                                <figure class="tech_logo icon_item">
                                     <img src="./img/logo-pug.svg" alt="Pug" title="Pug">
                                 </figure>
 
                             </div>
 
-                            <a class="btn btn2" href="https://natours-tsabudh.netlify.app/.netlify/functions/api" target="_blank">Visit</a>
+                            <a class="stylish07" href="https://natours-tsabudh.netlify.app/.netlify/functions/api" target="_blank">Visit</a>
 
                         </div>
                         <div class="slide_container slide_container-type-1">
@@ -226,19 +214,24 @@
                     <div class="wrapper">
 
                         <div class="work_description">
-                            <p>Explore the breathtaking landscapes of Nepal. Immerse yourself in the beauty of nature that capture the essence of Nepal's diverse terrain. From majestic mountains to serene valleys, Visit-Nepal invites you on a visual journey, showcasing the country's rich biodiversity and cultural treasures. Experience the
-                                wonder of Nepal from the comfort of your screen, and let Visit-Nepal be your window to the natural wonders of this Himalayan paradise.
+                            <p>
+                                Immerse yourself in the beauty of Nepal that capture the essence of world's diverse terrain. From majestic mountains to serene valleys, Visit-Nepal invites you on a visual journey, showcasing the country's rich biodiversity and cultural treasures.
                             </p>
-                            <div class="tech-stack icon-strip">
-                                <figure class="tech-logo icon-item">
+                            <p>
+                                Experience the wonder of Nepal from the comfort of your screen, and let Visit-Nepal be your window to the natural wonders of this Himalayan paradise.
+                            </p>
+                            <p>Built using HTML & SCSS only.</p>
+
+                            <div class="tech_stack icon_strip">
+                                <figure class="tech_logo icon_item">
                                     <img src="./img/logo-html.svg" alt="HTML" title="HTML">
                                 </figure>
-                                <figure class="tech-logo icon-item">
+                                <figure class="tech_logo icon_item">
                                     <img src="./img/logo-sass.svg" alt="SASS" title="SASS">
                                 </figure>
 
                             </div>
-                            <a class="btn btn2" href="https://tsabudh.com.np/visit-nepal" target="_blank">Visit</a>
+                            <a class="stylish07" href="https://tsabudh.com.np/visit-nepal" target="_blank">Visit</a>
                         </div>
                         <div class="slide_container slide_container-type-1">
                             <div class="slider">
@@ -269,28 +262,107 @@
 
                 </div>
 
-
-
-
-
-
             </div>
 
         </section>
 
+      
+
+        <section class="section section--about">
+            <div class="profile">
+                <figure>
+                    <img draggable="false" src="./img/profile-picture-1.png" alt="Sabudh Bahadur Thapa">
+                </figure>
+            </div>
+            <div class="description">
+                <h3></h3>
+                <div class="title">
+                    <h2 class="h2-primary--01">ABOUT</h2>
+                    <!-- <h3>सबुध बहादुर थापा</h3> -->
+
+                </div>
+                <div class="intro">
+                    <p>
+                        Hello! I'm <span class="name">Sabudh Bahadur Thapa </span>, a passionate computer engineer specializing in full-stack web development. With a foundation in the MERN (MongoDB, Express.js, React.js, Node.js) stack, I thrive on creating dynamic and intuitive web experiences. </p>
+                    <p>
+                        Outside of coding, I enjoy staying updated on industry trends, exploring new frameworks, and collaborating with talented individuals to bring ideas to life. Let's connect and explore how we can collaborate on your next digital venture!
+                    </p>
+
+                </div>
+                <div class="links">
+                    <a class="link link--linkedin" href="https://www.linkedin.com/in/tsabudh/" target="_blank">
+                        <img src="./img/icon_linkedin.svg" alt="linked.com/in/tsabudh">
+                    </a>
+                    <a class="link link--github" href="https://github.com/tsabudh/" target="_blank">
+                        <img src="./img/icon_github.svg" alt="github.com/tsabudh">
+                    </a>
+                    <a class="link link--resume" href="/img/resume-2024.pdf" download="Sabudh Bahadur Thapa CV" target="_blank" title="Download CV">
+                        <img src="./img/icon_pdf.svg" alt="github.com/tsabudh">
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- <section class="section section--stack-belt">
+            <div class="icon_strip">
+                <figure class="icon_item prioritized prioritized--4">
+                    <img src="/img/logo-mongodb.svg" alt="MongoDB">
+                </figure>
+                <figure class="icon_item prioritized prioritized--4">
+                    <img src="/img/logo-express.svg" alt="Express">
+                </figure>
+                <figure class="icon_item prioritized prioritized--4">
+                    <img src="/img/logo-react.svg" alt="React">
+                </figure>
+                <figure class="icon_item prioritized prioritized--4">
+                    <img src="/img/logo-nodejs.svg" alt="Nodejs">
+                </figure>
+                <figure class="icon_item prioritized prioritized--4">
+                    <img src="/img/logo-redis.svg" alt="Redis">
+                </figure>
+                <figure class="icon_item prioritized prioritized--4">
+                    <img src="/img/logo-nginx.svg" alt="Nginx">
+                </figure>
+                <figure class="icon_item prioritized prioritized--4">
+                    <img src="/img/logo-aws.svg" alt="AWS">
+                </figure>
+                <figure class="icon_item prioritized prioritized--4">
+                    <img src="/img/logo-sass.svg" alt="SASS">
+                </figure>
+                <figure class="icon_item prioritized prioritized--4">
+                    <img src="/img/logo-javascript.svg" alt="Javascript">
+                </figure>
+                <figure class="icon_item prioritized prioritized--4">
+                    <img src="/img/logo-typescript.svg" alt="Typescript">
+                </figure>
+                <figure class="icon_item prioritized prioritized--4">
+                    <img src="/img/logo-leaflet.svg" alt="Leaflet">
+                </figure>
+                <figure class="icon_item prioritized prioritized--4">
+                    <img src="/img/logo-html.svg" alt="HTML">
+                </figure>
+                <figure class="icon_item prioritized prioritized--4">
+                    <img src="/img/logo-ejs.svg" alt="EJS">
+                </figure>
+                <figure class="icon_item prioritized prioritized--4">
+                    <img src="/img/logo-pug.svg" alt="Pug">
+                </figure>
+            </div>
+        </section> -->
 
     </main>
-    <!-- <section class="section section--footer">
-        <a href="./img/natours-1.png" download="Sabudh Bahadur Thapa Resume">
-            Download Resume
-            
-            <figure class="u-img-logo-small">
+    <section class="section section--footer">
+        <div class="section-title">
 
-                <img src="/img/logo-pdf.svg" alt="PDF icon" title="Download Resume">
-            </figure>
-        </a>
+            <h2 class="h2-primary--01">Have an idea?</h2>
+        </div>
+        <div class="">
+            <p>Drop me an email:</p>
+            <p>tsabudh@gmail.com</p>
+        </div>
 
-    </section> -->
+    </section>
+
 
 
 

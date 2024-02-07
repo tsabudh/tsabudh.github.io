@@ -1,15 +1,30 @@
 .hero1 {
   position: relative;
   background: black;
+  background: #dadcde;
   height: 100vh;
   min-height: fit-content;
   width: 100%;
-  background-color: #2d3436;
-  background-image: linear-gradient(315deg, #1a1c1d 0%, #000000 74%);
-  // cursor: url('../img/dotCursor.svg') 5 5, pointer;
-  // overflow-y: auto;
+  overflow: hidden;
+  // background-color: #2d3436;
+  // background-image: linear-gradient(315deg, #1a1c1d 0%, #000000 74%);
+
   font-variant: no-common-ligatures proportional-nums;
   // overflow-x: hidden;
+
+  & .floating_image {
+    position: absolute;
+    left: 0;
+    height: 100%;
+
+    filter: grayscale(76%);
+
+    // transform: translateX(-50%);
+
+    & img {
+      height: 100%;
+    }
+  }
 
   & .wrapper {
     position: absolute;
@@ -18,16 +33,32 @@
     translate: -50% -30%;
     text-align: center;
 
-    & .username {
-      @include fluidFont(5rem, 7.5rem);
+    & .greeting {
+      margin-bottom: 3rem;
+      text-align: left;
+      color: white;
+
+      & .highlighted {
+        color: gray;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    & .title {
+      @include fluidFont(3rem, 8rem);
+
       color: white;
       cursor: none;
-      white-space: nowrap;
-      padding-inline: 15px;
 
-      & .name {
+      padding-inline: 15px;
+      letter-spacing: 4px;
+      white-space: nowrap;
+      line-height: 86%;
+
+      & .to-mask {
         position: relative;
         display: inline;
+        margin-left: 30%;
 
         & .mask {
           -webkit-text-fill-color: transparent;
@@ -36,30 +67,22 @@
           background-size: 100%;
           // transition: clip-path 0.1s ease;
           clip-path: circle(var(--clip-size) at var(--clip-position-sabudh));
-          background-image: linear-gradient(98.3deg, red, red);
+          // background-image: linear-gradient(98.3deg, red, red);
+          background-image: linear-gradient(98.3deg, #ff0022, #ff0022);
         }
 
         & .fill {
           position: absolute;
+          // filter: drop-shadow(2px 3px 3px #a8a8a8);
         }
       }
       & .red {
         position: relative;
-        display: inline;
+        display: inline-block;
         color: red;
 
-        & .mask {
-          -webkit-text-fill-color: transparent;
-          -webkit-background-clip: text;
-          background-clip: text;
-          background-size: 100%;
-
-          clip-path: circle(var(--clip-size) at var(--clip-position-t));
-          background-image: linear-gradient(98.3deg, white, white);
-        }
-
-        & .fill {
-          position: absolute;
+        & .white {
+          color: white;
         }
       }
       & .focused {
