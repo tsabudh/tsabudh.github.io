@@ -1,29 +1,23 @@
 .section--works {
   min-height: 50vh;
-  padding-inline: 2rem;
+  // padding-inline: 2rem;
 
-  --background-color-1: #e1ecf1;
-  --background-color-2: #acc8e5;
+  // background: #dadcde;
+  // background-image: linear-gradient(to bottom, transparent 99%, #ffffff98 100%),
+  //   linear-gradient(to right, #dadcde 99%, #ffffff98 100%);
+  // background-size: 100px 100px, 100px 100px;
+  // background-attachment: fixed;
+  // background-color: #b3d8bb;
+  background-color: #8abbb8;
 
-  & .section-title {
-    color: white;
-    @include fluidFont(3rem, 8rem);
+  color: #5c5e5a;
+  color: white;
 
-    & span {
-      border-bottom: 1px solid red;
-    }
+  & h2 {
+    display: inline-block;
+    border-bottom: 1px solid #5c5e5a;
+    color: #5c5e5a;
   }
-  background: #dceaf0; /* fallback for old browsers */
-  background: -webkit-linear-gradient(
-    to left,
-    var(--background-color-1),
-    var(--background-color-2)
-  ); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(
-    to left,
-    var(--background-color-1),
-    var(--background-color-2)
-  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
   & .works {
     display: flex;
@@ -31,7 +25,6 @@
     justify-content: flex-start;
     align-items: stretch;
     flex-wrap: wrap;
-    gap: 1rem;
 
     & .work {
       position: relative;
@@ -43,12 +36,20 @@
       display: flex;
       flex-direction: column;
       flex: 0 0 16rem;
-      padding: 5rem 0.5rem;
+      padding: 5rem 1.5rem;
 
-      border-top: 1px solid #7dd1f3;
+      // border-top: 1px solid #e24110;
       align-items: stretch;
 
       transition: border-color 0.5s ease-in, color 0.4s ease;
+
+      &:nth-child(2n - 1) {
+        background-color: #8abbb8;
+      }
+      &:nth-child(2n) {
+        background-color: #44403d;
+        background-color: #92a87c;
+      }
 
       @include respond(tab-port) {
         padding: 2.5rem 0.5rem;
@@ -57,11 +58,28 @@
       &:first-child {
         border-top: none;
       }
+
+      &_title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: left;
+        margin-block: 0.5rem;
+        min-height: 2.5lh;
+        // border-bottom: 2px solid #12242b;
+        padding-inline: 0.5rem;
+        & h3 {
+          font-weight: 400;
+          letter-spacing: 1px;
+          @include fluidFont(2rem, 5rem);
+        }
+      }
+
       & .slide_container {
         min-height: 5rem;
         max-width: 60%;
         overflow: hidden;
-        flex: 2.5;
+        flex-basis: 60%;
         padding-bottom: 3rem;
 
         @include respond(tab-port) {
@@ -78,19 +96,7 @@
           }
         }
       }
-      &_title {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        text-align: left;
-        margin-block: 0.5rem;
-        min-height: 2.5lh;
-        // border-bottom: 2px solid #12242b;
-        padding-inline: 0.5rem;
-        & h3 {
-          @include fluidFont(2rem, 5rem);
-        }
-      }
+
       & .wrapper {
         display: flex;
         flex-direction: row;
@@ -104,18 +110,20 @@
       &_description {
         padding-inline: 0.5rem;
         align-self: center;
-        flex: 1;
+        flex-basis: 40%;
+        max-width: 40%;
 
         // display: flex;
         // flex-direction: column;
         // gap: 3rem;
-        color: #12242b;
+        // color: #12242b;
         text-align: center;
 
-        @include fluidFont(1.8rem, 2.5rem);
+        @include fluidFont(1.8rem, 2rem);
 
         @include respond(tab-port) {
           margin-top: 1.5rem;
+          max-width: 100%;
         }
         & p {
           text-align: left;
@@ -124,10 +132,11 @@
         & a {
         }
 
-        & .tech-stack {
+        & .tech_stack {
           // border: 1px solid red;
+          justify-content: flex-start;
           margin-block: 1.5rem;
-          & .tech-logo {
+          & .tech_logo {
             width: 4rem;
             @include respond(tab-port) {
               width: 3rem;
