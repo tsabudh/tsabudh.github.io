@@ -36,14 +36,11 @@
   // background-image: linear-gradient(to right, green, aqua);
 }
 
-
 .section {
-  padding-block: 3rem;
+  // padding-block: 3rem;
 
-  &-title {
-    margin-block: 3rem;
-    text-transform: uppercase;
-    color: rgb(61, 61, 61);
-    font-weight: 300;
+  &--stack-belt,
+  &--works {
+    padding-block: 3rem;
   }
 }
