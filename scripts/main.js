@@ -1,15 +1,14 @@
 import "./global.js";
 
-import "./animations.js";
+// import "./animations.js";
 import "./carousel.js";
 import "./dot.js";
 
 import "./home.js";
-import "./locomotive.js";
+// import "./locomotive.js";
 
-import "./tracker.js";
+// import "./tracker.js";
 import "./slider.js";
-import "./work-skd.js";
 
 import "./mask.js";
-import "./modal.js";
+// import "./modal.js";
