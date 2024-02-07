@@ -12,6 +12,10 @@
   background-color: #f1f3f3;
   color: #2e7799;
 
+  @include respond(phone) {
+    flex-direction: column-reverse;
+  }
+
   & .profile {
     display: flex;
     flex-direction: row;
@@ -19,10 +23,13 @@
 
     align-self: flex-end;
     width: fit-content;
-    @include fluid-reverse("flex-basis", 40%, 70%);
-
     overflow: hidden;
 
+    @include fluid-reverse("flex-basis", 40%, 70%);
+
+    @include respond(phone) {
+      flex-basis: 100%;
+    }
     & figure {
       min-width: 20rem;
       max-width: 40rem;
@@ -43,13 +50,18 @@
     justify-content: flex-start;
     align-self: stretch;
     width: 40%;
-    flex-basis: 40%;
     color: #e1e1e1;
     color: #5c5e5a;
     z-index: 2;
     margin-block: 8%;
     margin-inline: 5%;
 
+    flex-basis: 40%;
+
+    @include respond(phone) {
+      flex-basis: 100%;
+      width: 100%;
+    }
 
     & .intro {
       flex-grow: 2;
