@@ -39,8 +39,11 @@
       color: white;
 
       & .highlighted {
+        display: inline-block;
         color: gray;
         letter-spacing: 0.5px;
+        font-size: 1.6rem;
+        font-weight: 400;
       }
     }
 
