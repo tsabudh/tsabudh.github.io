@@ -2,6 +2,7 @@
   position: relative;
   background: black;
   background: #dadcde;
+  background: #fff;
   height: 100vh;
   min-height: fit-content;
   width: 100%;
@@ -12,13 +13,22 @@
   font-variant: no-common-ligatures proportional-nums;
   // overflow-x: hidden;
 
+  & .contact-button {
+    position: absolute;
+    top: 2.5rem;
+    right: 15rem;
+    z-index: 100;
+  }
+
   & .floating_image {
     position: absolute;
     left: 0;
     height: 100%;
+    user-select: none;
+    filter: drop-shadow(3px 3px 4px white) drop-shadow(-3px -3px 4px white)
+      drop-shadow(4px 4px 14px rgb(206, 205, 205));
 
-    filter: grayscale(76%);
-
+    // filter: grayscale(76%);
     // transform: translateX(-50%);
 
     & img {
@@ -36,7 +46,7 @@
     & .greeting {
       margin-bottom: 3rem;
       text-align: left;
-      color: white;
+      color: #dadcde;
 
       & .highlighted {
         display: inline-block;
@@ -50,7 +60,7 @@
     & .title {
       @include fluidFont(3rem, 8rem);
 
-      color: white;
+      color: #dadcde;
       cursor: none;
 
       padding-inline: 15px;

@@ -44,3 +44,14 @@
     padding-block: 3rem;
   }
 }
+
+.hamburger-menu {
+  position: absolute;
+  top: 2.5rem;
+  right: 5rem;
+  z-index: 100;
+
+  & svg {
+    width: 2.5rem;
+  }
+}

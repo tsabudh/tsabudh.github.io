@@ -41,3 +41,8 @@ a {
     color: inherit;
   }
 }
+
+::selection{
+  color: white;
+  background-color: black;
+}

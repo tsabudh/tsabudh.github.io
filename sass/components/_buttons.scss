@@ -4,24 +4,29 @@ a {
   text-align: center;
 
   &.primary01 {
-    padding: 0.7rem 1rem;
+    padding: 1rem 1.6rem;
     border: none;
-    border-radius: 0.8rem;
+    border-radius: 3rem;
     color: white;
-    background: linear-gradient(
-      to right,
-      rgb(230, 30, 77) 0%,
-      rgb(227, 28, 95) 50%,
-      rgb(215, 4, 102) 100%
-    );
-  }
-  &.primary02 {
-    padding: 0.7rem 1rem;
-    border: none;
-    border-radius: 0.8rem;
+    background-color: #d10236;
+    background-color: #d00000;
+    text-transform: uppercase;
 
-    color: white;
-    background-color: #0a9e0a;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  &.primary02 {
+    padding: 0.5rem 0.6rem;
+    border: none;
+    border-radius: 3rem;
+    color: #d10236;
+    background-color: #d10236;
+    background-color: #dadcde;
+    text-transform: uppercase;
+
+    font-weight: 600;
+    letter-spacing: 0.5px;
   }
   &.primary03 {
     padding: 0.8rem 1.2rem;
