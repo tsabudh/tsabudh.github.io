@@ -14,3 +14,9 @@ function isInViewport(element) {
     rect.right <= (window.innerWidth || html.clientWidth)
   );
 }
+
+export function copyText(e) {
+  console.log("Running function copyText");
+  let text = e.target.textContent;
+  window.navigator.clipboard.writeText(text);
+}

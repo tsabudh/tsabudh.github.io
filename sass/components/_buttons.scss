@@ -18,15 +18,21 @@ a {
 
   &.primary02 {
     padding: 0.5rem 0.6rem;
-    border: none;
+    border: 1px solid transparent;
     border-radius: 3rem;
-    color: #d10236;
+    color: #iwd10236;
     background-color: #d10236;
     background-color: #dadcde;
     text-transform: uppercase;
 
     font-weight: 600;
     letter-spacing: 0.5px;
+    
+    transition: border-color 0.2s ease;
+
+    &:hover {
+      border-color: red;
+    }
   }
   &.primary03 {
     padding: 0.8rem 1.2rem;

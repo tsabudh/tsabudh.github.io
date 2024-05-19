@@ -1,5 +1,5 @@
-
-import { deviceCode } from './global.js';
+import { deviceCode } from "./global.js";
+import { copyText } from "./utils.js";
 
 //PERSONAL AND PROFESSIONAL CHECKBOX WITH TARGET TO RESPECTIVE IDS
 const goToLink = function (id) {
@@ -11,15 +11,23 @@ const goToLink = function (id) {
 };
 
 //SECTION MEMORY // EXPANDING CARDS SCRIPT
-const slides = document.getElementsByClassName('slide');
+const slides = document.getElementsByClassName("slide");
 
-[...slides].forEach(slide => {
-  slide.addEventListener('click', function () {
+[...slides].forEach((slide) => {
+  slide.addEventListener("click", function () {
     [...slides].forEach(function (slide) {
-      slide.classList.remove('active');
+      slide.classList.remove("active");
     });
     // [...slides].classList.remove("active"); // WON'T WORK, "array of html elements as a whole" do not have classList, each element has classList
-    slide.classList.add('active');
+    slide.classList.add("active");
   });
 });
 
+let footerEmail = document.getElementById("footerEmail");
+
+if(footerEmail){
+ footerEmail.addEventListener("dragend", (e) => {
+    console.log("drag end");
+    copyText(e);
+  });
+}

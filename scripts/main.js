@@ -4,6 +4,10 @@ import "./global.js";
 import "./carousel.js";
 import "./dot.js";
 
+import  "./utils.js";
+
+// window.copyText = copyText;
+
 import "./home.js";
 // import "./locomotive.js";
 

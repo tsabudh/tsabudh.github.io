@@ -1,4 +1,6 @@
-@use "./functions" as *;
+@use "sass:math";
+@use "../abstract/variables" as *;
+@use "../abstract/functions" as *;
 
 @mixin clearfix {
   &::after {
@@ -24,97 +26,126 @@
   transform: translate(-50%, -50%);
 }
 
-//Media query manager
-/* 
-
-0-600px     phone
-600-900px   tab-port
-900-1200px  tab-land
-1200-1800px desktop where our normal styles apply
-1800px+     large screens
-
- HOW @CONTENT IS USED
-@ mixin respond-phone {
-  @media (max-width: 600px) {
-    @content;
-  }
-}
- @include respond-phone {
-  font-size: 50%;
-}
-
-Breakpoint argument choices
-:phone
-:tab-port
-:tab-land
-:big-screen
-
-*/
-
-$phone-size: 37.5em; // sm
-$tab-port-size: 56.25em; // md
+$phone-size: 26.875em; // sm
+$tab-port-size: 52.125em; // md
 $tab-land-size: 75em; // lg
-$big-screen-size: 112.5em; // xl
+$desktop-size: 87.5em; //xl
+$big-screen-size: 120em; // xxl
+
+// $phone-size: 430px; // sm
+// $tab-port-size: 834px; // md
+// $tab-land-size: 1200px; // lg
+// $desktop-size: 1400px; //xl
+// $big-screen-size: 1920px; // xxl
 
 @mixin respond($breakpoint) {
   // 1em =16px
   //In media queries 1rem or 1em is defined by browser
 
   @if $breakpoint == phone {
-    @media (max-width: 37.5em) {
+    @media (max-width: $phone-size) {
       // 600 px / 16 px = 37.5
       @content;
     }
   }
   @if $breakpoint == tab-port {
     //900px
-    @media (max-width: 56.25em) {
+    @media (max-width: $tab-port-size) {
       @content;
     }
   }
   @if $breakpoint == tab-land {
     //1200px
-    @media (max-width: 75em) {
+    @media (max-width: $tab-land-size) {
+      @content;
+    }
+  }
+  @if $breakpoint == desktop {
+    //1200px
+    @media (max-width: $desktop-size) {
       @content;
     }
   }
   @if $breakpoint == big-screen {
-    @media (min-width: 112.5em) {
+    @media (min-width: $big-screen-size) {
       @content;
     }
   }
 }
 
-@mixin fluidFont($min-size, $max-size) {
-  font-size: $max-size;
-  font-size: calc(
-    #{$min-size} + (
-        #{strip-unit(
-            $number: (
-              $max-size - $min-size,
-            )
-          )}
-      ) * ((100vw - #{$phone-size}) /
-          (#{strip-unit($tab-land-size + $phone-size)}))
-  );
+@mixin fluid($property, $min-property-size, $max-property-size) {
+  $min-screen-size: 43rem;
+  $max-screen-size: 192rem;
+  #{$property}: $max-property-size;
+
+  @media screen and (max-width: 120em) {
+    #{$property}: calc(
+      #{$min-property-size} + (
+          strip-unit($max-property-size - $min-property-size)
+        ) * ((100vw - #{$min-screen-size}) / #{strip-unit(
+              $max-screen-size - $min-screen-size
+            )})
+    );
+  }
+  @media screen and (max-width: 26.875em) {
+    #{$property}: $min-property-size;
+  }
+
+  @media screen and (min-width: 120em) {
+    #{$property}: $max-property-size;
+  }
 }
 
-@mixin fluidFont($min-size, $max-size) {
-  font-size: $max-size;
-  font-size: calc(
-    #{$min-size} + (#{strip-unit($max-size - $min-size)}) * (
-        100vw - #{$phone-size}
-      ) / (#{strip-unit($tab-land-size + $phone-size)})
-  );
+@mixin fluidFont($min-property-size, $max-property-size) {
+  $min-screen-size: 43rem;
+  $max-screen-size: 192rem;
+ font-size: $max-property-size;
+
+  @media screen and (max-width: 120em) {
+   font-size: calc(
+      #{$min-property-size} + (
+          strip-unit($max-property-size - $min-property-size)
+        ) * ((100vw - #{$min-screen-size}) / #{strip-unit(
+              $max-screen-size - $min-screen-size
+            )})
+    );
+  }
+  @media screen and (max-width: 26.875em) {
+   font-size: $min-property-size;
+  }
+
+  @media screen and (min-width: 120em) {
+   font-size: $max-property-size;
+  }
 }
 
-@mixin fluid($property, $min-size, $max-size) {
-  #{$property}: $max-size;
-  #{$property}: calc(
-    #{$min-size} + (#{strip-unit($max-size - $min-size)}) * (
-        100vw - #{$phone-size}
-      ) / (#{strip-unit($tab-land-size + $phone-size)})
-  );
+@mixin fluidManual(
+  $property,
+  $min-property-size,
+  $max-property-size,
+  $min-screen-size,
+  $max-screen-size
+) {
+  #{$property}: $max-property-size;
+
+  #{$property}: $max-property-size;
+
+  @media screen and (max-width: $max-screen-size) {
+    #{$property}: calc(
+      #{$min-property-size} + (
+          strip-unit($max-property-size - $min-property-size)
+        ) * ((100vw - #{$min-screen-size}) / #{strip-unit(
+              $max-screen-size - $min-screen-size
+            )})
+    );
+  }
+  @media screen and (max-width: $min-screen-size) {
+    #{$property}: $min-property-size;
+  }
+
+  @media screen and (min-width: $max-screen-size) {
+    #{$property}: $max-property-size;
+  }
 }
 
 @mixin fluid-reverse($property, $min-size, $max-size) {

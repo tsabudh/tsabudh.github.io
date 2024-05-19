@@ -7,19 +7,26 @@ let maskingText = document.getElementById("maskingText") || document.body;
 let cursorOnHeroPage = true;
 
 //- Setting event listeners when cursor enters or leaves hero page
-heroPage.addEventListener("mouseenter", () => {
-  cursorOnHeroPage = true;
-});
-heroPage.addEventListener("mouseleave", () => {
-  cursorOnHeroPage = false;
-});
+if (heroPage) {
+  heroPage.addEventListener("mouseenter", () => {
+    cursorOnHeroPage = true;
+  });
+  heroPage.addEventListener("mouseleave", () => {
+    cursorOnHeroPage = false;
+  });
+}
 
 function clipMask() {
   let { left, top } = dotEl.getBoundingClientRect();
+  let toMaskLeft, toMaskTop;
 
-  let { left: toMaskLeft, top: toMaskTop } = maskingText
-    .getElementsByClassName("to-mask")[0]
-    .getBoundingClientRect();
+  const boundingRect = maskingText
+    ?.getElementsByClassName("to-mask")[0]
+    ?.getBoundingClientRect();
+
+  if (boundingRect) {
+    ({ left: toMaskLeft, top: toMaskTop } = boundingRect);
+  }
 
   rootEl.style.setProperty(
     "--clip-position-sabudh",
@@ -43,12 +50,14 @@ function onMouseLeaveMaskingText(e) {
   dotEl.style.background = null;
 }
 
-maskingText
-  .getElementsByClassName("to-mask")[0]
-  .addEventListener("mouseover", onMouseOverMaskingText);
-maskingText
-  .getElementsByClassName("to-mask")[0]
-  .addEventListener("mouseleave", onMouseLeaveMaskingText);
+if (maskingText) {
+  maskingText
+    .getElementsByClassName("to-mask")[0]
+    ?.addEventListener("mouseover", onMouseOverMaskingText);
+  maskingText
+    .getElementsByClassName("to-mask")[0]
+    ?.addEventListener("mouseleave", onMouseLeaveMaskingText);
+}
 
 function loop() {
   cursorOnHeroPage == true
