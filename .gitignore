@@ -1,3 +1,5 @@
 .vscode/
 .prettierrc
 bs-config.js
+
+node_modules
