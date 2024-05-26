@@ -44,6 +44,8 @@
   }
 }
 
+@property {
+}
 .hamburger-menu {
   position: absolute;
   position: fixed;
@@ -51,6 +53,80 @@
   right: 5rem;
   z-index: 100;
 
+  min-height: 4rem;
+  min-width: 4rem;
+
+  padding: 0.2rem;
+  aspect-ratio: 1;
+  // border: 1px solid transparent;
+  border-radius: 3rem;
+
+  // background-color: #d10236;
+  // background-color: #dadcde;
+  // background: linear-gradient(to left, pink, green);
+  // background: conic-gradient(transparent 60deg, pink 310deg);
+  // background-size: 120%;
+  // background-position: 0 0;
+  background-clip: border-box;
+  text-transform: uppercase;
+  background-repeat: no-repeat;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  // box-sizing: border-box;
+  background-color: cadetblue;
+  transition: border-color 0.2s ease, background 1s ease;
+
+  border-radius: 50%;
+
+  &:hover {
+    border-color: red;
+    // background: conic-gradient(transparent 60deg, pink 310deg);
+    // box-shadow: 3px 3px 0 rgb(27, 23, 23);
+    // border-image: linear-gradient(to left, red, blue);
+  }
+  & > div {
+    width: 100%;
+    height: 100%;
+  }
+
+  &_border {
+    display: block;
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+    position: absolute;
+    inset: 0;
+
+    transition: width 0.5s ease;
+    &--top {
+      border-top: 2px solid red;
+      width: 0%;
+      &:hover{
+        width: 100%;
+      }
+    }
+    &--right {
+      border-right: 2px solid rgb(21, 255, 0);
+      width: 100%;
+      &:hover{
+
+      }
+    }
+    &--bottom {
+      border-bottom: 2px solid rgb(0, 38, 255);
+      width: 0%;
+      &:hover{
+
+      }
+    }
+    &--left {
+      border-left: 2px solid rgb(247, 0, 255);
+      width: 100%;
+      &:hover{
+
+      }
+    }
+  }
   & svg {
     width: 2.5rem;
   }

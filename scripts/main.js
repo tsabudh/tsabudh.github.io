@@ -4,7 +4,7 @@ import "./global.js";
 import "./carousel.js";
 import "./dot.js";
 
-import  "./utils.js";
+import "./utils.js";
 
 // window.copyText = copyText;
 

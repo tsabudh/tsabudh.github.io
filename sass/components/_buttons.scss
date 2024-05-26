@@ -20,18 +20,19 @@ a {
     padding: 0.5rem 0.6rem;
     border: 1px solid transparent;
     border-radius: 3rem;
-    color: #iwd10236;
+
     background-color: #d10236;
     background-color: #dadcde;
     text-transform: uppercase;
 
     font-weight: 600;
     letter-spacing: 0.5px;
-    
+
     transition: border-color 0.2s ease;
 
     &:hover {
-      border-color: red;
+      // border-color: red;
+      // border-image: linear-gradient(to left, red, blue);
     }
   }
   &.primary03 {
