@@ -1,0 +1,60 @@
+@use "/src/scss/abstract/variables" as vars;
+@use "/src/scss/abstract/mixins" as mixins;
+
+.navbar {
+  padding: 0 0.6rem;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  width: 100%;
+
+  background: #{vars.$c-gray-100};
+  background: linear-gradient(to bottom, vars.$c-gray-300);
+
+  & nav {
+    & .nav-menu {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      list-style-type: none;
+
+      & .nav-link {
+        text-transform: uppercase;
+        padding: 0.4rem 0.8rem;
+        display: inline-block;
+        border: 1px solid transparent;
+        transition: border-color 1s ease;
+
+        &.inactive {
+          // color: gray;
+          box-sizing: border-box;
+        }
+        &.active {
+          box-sizing: border-box;
+          // border-color: black;
+          // transition: border-color 0s ease;
+        }
+
+        &.pending {
+          // border-color: red;
+          border-right: none;
+          border-left: none;
+        }
+      }
+
+      & .highlighter {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        height: 100%;
+        border-bottom: 1px solid vars.$c-blue-fair-500;
+
+        &.on-move {
+          border-left-color: transparent;
+          border-right-color: transparent☻;
+        }
+      }
+    }
+  }
+}
