@@ -18,63 +18,17 @@ function HomeSectionHero() {
   let anchorFlagToAddress: EventListener;
   let resetFlagToAddress: EventListener;
 
-  let designationContentOnHover: EventListener;
-  let designationContentOnLeave: EventListener;
-
   useGSAP(
     () => {
       const tl1 = gsap.timeline({ paused: true });
-      const tl2 = gsap.timeline({ paused: true });
 
       const addressContent: HTMLDivElement | null = addressContentRef.current;
-      const designationContent: HTMLDivElement | null = document.querySelector(
-        `.${cx("designation-content")}`
-      );
 
       const flag = document.querySelector("#logoNepalFlagOutline");
-      const graduationCap = document.querySelector("#iconGraduationCap");
 
       const paths: NodeListOf<SVGPathElement> = flag?.querySelectorAll(
         "path#moon, path#sun"
       ) as NodeListOf<SVGPathElement>;
-
-      const capPaths: NodeListOf<SVGPathElement> =
-        graduationCap?.querySelectorAll("path") as NodeListOf<SVGPathElement>;
-
-      if (capPaths) {
-        capPaths.forEach((path, index) => {
-          const length = Math.ceil(path.getTotalLength());
-
-          gsap.set(path, {
-            strokeDasharray: length,
-            strokeDashoffset: length,
-          });
-
-          tl2.to(
-            graduationCap,
-            {
-              rotate: 10,
-              duration: 0.8,
-              delay: 0.5,
-            },
-            0
-          );
-
-          tl2.fromTo(
-            path,
-            {
-              strokeDashoffset: length,
-            },
-            {
-              strokeDashoffset: 0,
-              duration: 1,
-              ease: "power2.inOut",
-              overwrite: true,
-            },
-            index * 0.05
-          );
-        });
-      }
 
       if (paths) {
         paths.forEach((path, index) => {
@@ -137,40 +91,14 @@ function HomeSectionHero() {
         tl1.progress(0);
       };
 
-      designationContentOnHover = () => {
-        tl2.play();
-      };
-      designationContentOnLeave = () => {
-        tl2.reverse();
-      };
-
       if (addressContent) {
         addressContent.addEventListener("mousemove", anchorFlagToAddress);
         addressContent.addEventListener("mouseleave", resetFlagToAddress);
-      }
-      if (designationContent) {
-        designationContent.addEventListener(
-          "mouseover",
-          designationContentOnHover
-        );
-        designationContent.addEventListener(
-          "mouseleave",
-          designationContentOnLeave
-        );
       }
 
       return () => {
         addressContent?.removeEventListener("mousemove", anchorFlagToAddress);
         addressContent?.removeEventListener("mouseleave", resetFlagToAddress);
-
-        designationContent?.removeEventListener(
-          "mouseover",
-          designationContentOnHover
-        );
-        designationContent?.removeEventListener(
-          "mouseleave",
-          designationContentOnLeave
-        );
       };
     },
     { dependencies: [] }
@@ -179,24 +107,20 @@ function HomeSectionHero() {
     <section className={cx("section-hero")}>
       <div className={cx("image-background")}></div>
       <div className={cx("content")}>
-        <div className={cx("designation")}>
-          <div className={cx("designation-content")}>
-            <IconGraduationCap />
-            <p>
-              <span>Software engineer</span>
-            </p>
-          </div>
-        </div>
         <div className={cx("address")}>
           <div className={cx("address-content")} ref={addressContentRef}>
             <div className={cx("address-detail")}>
               <Magneto>
                 <div className={cx("paragraph")}>
-                  <div className={cx("kathmandu")}>
-                    <MdMyLocation /> &nbsp;
-                    <span>Kathmandu,&ensp;</span>
+                  <div className={cx("designation")}>
+                    <p>
+                      <span>Software engineer</span>
+                    </p>
                   </div>
-                  <span>Nepal</span>
+                  <div className={cx("kathmandu")}>
+                    <span> @&nbsp;Kathmandu,&ensp;</span>
+                    <span>Nepal</span>
+                  </div>
                 </div>
               </Magneto>
               <LogoNepalFlagOutline className={cx("flag")} />

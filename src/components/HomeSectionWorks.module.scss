@@ -1,7 +1,16 @@
+@use "/src/scss/abstract/variables" as vars;
+@use "/src/scss/abstract/mixins" as mixins;
+
 .section-works {
   position: relative;
   height: 100vmin;
   overflow: hidden;
+  background: linear-gradient(
+    to right bottom,
+    vars.$c-marigold-100,
+    vars.$c-marigold-100
+  );
+
   background: black;
 
   display: flex;
@@ -10,8 +19,8 @@
   padding-block: 8rem;
 
   & .track-container {
-    cursor: crosshair;
-    
+    cursor: none;
+
     #image-track {
       display: flex;
       gap: 4vmin;
@@ -20,12 +29,24 @@
       top: 50%;
       transform: translate(0%, -50%);
       user-select: none; /* -- Prevent image highlighting -- */
-      & > .image {
-        width: 40vmin;
-        height: 56vmin;
-        object-fit: cover;
-        object-position: 100% center;
-      }
+    }
+  }
+}
+
+.track-item {
+  & .title {
+    color: white;
+  }
+  & .image {
+    width: 40vmin;
+    height: 56vmin;
+    object-fit: cover;
+    object-position: 100% center;
+
+    filter: grayscale(0.8);
+
+    &:hover {
+      filter: grayscale(0);
     }
   }
 }
