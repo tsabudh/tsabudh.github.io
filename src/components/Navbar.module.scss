@@ -7,6 +7,7 @@
   top: 0;
   z-index: 999;
   width: 100%;
+  display: none;
 
   background: #{vars.$c-gray-100};
   background: linear-gradient(to bottom, vars.$c-gray-300);
