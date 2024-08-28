@@ -1,0 +1,76 @@
+@use "/src/scss/abstract/variables" as vars;
+@use "/src/scss/abstract/mixins" as mixins;
+@use "/src/scss/layouts/section" as *;
+@use "/src/scss/base/typography" as *;
+
+.timeline {
+  min-height: 50vh;
+  & .container {
+    position: relative;
+
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding-block: 10rem;
+
+    & .content {
+      --padding-left: 3rem;
+      position: relative;
+      //   width: 1px;
+      //   background-color: vars.$c-blue-gray-100;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      gap: 2rem;
+      padding-left: var(--padding-left);
+
+      //   border: 1px solid red;
+
+      & .line {
+        position: absolute;
+        width: 1px;
+        left: 0;
+
+        top: 0;
+        bottom: 0;
+        background-color: vars.$c-gray-500;
+        height: 100%;
+      }
+
+      & .mark {
+        position: absolute;
+        left: 0;
+        width: 3rem;
+        height: 0.2rem;
+        background-color: vars.$c-gray-500;
+        transform: translate(-50%, 1em);
+      }
+      
+
+      & .activity {
+        & .date {
+        //   position: absolute;
+          left: calc(0 - var(--padding-left));
+          color: vars.$c-gray-300;
+          font-size: 3rem;
+        }
+
+        & .description {
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: flex-start;
+          gap: 1rem;
+          color: vars.$c-gray-100;
+          font-size: 1.8rem;
+        }
+      }
+    }
+  }
+}
