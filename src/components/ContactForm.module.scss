@@ -1,0 +1,170 @@
+@use "/src/scss/abstract/variables" as vars;
+@use "/src/scss/abstract/mixins" as mixins;
+@use "/src/scss/layouts/section" as *;
+@use "/src/scss/base/typography" as *;
+
+.form-container {
+  background-color: vars.$c-white;
+  border-radius: 1rem;
+  padding: 6rem 4rem;
+  color: vars.$c-gray-800;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: vars.$c-gray-800;
+    color: vars.$c-gray-100;
+  }
+
+  @include mixins.respond(tab-port) {
+    padding: 4rem 2rem;
+  }
+
+  &.effect2 {
+    position: relative;
+  }
+  &.effect2:before,
+  .effect2:after {
+    z-index: -1;
+    position: absolute;
+    content: "";
+    bottom: 15px;
+    left: 10px;
+    width: 50%;
+    top: 80%;
+    // max-width: 300px;
+    background: #777;
+    -webkit-box-shadow: 0 15px 10px #777;
+    -moz-box-shadow: 0 15px 10px #777;
+    box-shadow: 0 15px 10px #777;
+    -webkit-transform: rotate(-3deg);
+    -moz-transform: rotate(-3deg);
+    -o-transform: rotate(-3deg);
+    -ms-transform: rotate(-3deg);
+    transform: rotate(-3deg);
+  }
+  &.effect2:after {
+    -webkit-transform: rotate(3deg);
+    -moz-transform: rotate(3deg);
+    -o-transform: rotate(3deg);
+    -ms-transform: rotate(3deg);
+    transform: rotate(3deg);
+    right: 10px;
+    left: auto;
+  }
+
+  & form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4rem;
+
+    & .titles {
+      display: flex;
+      flex-direction: column;
+      gap: 1.6rem;
+    }
+    & .fields {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      flex-basis: 100%;
+      width: 100%;
+    }
+
+    & .input-group {
+      display: flex;
+      flex-direction: column;
+
+      & fieldset {
+        border: none;
+      }
+
+      &--flex-row,
+      .flex-row {
+        display: flex;
+        flex-direction: row;
+        gap: 1.2rem;
+        padding-block: 1.6rem;
+        flex-wrap: wrap;
+      }
+
+      & .wrapper {
+        & input {
+          display: none;
+          & + label .checkmark {
+            // display: none;
+            visibility: hidden;
+          }
+          &:checked ~ label {
+            border-color: #0d0d0d;
+            background-color: vars.$c-gray-50;
+
+            @media (prefers-color-scheme: dark) {
+                background-color: vars.$c-gray-300;
+              
+              }
+
+            & .checkmark {
+              // display: block;
+              visibility: visible;
+            }
+          }
+        }
+      }
+      & .label {
+        color: vars.$c-gray-700;
+        @media (prefers-color-scheme: dark) {
+            color: vars.$c-gray-100;
+          }
+      }
+
+      & .input {
+        padding: 1rem 0.6rem;
+        border: none;
+        outline: none;
+        border-bottom: 1px solid vars.$c-gray-100;
+        caret-color: vars.$c-blue-fair-500;
+        font-family: inter;
+        &:focus,
+        &:focus-visible,
+        &:hover {
+          border-bottom: 1px solid vars.$c-gray-700;
+          outline: none;
+
+        }
+
+        &::placeholder {
+          font-family: inter;
+          color: vars.$c-gray-200;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            background-color: vars.$c-gray-800;
+            color: vars.$c-gray-100;
+          }
+      }
+
+      & .error-message {
+        color: vars.$c-red-error-500;
+        font-size: 1.2rem;
+        margin-top: 0.4rem;
+        min-height: 1.8rem;
+      }
+
+      & .custom-radio {
+        display: flex;
+        padding: 1.2rem 1.6rem;
+        border: 1px solid #e5e5e5;
+        border-radius: 1.2rem;
+
+        align-items: center;
+        gap: 1.6rem;
+
+        font-weight: 500;
+        font-size: 1.4rem;
+
+        cursor: pointer;
+        color: vars.$c-gray-700;
+      }
+    }
+  }
+}
