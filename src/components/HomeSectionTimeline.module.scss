@@ -1,0 +1,16 @@
+@use "/src/scss/abstract/variables" as vars;
+@use "/src/scss/abstract/mixins" as mixins;
+@use "/src/scss/layouts/section" as *;
+@use "/src/scss/base/typography" as *;
+
+.section-timeline {
+  @extend %section-1;
+  min-height: 100vh;
+  background: vars.$c-blue-light-950;
+
+  & .h2 {
+    text-align: center;
+    color: vars.$c-white;
+    @extend %heading-2-a;
+  }
+}

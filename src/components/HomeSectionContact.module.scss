@@ -1,0 +1,13 @@
+@use "/src/scss/abstract/variables" as vars;
+@use "/src/scss/abstract/mixins" as mixins;
+@use "/src/scss/layouts/section" as *;
+@use "/src/scss/base/typography" as *;
+
+.section-contact {
+  @extend %section-1;
+
+  & .h2 {
+    text-align: center;
+    @extend %heading-2-a;
+  }
+}

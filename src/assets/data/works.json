@@ -1,0 +1,20 @@
+{
+  "works": [
+    {
+      "name": "Shree Krishna Dairy",
+      "src": "/images/work_1.png"
+    },
+    {
+      "name": "Natours Project",
+      "src": "/images/work_2.png"
+    },
+    {
+      "name": "Visit Nepal",
+      "src": "/images/work_3.png"
+    },
+    {
+      "name": "Supreme Education Consultancy",
+      "src": "/images/work_4.png"
+    }
+  ]
+}
