@@ -95,7 +95,7 @@ export default function ContactForm() {
         ref={formRef}
       >
         <div className={cx("titles")}>
-          <h3>Contact {submitted ? " another " : ""} me</h3>
+          <h3>Contact me {submitted ? " again " : ""}</h3>
           <p>Fill this form to let me know.</p>
         </div>
         <div className={cx("fields")}>
