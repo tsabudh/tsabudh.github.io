@@ -29,6 +29,23 @@ function HomeSectionAbout() {
             <p>
               I work remotely as a freelance engineer and solution architect.
             </p>
+            <div className={cx("links")}>
+              <p>You can find me on:</p>
+              <div className={cx("social-links")}>
+                <a
+                  href="https://www.linkedin.com/in/tsabudh/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src="/images/linkedin.svg"
+                    alt="LinkedIn"
+                    height={"20px"}
+                    width={"20px"}
+                  />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
