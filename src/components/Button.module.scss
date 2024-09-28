@@ -30,4 +30,20 @@ button {
     }
 
   }
+
+  &.submit {
+    background: vars.$c-blue-fair-800;
+    color: vars.$c-white;
+
+    &:hover {
+        background: vars.$c-white;
+        color: vars.$c-blue-fair-600;
+        border-color: vars.$c-blue-fair-800;
+    }
+    &:active {
+        background: vars.$c-blue-fair-100;
+        color: vars.$c-blue-fair-600;
+        border-color: vars.$c-blue-fair-400;
+    }
+  }
 }
