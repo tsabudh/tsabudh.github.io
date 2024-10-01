@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Block specific directories if needed
+# Disallow: /private-directory/
+
+# Sitemap location
+Sitemap: https://www.tsabudh.com.np/sitemap.xml
