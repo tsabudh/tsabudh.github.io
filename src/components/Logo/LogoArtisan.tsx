@@ -1,6 +1,8 @@
-import React from "react";
+import React from 'react';
 
-export default function LogoArtisan(props) {
+interface LogoArtisanProps extends React.SVGProps<SVGSVGElement> {}
+
+export default function LogoArtisan(props: LogoArtisanProps) {
   return (
     <svg
       id="logoArtisan"

@@ -5,12 +5,14 @@ import styles from "./ColorScheme.module.scss";
 
 const cx = classNames.bind(styles);
 
-export default function ColorScheme() {
+const ColorScheme: React.FC = function ColorScheme() {
   const [theme, setTheme] = useState("auto");
 
   useEffect(() => {
     const doc = document.firstElementChild;
-    doc.setAttribute("color-scheme", theme);
+    if (doc) {
+      doc.setAttribute("color-scheme", theme);
+    }
   }, [theme]);
 
   return (
@@ -103,4 +105,5 @@ export default function ColorScheme() {
       </main>
     </div>
   );
-}
+};
+export default ColorScheme;

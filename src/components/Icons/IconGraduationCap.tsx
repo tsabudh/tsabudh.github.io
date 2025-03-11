@@ -1,6 +1,4 @@
-import React from "react";
-
-export default function IconGraduationCap(props) {
+export default function IconGraduationCap(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       version="1.1"
@@ -14,6 +12,7 @@ export default function IconGraduationCap(props) {
       fill="none"
       stroke="currentColor"
       xmlSpace="preserve"
+      {...props}
     >
       <path
         className="st0"

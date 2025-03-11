@@ -1,4 +1,3 @@
-import React from "react";
 import classNames from "classnames/bind";
 import styles from "./HomeSectionTimeline.module.scss";
 import Timeline from "./Timeline";

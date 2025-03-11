@@ -1,4 +1,3 @@
-import React, { useEffect, useRef } from "react";
 import classNames from "classnames/bind";
 import { works } from "../assets/data/works.json";
 import styles from "./HomeSectionWorks.module.scss";

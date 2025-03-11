@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import styles from "./ContactForm.module.scss";
 import Button from "./Button";
@@ -22,6 +22,9 @@ export default function ContactForm() {
 
   const handleFormSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (twiceSubmitted) {
+      return;
+    }
     let areErrorsPresent = false;
 
     const fullNameRegexp = new RegExp(/^[\p{L}]{2,}([\p{L} '-][\p{L}]+)*$/u);
@@ -71,11 +74,6 @@ export default function ContactForm() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form submitted");
-  };
-
   useEffect(() => {
     // setEmail('');
     // setFullName('');
@@ -87,7 +85,6 @@ export default function ContactForm() {
       <form
         method="POST"
         action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSdczVnaH2c9qTD1Wbtyk-Eo5eoYpLRNZQzSOsZ_5Qd87yWFYg/formResponse"
-        onSubmit={handleSubmit}
         id="contactForm"
         target="_blank"
         aria-describedby="Form to contact for Sabudh Thapa"

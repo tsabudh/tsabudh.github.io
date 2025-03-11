@@ -1,14 +1,12 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import classNames from "classnames/bind";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { MdMyLocation } from "react-icons/md";
 
 import styles from "./HomeSectionHero.module.scss";
 
 import LogoNepalFlagOutline from "./Logo/LogoNepalFlagOutline";
 import Magneto from "./Magneto";
-import IconGraduationCap from "./Icons/IconGraduationCap";
 
 const cx = classNames.bind(styles);
 
@@ -57,13 +55,14 @@ function HomeSectionHero() {
       anchorFlagToAddress = (event) => {
         if (addressContent) {
           const addressBoundBox = addressContent.getBoundingClientRect();
+          if (!flag) return;
           const flagBox = flag.getBoundingClientRect();
 
           const xAddress = addressBoundBox.x;
           const yAddress = addressBoundBox.y;
 
-          const xOffSet = (event.clientX - xAddress - flagBox.width) * 0.6;
-          const yOffSet = (event.clientY - yAddress - flagBox.height) * 0.5;
+          const xOffSet = ((event as MouseEvent).clientX - xAddress - flagBox.width) * 0.6;
+          const yOffSet = ((event as MouseEvent).clientY - yAddress - flagBox.height) * 0.5;
 
           gsap.to(flag, {
             x: xOffSet.toFixed(3),

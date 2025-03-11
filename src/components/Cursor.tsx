@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import styles from "./Cursor.module.scss";
 import classNames from "classnames/bind";
 import gsap from "gsap";
@@ -7,7 +7,8 @@ const cx = classNames.bind(styles);
 function Cursor() {
   useEffect(() => {
     gsap.set("#cursor", {
-      scale: 0    });
+      scale: 0,
+    });
 
     window.addEventListener("mousemove", (e) => {
       gsap.to("#cursor", {
@@ -20,7 +21,6 @@ function Cursor() {
       });
     });
   }, []);
- 
 
   return <div className={cx("cursor")} id="cursor"></div>;
 }

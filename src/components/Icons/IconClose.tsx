@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-export default function IconClose(props) {
+export default function IconClose(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       width="1em"

@@ -1,11 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import classNames from "classnames/bind";
 import gsap from "gsap";
 import debounce from "lodash/debounce";
 
 import styles from "./Navbar.module.scss";
-
 
 const cx = classNames.bind(styles);
 

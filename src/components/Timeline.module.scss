@@ -51,11 +51,10 @@
         background-color: vars.$c-gray-500;
         transform: translate(-50%, 1em);
       }
-      
 
       & .activity {
         & .date {
-        //   position: absolute;
+          //   position: absolute;
           left: calc(0 - var(--padding-left));
           color: vars.$c-gray-300;
           font-size: 3rem;
@@ -72,5 +71,10 @@
         }
       }
     }
+  }
+
+  & .footer {
+    display: flex;
+    justify-content: center;
   }
 }

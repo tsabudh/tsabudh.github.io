@@ -1,14 +1,18 @@
-import React, { HtmlHTMLAttributes, useRef } from "react";
+import { HtmlHTMLAttributes, useRef } from "react";
+
+interface MagnetoProps extends HtmlHTMLAttributes<HTMLDivElement> {
+  height?: number;
+  width?: number;
+}
 import classNames from "classnames/bind";
+import gsap from "gsap";
 import styles from "./Magneto.module.scss";
 import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import debounce from "lodash/debounce";
 
-const cx = classNames.bind(styles);
+function Magneto(props: MagnetoProps) {
+  const cx = classNames.bind(styles);
 
-function Magneto(props: HtmlHTMLAttributes<HTMLDivElement>) {
-  const magnetoRef = useRef(null);
+  const magnetoRef = useRef<HTMLDivElement>(null);
   const { height, width } = props;
 
   useGSAP(
@@ -25,10 +29,12 @@ function Magneto(props: HtmlHTMLAttributes<HTMLDivElement>) {
       if (height) gsap.set(magneto, { height: height });
 
       // On mouse move
-      const activateMagneto = (event) => {
+      const activateMagneto = (event: MouseEvent): void => {
         const boundBox = magneto?.getBoundingClientRect();
 
-        const strength = Math.min(magneto.offsetWidth, magneto.offsetHeight);
+        const strength = magneto
+          ? Math.min(magneto.offsetWidth, magneto.offsetHeight)
+          : 0;
 
         if (!boundBox || !magneto || !magnetoChild) return;
 
@@ -53,17 +59,19 @@ function Magneto(props: HtmlHTMLAttributes<HTMLDivElement>) {
           y: Number(newY) * magnetoStrength,
           ease: "power4.easeOut",
         });
-        gsap.to(magnetoChild, {
-          duration: 0.5,
-          x: Number(newX) * magnetoChildStrength,
-          y: Number(newY) * magnetoChildStrength,
-          ease: "power4.easeOut",
-        });
+        if (magnetoChild) {
+          gsap.to(magnetoChild, {
+            duration: 0.5,
+            x: Number(newX) * magnetoChildStrength,
+            y: Number(newY) * magnetoChildStrength,
+            ease: "power4.easeOut",
+          });
+        }
       };
 
       // On mouse leave
 
-      const resetMagneto = (event) => {
+      const resetMagneto = () => {
         console.log("resetint");
         gsap.to(magneto, {
           duration: 1,
@@ -71,36 +79,52 @@ function Magneto(props: HtmlHTMLAttributes<HTMLDivElement>) {
           y: 0,
           ease: "Elastic.easeOut",
         });
-        gsap.to(magnetoChild, {
-          duration: 1,
-          x: 0,
-          y: 0,
-          ease: "Elastic.easeOut",
-        });
+        if (magnetoChild) {
+          gsap.to(magnetoChild, {
+            duration: 1,
+            x: 0,
+            y: 0,
+            ease: "Elastic.easeOut",
+          });
+        }
       };
 
       // Add event listeners
 
-      magneto.addEventListener("mousemove", activateMagneto);
-      magneto.addEventListener("mouseleave", resetMagneto);
+      if (magneto) {
+        magneto.addEventListener("mousemove", activateMagneto);
+        magneto.addEventListener("mouseleave", resetMagneto);
+      }
 
-      (magneto as any)._activateMagneto = activateMagneto;
-      (magneto as any)._resetMagneto = resetMagneto;
+      (
+        magneto as HTMLDivElement & {
+          _activateMagneto?: (event: MouseEvent) => void;
+        }
+      )._activateMagneto = activateMagneto;
+      (
+        magneto as HTMLDivElement & { _resetMagneto?: () => void }
+      )._resetMagneto = resetMagneto;
 
       // Clean up event listeners
       return () => {
         if (magneto) {
           magneto.removeEventListener(
-            "mouseenter",
-            (magneto as any)._activateMagneto
+            "mousemove",
+            (
+              magneto as HTMLDivElement & {
+                _activateMagneto?: (event: MouseEvent) => void;
+              }
+            )._activateMagneto!
           );
           magneto.removeEventListener(
             "mouseleave",
-            (magneto as any)._resetMagneto
+            (magneto as HTMLDivElement & { _resetMagneto?: () => void })
+              ._resetMagneto!
           );
         }
 
-        gsap.killTweensOf(magneto, magnetoChild);
+        if (magneto) gsap.killTweensOf(magneto);
+        if (magnetoChild) gsap.killTweensOf(magnetoChild);
       };
     },
     { dependencies: [] }

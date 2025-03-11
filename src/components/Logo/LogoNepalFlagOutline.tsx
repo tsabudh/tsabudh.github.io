@@ -1,9 +1,7 @@
-import React from "react";
-
-function LogoNepalFlagOutline(props) {
+function LogoNepalFlagOutline(props:any) {
   return (
     <svg
-    id="logoNepalFlagOutline"
+      id="logoNepalFlagOutline"
       width="1em"
       height="1.22em"
       xmlns="http://www.w3.org/2000/svg"

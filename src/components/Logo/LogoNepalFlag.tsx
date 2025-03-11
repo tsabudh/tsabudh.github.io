@@ -1,6 +1,4 @@
-import React from "react";
-
-function LogoNepalFlag(props) {
+const LogoNepalFlag: React.FC = function LogoNepalFlag(props) {
   return (
     <svg
       id="logoNepalFlag"

@@ -1,7 +1,7 @@
-import React from "react";
 import classNames from "classnames/bind";
 
 import styles from "./Timeline.module.scss";
+import Button from "./Button";
 
 const cx = classNames.bind(styles);
 
@@ -57,6 +57,9 @@ function Timeline() {
             );
           })}
         </div>
+      </div>
+      <div className={cx("footer")}>
+        <Button className={"rounded"}>View More</Button>
       </div>
     </section>
   );

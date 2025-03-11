@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React,{ FC } from "react";
 
 import HomeSectionWorks from "../components/HomeSectionWorks.tsx";
 import HomeSectionHero from "../components/HomeSectionHero.tsx";
