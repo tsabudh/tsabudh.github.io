@@ -3,14 +3,32 @@
 
 .card-1 {
   & .outer-layer {
+    transition: all 0.2s ease-out;
+
+    &:hover{
+      scale: 1.05;
+    }
     & .inner-layer {
       & .content {
+
         & .header {
         }
         & .main {
           & figure {
             aspect-ratio: 2/3;
             height: 50rem;
+            position: relative;
+            
+            &::before {
+              content: '';
+              position: absolute;
+              inset: 0;
+              // box-shadow: inset 0 0 60px rgba(92, 85, 85, 0.4); // soft vignette effect
+              background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.4) 100%);
+              pointer-events: none;
+              z-index: 2;
+            }
+
             & img {
               width: 100%;
               height: 100%;

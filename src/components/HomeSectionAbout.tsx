@@ -21,14 +21,13 @@ function HomeSectionAbout() {
           <div className={cx("description")}>
             <p>
               Hi! I am <span>Sabudh Bahadur Thapa. </span>
-              I'm a software engineer with experience in web and machine
-              learning technologies. I am based in Kathmandu, Nepal.
-            </p>
+              I'm a Software Engineer with experience in architecting web applications and distributed systems, based in <strong>Kathmandu, Nepal</strong>.            </p>
             <p>
-              I work remotely as a freelance engineer and solution architect.
+              I work remotely as a software engineer.
             </p>
             <div className={cx("links")}>
-              <p>You can find me on:</p>
+              <p>You can email me on: <a href="mailto:tsabudh@gmail.om"><strong>tsabudh@gmail.com</strong></a></p>
+              <p>You can also reach out on:</p>
               <div className={cx("social-links")}>
                 <a
                   href="https://www.linkedin.com/in/tsabudh/"
@@ -43,6 +42,9 @@ function HomeSectionAbout() {
                   />
                 </a>
               </div>
+            </div>
+            <div className="">
+              <p>You can also <a href="https://drive.google.com/drive/folders/1zcsdqVT6uzs8NA7oFs3Z_OHkE048Ka9Z?usp=drive_link" target="_blank"> <u>view my cv.</u></a></p>
             </div>
           </div>
         </div>

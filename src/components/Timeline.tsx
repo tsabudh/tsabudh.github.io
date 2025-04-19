@@ -7,22 +7,28 @@ const cx = classNames.bind(styles);
 
 const activities = [
   {
+    year: 2025,
+    month: "April",
+    day: 9,
+    event: "Software Engineer at 'Wissenschaft-Inc'",
+  },
+  {
     year: 2024,
     month: "March",
     day: 9,
-    event: "Working at 'Wissenschaft-Inc' as a junior software engineer",
+    event: "Junior Software Engineer at 'Wissenschaft-Inc'",
   },
   {
     year: 2023,
     month: "November",
     day: 9,
-    event: "Worked at 'Brandbuilder Nepal' as an Intern",
+    event: "Internship at 'Brandbuilder Nepal' ",
   },
   {
     year: 2022,
     month: "December",
     day: 9,
-    event: "Worked at 'Pagevamp Nepal' as an Intern",
+    event: "Internship at 'Pagevamp Nepal'",
   },
   {
     year: 2022,
@@ -59,7 +65,7 @@ function Timeline() {
         </div>
       </div>
       <div className={cx("footer")}>
-        <Button className={"rounded"}>View More</Button>
+        {/* <Button className={"rounded"}>View More</Button> */}
       </div>
     </section>
   );
