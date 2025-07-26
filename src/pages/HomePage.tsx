@@ -10,8 +10,8 @@ const HomePage: FC = function HomePage() {
   return (
     <React.Fragment>
       <HomeSectionHero />
-      <HomeSectionWorks />
       <HomeSectionAbout />
+      <HomeSectionWorks />
       <HomeSectionTimeline />
       <HomeSectionContact />
     </React.Fragment>

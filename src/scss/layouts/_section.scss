@@ -3,6 +3,7 @@
 
 %section-1 {
   padding: 6rem 2.6rem;
+  // max-width: 140rem;
 
   @include mixins.respond(tab-port) {
     padding: 4rem 2.6rem;

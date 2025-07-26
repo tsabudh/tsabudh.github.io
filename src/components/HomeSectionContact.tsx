@@ -8,9 +8,11 @@ const cx = classNames.bind(styles);
 function HomeSectionContact() {
   return (
     <section className={cx("section-contact")}>
-      <h2 className={cx("h2")}>Have a business or an idea? Reach out!</h2>
+      <h2 className={cx("h2")}>Reach out.</h2>
 
-      <ContactForm />
+      <div className="flex">
+        <ContactForm />
+      </div>
     </section>
   );
 }

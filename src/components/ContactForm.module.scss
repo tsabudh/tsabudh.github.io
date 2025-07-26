@@ -8,7 +8,7 @@
   border-radius: 1rem;
   padding: 6rem 4rem;
   color: vars.$c-gray-800;
-
+  max-width: 80rem;
   @media (prefers-color-scheme: dark) {
     background-color: vars.$c-gray-800;
     color: vars.$c-gray-100;
@@ -97,11 +97,12 @@
           &:checked ~ label {
             border-color: #0d0d0d;
             background-color: vars.$c-gray-50;
-
+            svg {
+              stroke: vars.$c-gray-50;
+            }
             @media (prefers-color-scheme: dark) {
-                background-color: vars.$c-gray-300;
-              
-              }
+              background-color: vars.$c-gray-700;
+            }
 
             & .checkmark {
               // display: block;
@@ -113,8 +114,8 @@
       & .label {
         color: vars.$c-gray-700;
         @media (prefers-color-scheme: dark) {
-            color: vars.$c-gray-100;
-          }
+          color: vars.$c-gray-100;
+        }
       }
 
       & .input {
@@ -129,7 +130,6 @@
         &:hover {
           border-bottom: 1px solid vars.$c-gray-700;
           outline: none;
-
         }
 
         &::placeholder {
@@ -138,9 +138,9 @@
         }
 
         @media (prefers-color-scheme: dark) {
-            background-color: vars.$c-gray-800;
-            color: vars.$c-gray-100;
-          }
+          background-color: vars.$c-gray-800;
+          color: vars.$c-gray-100;
+        }
       }
 
       & .error-message {
@@ -163,7 +163,7 @@
         font-size: 1.4rem;
 
         cursor: pointer;
-        color: vars.$c-gray-700;
+        color: vars.$c-gray-200;
       }
     }
   }

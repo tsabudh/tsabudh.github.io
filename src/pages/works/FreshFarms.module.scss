@@ -1,0 +1,138 @@
+@use "/src/scss/abstract/variables" as vars;
+@use "/src/scss/abstract/mixins" as mixins;
+@use "/src/scss/layouts/section" as *;
+@use "/src/scss/base/typography" as *;
+
+
+.header{
+  background-color: white;
+  color: vars.$c-gray-600;
+}
+.section {
+  display: block;
+  @extend %section-1;
+  background-color: white;
+  color: vars.$c-gray-600;
+  h1 {
+    color: vars.$c-orange-fair-700;
+    @extend %heading-1-a;
+  }
+  h2 {
+    color: vars.$c-orange-fair-700;
+    @extend %heading-2-a;
+  }
+  h3 {
+    @extend %heading-3-a;
+  }
+  
+
+  &--why {
+    background-color: vars.$c-gray-100;
+    
+  }
+  &--role {
+    background-color: vars.$c-gray-100;
+    
+  }
+  &--features {
+    background-color: vars.$c-gray-100; 
+  }
+  &--demo {
+    background-color: vars.$c-gray-100; 
+  }
+  &--links {
+    padding-block: 1rem;
+  }
+  & .screenshot-container {
+    padding: 2rem;
+    display: flex;
+    gap: 2rem;
+    // background-color: vars.$c-gray-400;
+
+    & .figure {
+      background-color: vars.$c-gray-300;
+      padding: 3rem 2rem;
+      max-width: 50%;
+
+      & img {
+        object-fit: contain;
+      }
+
+      & caption {
+        color: vars.$c-marigold-950;
+        display: block;
+      }
+    }
+  }
+}
+
+.links {
+  & .live-link {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+
+    & a {
+      background: vars.$c-blue-fair-100;
+      color: vars.$c-marigold-700;
+      padding: 0.8rem 1rem;
+      cursor: pointer;
+      border-radius: 1rem;
+
+      &.underlined {
+        text-decoration: underline;
+        text-underline-offset: 5px;
+      }
+      &.no-bg {
+        background-color: vars.$c-orange-fair-700;
+        color: white;
+        border-color: vars.$c-blue-fair-400;
+      }
+      &:hover {
+        background-color: vars.$c-marigold-500;
+      }
+      &:active {
+
+        text-decoration: underline;
+        text-underline-position: below;
+        text-underline-offset: 5px;
+      }
+    }
+  }
+  & .wrapper {
+    display: flex;
+    gap: 2rem;
+  }
+  & a {
+    background: vars.$c-blue-fair-100;
+    color: vars.$c-marigold-700;
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    border-radius: 1rem;
+
+    &.underlined {
+      text-decoration: underline;
+      text-underline-offset: 5px;
+    }
+    &.no-bg {
+      background-color: transparent;
+    }
+    &:hover {
+      background: vars.$c-gray-600;
+      color: vars.$c-marigold-300;
+      border-color: vars.$c-blue-fair-400;
+    }
+    &:active {
+      background: vars.$c-gray-300;
+      color: vars.$c-marigold-600;
+      border-color: vars.$c-blue-fair-400;
+      text-decoration: underline;
+      text-underline-position: below;
+      text-underline-offset: 5px;
+    }
+  }
+}
+
+.main {
+  position: relative;
+}

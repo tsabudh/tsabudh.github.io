@@ -2,19 +2,23 @@
   "works": [
     {
       "name": "Freshfarms",
-      "src": "/images/work_1.png"
-    },
-    {
-      "name": "Natours Project",
-      "src": "/images/work_2.png"
+      "src": "/images/work_1.png",
+      "description": [
+        "Freshfarms is a software built to keep the purchase logs and customer information of  farm & dairy.",
+        "Some of the features built into the freshfarms software are Transaction Registry & Logs, Customer Profiles, Staff's profile, Messaging etc."
+      ],
+      "github-repo-link": "https://github.com/tsabudh/freshfarms-react-app",
+      "live-link": "https://freshfarmsapp.netlify.app/",
+      "page-link": "/works/freshfarms"
     },
     {
       "name": "Visit Nepal",
-      "src": "/images/work_3.png"
-    },
-    {
-      "name": "Supreme Education Consultancy",
-      "src": "/images/work_4.png"
+      "src": "/images/work_3.png",
+      "description": [
+        "Visit Nepal is CSS heavy website built for demonstration purpose only."
+      ],
+      "github-repo-link": "https://github.com/tsabudh/visit-nepal",
+      "live-link": "https://tsabudh.github.io/visit-nepal"
     }
   ]
 }

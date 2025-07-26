@@ -1,22 +1,34 @@
 @use "/src/scss/abstract/variables" as vars;
 @use "/src/scss/abstract/mixins" as mixins;
+@use "/src/scss/layouts/section" as *;
+@use "/src/scss/base/typography" as *;
 
 .section-about {
-  min-height: 100vmin;
+  // min-height: 100vmin;
+
+  @extend %section-1;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 5rem 2rem;
+  padding: 8rem 2rem;
+  background-color: vars.$c-gray-300;
+
+  & .h2 {
+    text-align: center;
+    color: vars.$c-gray-600;
+    @extend %heading-2-a;
+  }
 
   & .content {
-    border: 4px solid vars.$c-blue-light-100;
-    display: grid;
+    // border: 4px solid vars.$c-white;
+    // display: grid;
     grid-template-rows: 1fr;
     grid-template-columns: 1fr 1fr;
     grid-gap: 1rem;
     padding: 1rem;
+    max-width: 140rem;
 
     @include mixins.respond(tab-port) {
       grid-template-columns: 1fr;

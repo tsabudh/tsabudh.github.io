@@ -7,7 +7,8 @@
   position: relative;
   min-height: 100vmin;
 
-  background: vars.$c-black;
+  // background: vars.$c-black; //TODO change background
+  background-color: vars.$c-gray-25;
   color: vars.$c-white;
   display: flex;
   flex-direction: column;
@@ -16,7 +17,7 @@
 
   & .h2 {
     text-align: center;
-    color: vars.$c-white;
+    color: vars.$c-gray-600;
     @extend %heading-2-a;
   }
 
@@ -27,8 +28,116 @@
     align-items: flex-end;
     flex-wrap: wrap;
     padding: 10rem 2rem;
+    position: relative;
 
-    & .item-wrapper {
+    @include mixins.respond(phone) {
+      padding: 0.5rem 0;
+    }
+
+    & .work-wrapper {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      max-width: 140rem;
+
+      & .item-wrapper {
+        position: relative;
+        background-color: white;
+        border-top: 1px solid vars.$c-gray-800;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 2rem;
+        padding-block: 2rem;
+        padding-inline: 0.5rem;
+        letter-spacing: 0.05em;
+        font-size: 1.8rem;
+        transition: opacity 0.1s ease, box-shadow 0.3s ease;
+        width: 100%;
+
+        @include mixins.respond(phone) {
+          flex-direction: column;
+          gap: 0.8rem;
+        }
+
+        &.is-stuck {
+          opacity: 20%;
+        }
+
+        & .card-wrapper {
+          @include mixins.respond(phone) {
+            // width: 40rem;
+            // height: 20rem;
+          }
+        }
+        & .content {
+          margin-top: 3rem;
+          display: flex;
+          flex-direction: column;
+          flex-basis: 60%;
+          flex-grow: 5;
+
+          // align-self: stretch;
+
+          @include mixins.respond(phone) {
+            margin-top: 0.5rem;
+          }
+
+          & .description {
+            flex-basis: 40%;
+            color: vars.$c-gray-400;
+            p {
+              margin-block: 1rem;
+            }
+          }
+
+          & .links {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 5rem;
+            flex-grow: 2;
+
+            @include mixins.respond(phone) {
+              margin-top: 0.5rem;
+            }
+
+            & a {
+              background: vars.$c-blue-fair-100;
+              color: vars.$c-marigold-700;
+              padding: 0.8rem 1rem;
+              cursor: pointer;
+              border-radius: 1rem;
+
+              &.underlined {
+                text-decoration: underline;
+                text-underline-offset: 5px;
+              }
+              &.no-bg {
+                background-color: transparent;
+              }
+              &:hover {
+                background: vars.$c-gray-600;
+                color: vars.$c-marigold-300;
+                border-color: vars.$c-blue-fair-400;
+              }
+              &:active {
+                background: vars.$c-gray-300;
+                color: vars.$c-marigold-600;
+                border-color: vars.$c-blue-fair-400;
+                text-decoration: underline;
+                text-underline-position: below;
+                text-underline-offset: 5px;
+              }
+              &.hidden {
+                display: none;
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

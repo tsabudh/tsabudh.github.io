@@ -6,11 +6,11 @@
 .section-timeline {
   @extend %section-1;
   min-height: 100vh;
-  background: vars.$c-blue-light-950;
+  background: vars.$c-gray-100;
 
   & .h2 {
     text-align: center;
-    color: vars.$c-white;
+    color: vars.$c-gray-950;
     @extend %heading-2-a;
   }
 }

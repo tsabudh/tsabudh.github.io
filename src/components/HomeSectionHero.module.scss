@@ -110,9 +110,10 @@
       flex-direction: column;
       justify-content: center;
 
-      & p {
+      & h1 {
         color: vars.$c-white;
         font-weight: 500;
+        font-size: 7.5rem;
         //   mix-blend-mode: difference;
         //   filter: drop-shadow(0px 0px 20px vars.$c-gray-950);
       }
