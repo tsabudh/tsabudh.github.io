@@ -127,7 +127,7 @@ function HomeSectionHero() {
           </div>
         </div>
         <div className={cx("name")}>
-          <p>SABUDH BAHADUR THAPA</p>
+          <h1>SABUDH BAHADUR THAPA</h1>
         </div>
       </div>
     </section>

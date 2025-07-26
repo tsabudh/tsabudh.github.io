@@ -5,8 +5,10 @@
 
 .section-contact {
   @extend %section-1;
+  background-color: vars.$c-gray-300;
 
   & .h2 {
+    margin-bottom: 2rem;
     text-align: center;
     @extend %heading-2-a;
   }
