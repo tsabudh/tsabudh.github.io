@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>{{ title }}</title>
+        <link rel="stylesheet" href="/styles/main.css"/>
+        <link rel="stylesheet" href="/styles/tailwind.css"/>
+    </head>
+    <body data-barba="wrapper">
+        <div class="barba-load-container">
+            <div class="loading-screen">
+                <h1 id="loading-screen-text">Loading</h1>
+            </div>
+        </div>
+        <main data-barba="container" data-barba-namespace="{{ namespace }}">
+            {% include "header.html" %}
+            {{ content | safe }}
+        </main>
+
+        <!-- Barba.js + GSAP -->
+        <script type="module" src="/scripts/barba.js"></script>
+
+    </body>
+</html>
