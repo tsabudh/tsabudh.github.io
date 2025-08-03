@@ -1,41 +1,44 @@
 {
   "name": "tsabudh.github.io",
-  "private": true,
-  "version": "0.0.0",
+  "version": "3.0.0",
+  "description": "Portfolio website for @tsabudh",
+  "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "start": "npx @11ty/eleventy --serve",
+    "build": "npx @11ty/eleventy",
+    "build:css": "npx postcss src/styles/tailwind.css -o src/styles/main.css"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsabudh/tsabudh.github.io.git"
+  },
+  "keywords": [
+    "tsabudh",
+    "Sabudh",
+    "Bahadur",
+    "Thapa"
+  ],
+  "author": "Sabudh Bahadur Thapa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tsabudh/tsabudh.github.io/issues"
+  },
+  "homepage": "https://github.com/tsabudh/tsabudh.github.io#readme",
   "dependencies": {
-    "@gsap/react": "^2.1.1",
-    "classnames": "^2.5.1",
-    "gsap": "^3.12.5",
-    "lodash": "^4.17.21",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-icons": "^5.2.1",
-    "react-router-dom": "^6.24.1"
+    "@11ty/eleventy": "^3.1.2",
+    "@11ty/eleventy-plugin-directory-output": "^1.0.1",
+    "@barba/core": "^2.10.3",
+    "@tailwindcss/postcss": "^4.1.11",
+    "autoprefixer": "^10.4.21",
+    "eleventy": "^1.0.7",
+    "gsap": "^3.13.0",
+    "postcss": "^8.5.6",
+    "sass": "^1.89.2",
+    "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.9",
-    "@types/node": "^24.0.14",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^7.13.1",
-    "@vitejs/plugin-react": "^4.3.1",
-    "eslint": "^8.57.0",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.7",
-    "gh-pages": "^6.1.1",
-    "sass": "^1.77.6",
-    "typescript": "^5.2.2",
-    "vite": "^5.3.1"
-  },
-  "homepage": "https://tsabudh.github.io"
+    "@11ty/eleventy-plugin-vite": "^6.0.0-alpha.4",
+    "eslint-plugin-import": "^2.32.0"
+  }
 }
