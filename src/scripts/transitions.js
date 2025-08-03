@@ -1,3 +1,5 @@
+import gsap from "gsap";
+
 export function setTextOnLoadingScreen(textContent) {
     try {
         const loadingScreenHeading = document.querySelector("#loading-screen-text");
@@ -26,7 +28,7 @@ export function getTitleFromHref(href) {
             case "":
                 return "Home";
             case "contact":
-                return "Contact Us";
+                return "Contact";
             case "about":
                 return "About";
             default:
@@ -37,4 +39,32 @@ export function getTitleFromHref(href) {
         console.error("Error in leave hook:", err);
 
     }
+}
+
+export function showCurtains() {
+    const tl = gsap.timeline();
+    console.log("animating on leave")
+
+    tl.to(".barba-load-container", {
+        y: "0%",
+        duration: 1.2,
+        ease: "power3.inOut"
+    })
+    return tl;
+}
+
+export function hideCurtains() {
+    const tl = gsap.timeline();
+    console.log("animating after enter")
+    tl.to(".barba-load-container", {
+        y: "-100%",
+        duration: 1.5,
+        ease: "power4.inOut"
+
+    })
+
+    tl.set(".barba-load-container", {
+        y: "110%"
+    })
+    return tl;
 }

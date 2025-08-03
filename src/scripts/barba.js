@@ -1,9 +1,18 @@
-import barba from 'https://cdn.skypack.dev/@barba/core';
-import gsap from 'https://cdn.skypack.dev/gsap';
-import { getTitleFromHref, setTextOnLoadingScreen } from './domUtils.js';
+
+import barba from "@barba/core";
+import gsap from "gsap";
+import { getTitleFromHref, hideCurtains, setTextOnLoadingScreen, showCurtains, } from './transitions.js';
+import { initHomePage } from "./home.js";
 
 const tl = gsap.timeline();
 barba.init({
+    views: [
+        {
+            namespace: "home",
+            afterEnter() {
+                initHomePage();
+            },
+        },],
     transitions: [
         {
             name: 'default',
@@ -13,15 +22,7 @@ barba.init({
                     const nextTitle = getTitleFromHref(href);
                     setTextOnLoadingScreen(nextTitle);
 
-                    const tl = gsap.timeline();
-                    console.log("animating on leave")
-
-                    tl.to(".barba-load-container", {
-                        y: "0%",
-                        duration: 1.5,
-                        ease: "power4.inOut"
-                    })
-                    return tl;
+                    return showCurtains();
 
                 } catch (err) {
                     console.log(err)
@@ -32,15 +33,7 @@ barba.init({
             async afterEnter({ current, next }) {
 
                 current.container.style.display = "none";
-                const tl = gsap.timeline();
-                console.log("animating after enter")
-                tl.to(".barba-load-container", {
-                    y: "-100%",
-                    duration: 1.5,
-                    ease: "power4.inOut"
-
-                })
-                return tl;
+                return hideCurtains();
             },
 
 
