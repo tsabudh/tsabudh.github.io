@@ -1,0 +1,15 @@
+.index_hero_text {
+  animation: textRotation 8s linear infinite;
+}
+.index_hero_text span {
+	position: absolute;
+	left: 50%;
+	transform-origin: 0 40px;
+}
+
+
+@keyframes textRotation {
+  to {
+    transform: rotate(360deg);
+  }
+}
