@@ -1,25 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>{{ title }}</title>
-        <link rel="stylesheet" href="/styles/main.css"/>
-        <link rel="stylesheet" href="/styles/tailwind.css"/>
-    </head>
-    <body data-barba="wrapper">
-        <div class="barba-load-container">
-            <div class="loading-screen">
-                <h1 id="loading-screen-text">Loading</h1>
-            </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/tailwind.css" />
+    <link rel="stylesheet" href="/styles/compiled.css" />
+    <script type="module" src="/scripts/barba.js"></script>
+  </head>
+  <body data-barba="wrapper">
+    <div class="barba-load-container">
+      <div
+        class="loading-screen relative h-full w-full flex items-center justify-center overflow-hidden"
+      >
+        <div
+          class="barba-load-container_bg-texts absolute inset-0 text-zinc-500 text-9xl opacity-45 rotate-12 scale-150 whitespace-nowrap space-y-9"
+        >
+          <p>
+            <span> BACKGROUND ANIMATING TEXT 1</span>
+            <span> BACKGROUND ANIMATING TEXT 1</span>
+          </p>
+          <p>
+            <span> BACKGROUND ANIMATING TEXT 2</span>
+            <span> BACKGROUND ANIMATING TEXT 2</span>
+          </p>
+          <p>
+            <span> BACKGROUND ANIMATING TEXT 3</span>
+            <span> BACKGROUND ANIMATING TEXT 3</span>
+          </p>
+          <p>
+            <span> BACKGROUND ANIMATING TEXT 3</span>
+            <span> BACKGROUND ANIMATING TEXT 3</span>
+          </p>
+          <p>
+            <span> BACKGROUND ANIMATING TEXT 3</span>
+            <span> BACKGROUND ANIMATING TEXT 3</span>
+          </p>
+          <p>
+            <span> BACKGROUND ANIMATING TEXT 3</span>
+            <span> BACKGROUND ANIMATING TEXT 3</span>
+          </p>
         </div>
-        <main data-barba="container" data-barba-namespace="{{ namespace }}">
-            {% include "header.html" %}
-            {{ content | safe }}
-        </main>
-
-        <!-- Barba.js + GSAP -->
-        <script type="module" src="/scripts/barba.js"></script>
-
-    </body>
+        <h1 id="loading-screen-text" class="font-delight text-9xl text-white">
+          Loading
+        </h1>
+      </div>
+    </div>
+    <main data-barba="container" data-barba-namespace="{{ namespace }}">
+      {% include "header.njk" %}
+      {{ content | safe }}
+    </main>
+  </body>
 </html>
