@@ -11,12 +11,12 @@
     <script type="module" src="/scripts/locomotive.js"></script>
   </head>
   <body data-barba="wrapper" class="text-slate-950">
-    <div class="barba-load-container">
+    <div class="barba-load-container bg-slate-700">
       <div
         class="loading-screen relative h-full w-full flex items-center justify-center overflow-hidden"
       >
         <div
-          class="barba-load-container_bg-texts absolute inset-0 text-slate-500 text-9xl opacity-45 rotate-12 scale-150 whitespace-nowrap space-y-9 font-lexend font-bold"
+          class="barba-load-container_bg-texts absolute inset-0 text-slate-600 text-9xl opacity-45 rotate-12 scale-150 whitespace-nowrap space-y-9 font-lexend font-bold"
         >
           <p>
             <span> BUILDING SOFTWARE THAT PERFORMS </span>
@@ -43,7 +43,7 @@
             <span> FRONTEND & BACKEND MAKES FULLSTACK </span>
           </p>
         </div>
-        <h1 id="loading-screen-text" class="font-delight text-9xl text-white">
+        <h1 id="loading-screen-text" class="font-delight text-9xl text-white z-50">
           Loading
         </h1>
       </div>
@@ -63,16 +63,16 @@
  -->
           
  <main class="px-5 mb-80">
-  <section>
-    <h1 class="text-[140px] font-bold font-lexend text-slate-800">
+  <section class="py-6 min-h-[40vh]">
+    <h1 class="text-[clamp(86px,11vw,140px)] font-bold font-lexend text-slate-800 leading-[0.9em] max-sm:text-[clamp(66px,14vw,86px)]">
       <span>SABUDH</span>
       <span class="text-right">THAPA</span>
     </h1>
-    <div class="flex justify-between tracking-tight font-lexend">
+    <div class="flex justify-between gap-5 tracking-tight font-lexend mt-6 max-sm:flex-col-reverse">
       <div>
-        <h2 class="uppercase font-semibold">software engineer</h2>
-        <h2 class="uppercase font-semibold">building web applications</h2>
-        <h2 class="uppercase font-semibold">& distributed systems.</h2>
+        <h2 class="uppercase font-semibold text-zinc-600">software engineer</h2>
+        <h2 class="uppercase font-semibold text-zinc-600">building web applications</h2>
+        <h2 class="uppercase font-semibold text-zinc-600">& distributed systems.</h2>
       </div>
       <div class="font-semibold">
         <a href="#"> About, </a>
@@ -83,15 +83,15 @@
 </main>
 
  <main class="px-5 mx-auto">
-  <section class="">
+  <section class="py-6">
     <div class="flex flex-col gap-10">
-      <section class="flex gap-6">
+      <section class="flex gap-6 max-md:flex-col">
         <div
-          class="skd relative h-[600px] w-full max-w-[860px] rounded-md bg-amber-700 bg-[url(/assets/images/freshfarmsmockup.jpg)] bg-no-repeat bg-center bg-cover"
+          class="skd relative h-[600px] w-3/5 shrink-0 max-w-[860px] rounded-md bg-amber-700 bg-[url(/assets/images/freshfarmsmockup.webp)] bg-no-repeat bg-center bg-cover  max-md:w-full"
           data-lag="0.2"
         >
           <div
-            class="absolute inset-0 text-rose-500 font-lexend uppercase text-8xl font-bold"
+            class="absolute inset-0 text-rose-50 font-lexend uppercase text-8xl font-bold"
           >
             <h3 class="absolute top-0 left-0 p-10">fresh</h3>
             <h3 class="absolute bottom-0 right-0 p-10">farms</h3>
@@ -99,16 +99,16 @@
         </div>
         <div class="text-2xl" data-lag="0.3">
           <p>Digital book keeping for precise logging.</p>
-          <a href="" class="text-rose-400 hover:underline underline-offset-4">Learn more &#x2192;</a>
+          <a href="" class="text-amber-500 hover:underline underline-offset-4">Learn more &#x2192;</a>
         </div>
       </section>
-      <section class="flex gap-6">
+      <section class="flex gap-6 max-md:flex-col">
         <div
-          class="skd relative h-[600px] w-full max-w-[860px] rounded-md bg-sky-700 bg-[url(/assets/images/freshfarmsmockup.jpg)] bg-no-repeat bg-center bg-cover"
+          class="skd relative h-[600px] w-3/5 shrink-0  max-w-[860px] rounded-md bg-sky-700 bg-[url(/assets/images/telequeuemockup.webp)] bg-no-repeat bg-center bg-cover  max-md:w-full"
           data-lag="0.2"
         >
           <div
-            class="absolute inset-0 text-sky-500 font-lexend uppercase text-8xl font-bold"
+            class="absolute inset-0 text-sky-50 font-lexend uppercase text-8xl font-bold"
           >
             <h3 class="absolute top-0 left-0 p-10">tele</h3>
             <h3 class="absolute bottom-0 right-0 p-10">queue</h3>
@@ -116,9 +116,23 @@
         </div>
         <div class="text-2xl" data-lag="0.3">
           <p>Booking system that can handle the real spikes.</p>
-          <a href="" class="text-sky-400 hover:underline underline-offset-4">Learn more &#x2192;</a>
+          <a href="" class="text-amber-500 hover:underline underline-offset-4">Learn more &#x2192;</a>
         </div>
       </section>
+    </div>
+  </section>
+</main>
+
+ <main class="px-6">
+  <section class="py-96">
+    <div class="flex items-center justify-center">
+      <a
+        href="mailto:tsabudh@gmail.com"
+        class="inline-flex items-center gap-4 p-4 bg-amber-400 text-white rounded-3xl hover:gap-8 hover:bg-white hover:text-amber-400 transition-all ease-in duration-75"
+      >
+        <h3>tsabudh@gmail.com</h3>
+        <span class="text-3xl">&#x2192;</span>
+      </a>
     </div>
   </section>
 </main>
