@@ -1,42 +1,52 @@
-
 import barba from "@barba/core";
 import gsap from "gsap";
-import { getTitleFromHref, hideCurtains, setTextOnLoadingScreen, showCurtains, } from './transitions.js';
+import {
+  getTitleFromHref,
+  hideCurtains,
+  setTextOnLoadingScreen,
+  showCurtains,
+} from "./transitions.js";
 import { initHomePage } from "./home.js";
 
 const tl = gsap.timeline();
 barba.init({
-    views: [
-        {
-            namespace: "home",
-            afterEnter() {
-                initHomePage();
-            },
-        },],
-    transitions: [
-        {
-            name: 'default',
-            async leave({ current, next, trigger }) {
-                try {
-                    const href = trigger?.getAttribute("href");
-                    const nextTitle = getTitleFromHref(href);
-                    setTextOnLoadingScreen(nextTitle);
+  views: [
+    {
+      namespace: "home",
+      afterEnter() {
+        initHomePage();
+      },
+    },
+  ],
+  transitions: [
+    {
+      name: "default",
+      async leave({ current, next, trigger }) {
+        try {
+          const href = trigger?.getAttribute("href");
+          const nextTitle = getTitleFromHref(href);
+          setTextOnLoadingScreen(nextTitle);
 
-                    return showCurtains();
-
-                } catch (err) {
-                    console.log(err)
-                }
-
-            },
-
-            async afterEnter({ current, next }) {
-
-                current.container.style.display = "none";
-                return hideCurtains();
-            },
-
-
+          return showCurtains(true);
+        } catch (err) {
+          console.log(err);
         }
-    ]
+      },
+
+      async afterEnter({ current, next }) {
+        current.container.style.display = "none";
+        return hideCurtains();
+      },
+      async once() {
+        try {
+          setTextOnLoadingScreen("Loading");
+          await showCurtains(false);
+          await hideCurtains();
+          return;
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    },
+  ],
 });
