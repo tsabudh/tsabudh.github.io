@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="/styles/tailwind.css" />
     <link rel="stylesheet" href="/styles/compiled.css" />
     <script type="module" src="/scripts/barba.js"></script>
+    <script type="module" src="/scripts/locomotive.js"></script>
   </head>
-  <body data-barba="wrapper">
+  <body data-barba="wrapper" class="text-slate-950">
     <div class="barba-load-container">
       <div
         class="loading-screen relative h-full w-full flex items-center justify-center overflow-hidden"
@@ -48,8 +49,12 @@
       </div>
     </div>
     <main data-barba="container" data-barba-namespace="{{ namespace }}">
-      {% include "header.njk" %}
-      {{ content | safe }}
+      <div id="smooth-wrapper">
+      <div id="smooth-content">
+          <!-- {% include "header.njk" %} -->
+          {{ content | safe }}
+        </div>
+      </div>
     </main>
   </body>
 </html>

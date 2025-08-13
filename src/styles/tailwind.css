@@ -9,6 +9,9 @@
   --font-brother: BrotherSignature, cursive;
   --font-timeburner: Timeburner, sans-serif;
   --font-delight: DelightLettering, cursive;
+  --font-urbanist: Urbanist, sans-serif;
+  --font-urbanist-italic: UrbanistItalic, sans-serif;
+  --font-lexend: Lexend, Urbanist, sans-serif;
 
   --breakpoint-*: initial;
 }

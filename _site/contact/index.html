@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="/styles/tailwind.css" />
     <link rel="stylesheet" href="/styles/compiled.css" />
     <script type="module" src="/scripts/barba.js"></script>
+    <script type="module" src="/scripts/locomotive.js"></script>
   </head>
-  <body data-barba="wrapper">
+  <body data-barba="wrapper" class="text-slate-950">
     <div class="barba-load-container">
       <div
         class="loading-screen relative h-full w-full flex items-center justify-center overflow-hidden"
@@ -48,7 +49,9 @@
       </div>
     </div>
     <main data-barba="container" data-barba-namespace="contact">
-      <header
+      <div id="smooth-wrapper">
+      <div id="smooth-content">
+          <!-- <header
   class="fixed mix-blend-difference isolate top-0 w-full px-4 pt-1 flex gap-4 justify-between bg-transparent z-[9000] text-white "
 >
   <p class=" font-timeburner font-bold tracking-[0.2ch]">Sabudh Thapa</p>
@@ -57,8 +60,8 @@
     <a href="/contact">Contact</a>
   </nav>
 </header>
-
-      
+ -->
+          
 <h1 class="bg-amber-500">Contact Page</h1>
 <p class="bg-amber-500">
     Welcome to the contact page !
@@ -71,6 +74,8 @@
 <h2 style="font-family: 'GlametrixLight'">Glametrix Light Sample</h2>
 <h2 style="font-family: 'GlametrixBold'">Glametrix Bold Sample</h2>
 <h2 style="font-family: 'DelightLettering'">Delight Lettering Script Sample</h2>
+        </div>
+      </div>
     </main>
   </body>
 </html>

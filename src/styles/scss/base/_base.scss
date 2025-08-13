@@ -1,5 +1,12 @@
 body{
-    font-family: Timeburner;
+    font-family: Urbanist;
     letter-spacing: 0.1ch;
     overflow-x: hidden;
+    font-size: 1.1rem;
+    
+}
+
+*::selection{
+    background-color: black;
+    color: white;
 }

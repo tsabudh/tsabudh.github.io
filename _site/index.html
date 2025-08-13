@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="/styles/tailwind.css" />
     <link rel="stylesheet" href="/styles/compiled.css" />
     <script type="module" src="/scripts/barba.js"></script>
+    <script type="module" src="/scripts/locomotive.js"></script>
   </head>
-  <body data-barba="wrapper">
+  <body data-barba="wrapper" class="text-slate-950">
     <div class="barba-load-container">
       <div
         class="loading-screen relative h-full w-full flex items-center justify-center overflow-hidden"
@@ -48,7 +49,9 @@
       </div>
     </div>
     <main data-barba="container" data-barba-namespace="home">
-      <header
+      <div id="smooth-wrapper">
+      <div id="smooth-content">
+          <!-- <header
   class="fixed mix-blend-difference isolate top-0 w-full px-4 pt-1 flex gap-4 justify-between bg-transparent z-[9000] text-white "
 >
   <p class=" font-timeburner font-bold tracking-[0.2ch]">Sabudh Thapa</p>
@@ -57,71 +60,57 @@
     <a href="/contact">Contact</a>
   </nav>
 </header>
-
-      
- <main
-  class="index_hero_main relative min-h-dvh  w-full h-full bg-[#efefef] flex items-center justify-center"
->
-  <div
-    class="index_hero_background absolute inset-0 bg-[url(/assets/images/sabudh_hero.png)] bg-no-repeat bg-bottom-right opacity-50 bg-size-[auto_80vh]"
-  ></div>
-  <section class="index_hero_content relative p-4 mt-[5vh] md:mt-10 flex flex-col gap-8">
-    <div
-      class="index_hero_h1 flex flex-col gap-2 text-8xl max-xl:text-7xl max-lg:text-6xl"
-    >
-      <h1
-        class="text-center italic text-zinc-950 font-medium font-runtime leading-[0.85]"
-      >
-        <span class="text-zinc-600"> Systems that survive, </span>
-      </h1>
-      <h1
-        class="text-center text-zinc-950 font-medium font-runtime leading-[0.85]"
-      >
-        software that performs
-      </h1>
-    </div>
-    <div
-      class="index_hero_h2 text-zinc-600 text-center text-4xl max-xl:text-3xl max-md:text-2xl leading-[0.9] tracking-[0.1ch]"
-    >
-      <h2 class="font-glametrix">
-        I am a<span>&nbsp;software engineer&nbsp;</span>building scalable
-        systems.
-      </h2>
-      <h2 class="font-glametrix">
-        I excel in&nbsp;<span class="text-zinc-800"
-          >Web Apps & Distributed System</span
-        >&nbsp;domain.
-      </h2>
-    </div>
-  </section>
-
-
-
-  <section class="absolute right-0 bottom-0">
-    <div
-      class="relative w-20 h-20 rounded-full flex justify-center items-center text-white"
-    >
-      <div
-        class="absolute w-20 h-20 rounded-full text-zinc-300 bg-[url(/assets/images/scroll-down-svg.svg)] bg-center bg-size-[40px] bg-no-repeat"
-      ></div>
-      <div
-        class="index_hero_text absolute w-full h-full text-black font-glametrix text-sm tracking-wide"
-      >
-        <p>&nbsp;Scroll down&nbsp;</p>
+ -->
+          
+ <main class="px-5 mb-80">
+  <section>
+    <h1 class="text-[140px] font-bold font-lexend text-slate-800">
+      <span>SABUDH</span>
+      <span class="text-right">THAPA</span>
+    </h1>
+    <div class="flex justify-between tracking-tight font-lexend">
+      <div>
+        <h2 class="uppercase font-semibold">software engineer</h2>
+        <h2 class="uppercase font-semibold">building web applications</h2>
+        <h2 class="uppercase font-semibold">& distributed systems.</h2>
+      </div>
+      <div class="font-semibold">
+        <a href="#"> About, </a>
+        <a href="/contact"> Contact </a>
       </div>
     </div>
   </section>
 </main>
 
-<h2 class="font-glametrix ">Glametrix Font</h2>
-<h2 class="font-runtime">Runtime Regular Sample</h2>
-<h2 class="font-kingsman">Kingsman Demo Sample</h2>
-<h2 class="font-brother">Brother Signature Sample</h2>
-<h2 class="font-Timeburner">Timeburner Sample</h2>
-<h2 class="font-delight">Delight Sample</h2>
+ <main class="px-5">
+  <section class="">
+    <div class="flex flex-col gap-6">
+      <section class="skd relative h-[600px] rounded-2xl bg-amber-700 bg-[url(/assets/images/freshfarmsmockup.jpg)] bg-no-repeat bg-center bg-cover" data-lag="0.2">
+        <div
+          class="absolute inset-0 text-white font-lexend uppercase text-8xl font-bold"
+        >
+          <h3 class="absolute top-0 left-0 p-10">fresh</h3>
+          <h3 class="absolute bottom-0 right-0 p-10">farms</h3>
+        </div>
+        
+      </section>
+      <section class="skd relative h-[600px] rounded-2xl bg-sky-800" data-lag="0.2">
+        <div
+          class="absolute inset-0 text-white font-lexend uppercase text-8xl font-bold"
+        >
+          <h3 class="absolute top-0 left-0 p-10">Tele</h3>
+          <h3 class="absolute bottom-0 right-0 p-10">Queue</h3>
+        </div>
+      </section>
+    </div>
+  </section>
+</main>
+
 
 <script type="module" src="/scripts/home.js"></script>
 
+        </div>
+      </div>
     </main>
   </body>
 </html>
