@@ -1,20 +1,21 @@
 import barba from "@barba/core";
 import gsap from "gsap";
+
 import {
   getTitleFromHref,
   hideCurtains,
   setTextOnLoadingScreen,
   showCurtains,
 } from "./transitions.js";
-import { initHomePage } from "./home.js";
+import { initAboutPageHero } from "./about.js";
 
 const tl = gsap.timeline();
 barba.init({
   views: [
     {
-      namespace: "home",
+      namespace: "about",
       afterEnter() {
-        initHomePage();
+        initAboutPageHero();
       },
     },
   ],
