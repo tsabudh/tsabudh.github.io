@@ -8,9 +8,8 @@
     <link rel="stylesheet" href="/styles/tailwind.css" />
     <link rel="stylesheet" href="/styles/compiled.css" />
     <script type="module" src="/scripts/barba.js"></script>
-    <script type="module" src="/scripts/locomotive.js"></script>
   </head>
-  <body data-barba="wrapper" class="text-slate-950">
+  <body class="text-slate-950">
     <div class="barba-load-container bg-slate-700">
       <div
         class="loading-screen relative h-full w-full flex items-center justify-center overflow-hidden"
@@ -43,18 +42,22 @@
             <span> FRONTEND & BACKEND MAKES FULLSTACK </span>
           </p>
         </div>
-        <h1 id="loading-screen-text" class="font-delight text-9xl text-white z-50">
+        <h1
+          id="loading-screen-text"
+          class="font-delight text-9xl text-white z-50"
+        >
           Loading
         </h1>
       </div>
     </div>
-    <main data-barba="container" data-barba-namespace="{{ namespace }}" >
-      <div id="smooth-wrapper">
-        <div id="smooth-content" class="">
-          <!-- {% include "header.njk" %} -->
-          {{ content | safe }}
+    <div id="smooth-wrapper">
+      <div id="smooth-content" class="">
+        <div data-barba="wrapper">
+          <div data-barba="container" data-barba-namespace="{{ namespace }}">
+            {{ content | safe }}
+          </div>
         </div>
       </div>
-    </main>
+    </div>
   </body>
 </html>
