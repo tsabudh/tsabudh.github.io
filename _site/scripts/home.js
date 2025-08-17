@@ -153,7 +153,7 @@ export function initHomePage(barbaContainer) {
             pinSpacing: false,
             scrub: true,
 
-            markers: true,
+            // markers: true,
             // scroller: smootherContentEl,
             onEnter: () =>
               console.log(
@@ -170,14 +170,36 @@ export function initHomePage(barbaContainer) {
         // Animate text with its own scrollTrigger inside timeline
 
         stickyTimeline.to(
-          ".stickysabudhthapatexthome a",
+          ".stickysabudhthapatexthome",
           {
-            color: "red",
-            duration: 2,
+            duration: 0.5,
             scrollTrigger: {
               trigger: ".stickysabudhthapatexthome",
               start: "top top",
-              end: "bottom top",
+              end: "bottom bottom",
+              endTrigger: "#smooth-content",
+              pin: true,
+              pinSpacing: false,
+              scrub: true,
+              // markers: true,
+              // scroller: "#smooth-content",
+              // scroller: scrollerEl,
+            },
+          },
+          ">"
+        );
+        stickyTimeline.fromTo(
+          ".stickysabudhthapatexthome a",
+          {
+            opacity: 0,
+          },
+          {
+            opacity: 1,
+            duration: 2,
+            scrollTrigger: {
+              trigger: ".stickysabudhthapatexthome a",
+              start: "top top",
+              end: "+=200px",
               endTrigger: "#smooth-content",
               pin: true,
               pinSpacing: false,
