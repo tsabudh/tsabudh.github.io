@@ -1,5 +1,5 @@
 import barba from "@barba/core";
-import gsap from "gsap";
+import { initScrollSmoother, smoother } from "./gsap.js";
 
 import {
   getTitleFromHref,
@@ -7,46 +7,81 @@ import {
   setTextOnLoadingScreen,
   showCurtains,
 } from "./transitions.js";
-import { initAboutPageHero } from "./about.js";
 
-const tl = gsap.timeline();
+import { cleanupAboutPage, initAboutPage } from "./about.js";
+import { cleanupHomePage, initHomePage } from "./home.js";
+import { cleanupContactPage, initContactPage } from "./contact.js";
+
 barba.init({
+  prevent: ({ el, href }) => href == "#",
+
   views: [
+    {
+      namespace: "home",
+      afterEnter({ current }) {
+        initScrollSmoother();
+        initHomePage(current.container);
+      },
+      afterLeave() {
+        cleanupHomePage();
+      },
+    },
     {
       namespace: "about",
       afterEnter() {
-        initAboutPageHero();
+        initScrollSmoother();
+        initAboutPage();
+        // initScrollSmoother();
+      },
+      afterLeave() {
+        cleanupAboutPage();
+      },
+    },
+    {
+      namespace: "contact",
+      afteEnter() {
+        initScrollSmoother();
+        initContactPage();
+      },
+      afterLeave() {
+        cleanupContactPage();
       },
     },
   ],
   transitions: [
     {
       name: "default",
-      async leave({ current, next, trigger }) {
+      sync: false,
+      async leave({ trigger }) {
         try {
           const href = trigger?.getAttribute("href");
           const nextTitle = getTitleFromHref(href);
           setTextOnLoadingScreen(nextTitle);
-
           return showCurtains(true);
         } catch (err) {
-          console.log(err);
+          console.error(err?.message);
         }
       },
 
-      async afterEnter({ current, next }) {
-        current.container.style.display = "none";
-        return hideCurtains();
+      async after({ current, next }) {
+        try {
+          return hideCurtains();
+        } catch (error) {
+          console.error(error.message);
+        }
       },
+
       async once() {
         try {
           setTextOnLoadingScreen("Loading");
           await showCurtains(false);
-          await hideCurtains();
           return;
         } catch (err) {
-          console.log(err);
+          console.error(err.message);
         }
+      },
+      afterOnce() {
+        hideCurtains();
       },
     },
   ],

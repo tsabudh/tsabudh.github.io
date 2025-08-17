@@ -1,4 +1,4 @@
-import gsap from "gsap";
+import gsap from "./gsap";
 
 export function setTextOnLoadingScreen(textContent) {
   try {
@@ -38,7 +38,6 @@ export function getTitleFromHref(href) {
 
 export function showCurtains(animate = true) {
   const tl = gsap.timeline();
-  console.log("animating on leave");
 
   tl.to(".barba-load-container", {
     y: "0%",
@@ -50,7 +49,6 @@ export function showCurtains(animate = true) {
 
 export function hideCurtains() {
   const tl = gsap.timeline();
-  console.log("animating after enter");
   tl.to(".barba-load-container", {
     y: "-100%",
     duration: 1.5,
@@ -60,5 +58,6 @@ export function hideCurtains() {
   tl.set(".barba-load-container", {
     y: "110%",
   });
+
   return tl;
 }
