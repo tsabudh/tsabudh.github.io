@@ -2,10 +2,10 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   build: {
-    outDir: "_site/assets",
+    outDir: "_site",
     emptyOutDir: false,
     rollupOptions: {
-      input: "./src/scripts/bundle.js", // Entry point for Vite
+      input: "./src/scripts/barba.js", // Entry point for Vite
     },
   }
 });
