@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/tailwind.css" />
+    <link rel="stylesheet" href="/styles/compiled.css" />
+    <script type="module" src="/scripts/barba.js"></script>
+  </head>
+  <body class="text-slate-950">
+    <div class="barba-load-container bg-slate-700">
+      <div
+        class="loading-screen relative h-full w-full flex items-center justify-center overflow-hidden"
+      >
+        <div
+          class="barba-load-container_bg-texts absolute inset-0 text-slate-600 text-9xl opacity-45 rotate-12 scale-150 whitespace-nowrap space-y-9 font-lexend font-bold"
+        >
+          <p>
+            <span> BUILDING SOFTWARE THAT PERFORMS </span>
+            <span> BUILDING SOFTWARE THAT PERFORMS </span>
+          </p>
+          <p>
+            <span> RESILIENT SYSTEMS THAT HANDLES FAILURE GRACEFULLY </span>
+            <span> RESILIENT SYSTEMS THAT HANDLES FAILURE GRACEFULLY </span>
+          </p>
+          <p>
+            <span> CREATIVE DESIGNS AND SOLUTIONS </span>
+            <span> CREATIVE DESIGNS AND SOLUTIONS </span>
+          </p>
+          <p>
+            <span> DELIVERING SOFTWARE THAT GOES AN EXTRA MILE </span>
+            <span> DELIVERING SOFTWARE THAT GOES AN EXTRA MILE </span>
+          </p>
+          <p>
+            <span> WEB APP THAT FEELS INTUIATIVE </span>
+            <span> WEB APP THAT FEELS INTUIATIVE </span>
+          </p>
+          <p>
+            <span> FRONTEND & BACKEND MAKES FULLSTACK </span>
+            <span> FRONTEND & BACKEND MAKES FULLSTACK </span>
+          </p>
+        </div>
+        <h1
+          id="loading-screen-text"
+          class="font-delight text-9xl text-white z-50"
+        >
+          Loading
+        </h1>
+      </div>
+    </div>
+    <div id="smooth-wrapper">
+      <div id="smooth-content" class="">
+        <div data-barba="wrapper">
+          <div data-barba="container" data-barba-namespace="{{ namespace }}">
+            {{ content | safe }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "plugins": ["import"],
+  "extends": [
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "eslint:recommended"
+  ],
+  "rules": {
+    "import/extensions": [
+      "error",
+      "always",
+      {
+        "js": "always",
+        "mjs": "always"
+      }
+    ],
+    "no-unused-vars": [
+      "warn",
+      { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }
+    ],
+    "no-console": "warn",
+    "eqeqeq": ["error", "always"],
+    "curly": "error",
+    "no-var": "error",
+    "prefer-const": [
+      "warn",
+      {
+        "destructuring": "any",
+        "ignoreReadBeforeAssign": true
+      }
+    ],
+    "semi": ["warn", "always"],
+    "quotes": ["warn", "double", { "avoidEscape": true }],
+    "indent": ["warn", 2, { "SwitchCase": 1 }],
+    "object-curly-spacing": ["warn", "always"],
+    "comma-dangle": ["warn", "only-multiline"]
+  }
+}

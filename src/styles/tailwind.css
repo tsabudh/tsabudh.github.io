@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --font-glametrix: GlametrixLight, sans-serif;
+  --font-glametrix-bold: GlametrixBold, sans-serif;
+  --font-glametrix-base: Glametrix, sans-serif;
+  --font-runtime: RuntimeRegular, sans-serif;
+  --font-kingsman: KingsmanDemo, serif;
+  --font-brother: BrotherSignature, cursive;
+  --font-timeburner: Timeburner, sans-serif;
+  --font-delight: DelightLettering, cursive;
+  --font-urbanist: Urbanist, sans-serif;
+  --font-urbanist-italic: UrbanistItalic, sans-serif;
+  --font-lexend: Lexend, Urbanist, sans-serif;
+
+  --breakpoint-*: initial;
+}
+
+@custom-variant max-2xl (@media (width < 96rem));
+@custom-variant max-xl (@media (width < 80rem));
+@custom-variant max-lg (@media (width < 64rem));
+@custom-variant max-md (@media (width < 48rem));
+@custom-variant max-sm (@media (width < 40rem));
