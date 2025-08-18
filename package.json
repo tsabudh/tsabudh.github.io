@@ -7,7 +7,8 @@
   "scripts": {
     "start": "npx @11ty/eleventy --serve",
     "build": "npx @11ty/eleventy",
-    "build:css": "npx postcss src/styles/tailwind.css -o src/styles/main.css"
+    "build:css": "npx postcss src/styles/tailwind.css -o src/styles/main.css",
+    "deploy": "gh-pages -d _site"
   },
   "repository": {
     "type": "git",
@@ -35,10 +36,12 @@
     "gsap": "^3.13.0",
     "postcss": "^8.5.6",
     "sass": "^1.89.2",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "vite-plugin-static-copy": "^3.1.1"
   },
   "devDependencies": {
     "@11ty/eleventy-plugin-vite": "^6.0.0-alpha.4",
-    "eslint-plugin-import": "^2.32.0"
+    "eslint-plugin-import": "^2.32.0",
+    "gh-pages": "^6.3.0"
   }
 }

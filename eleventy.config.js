@@ -14,11 +14,16 @@ export default function (eleventyConfig) {
 
   eleventyConfig.addPassthroughCopy("src/fonts");
   eleventyConfig.addPassthroughCopy("src/assets");
+
+  eleventyConfig.addPassthroughCopy("CNAME");
   eleventyConfig.addPassthroughCopy("src/scripts");
 
   eleventyConfig.addPlugin(dirOutputPlugin);
   eleventyConfig.addPlugin(HtmlBasePlugin);
-  eleventyConfig.addPlugin(pluginVite);
+  eleventyConfig.addPlugin(pluginVite, {
+    viteOptions: viteConfig,
+  });
+
 
   eleventyConfig.addExtension("scss", {
     outputFileExtension: "css",
@@ -69,7 +74,7 @@ export default function (eleventyConfig) {
     dir: {
       input: "src",
       includes: "_includes",
-      data: "_data",
+      output: "_site",
     },
   };
 }
