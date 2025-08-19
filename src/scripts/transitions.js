@@ -44,6 +44,7 @@ export function showCurtains(animate = true) {
     duration: animate ? 1.2 : 0,
     ease: "power3.inOut",
   });
+
   return tl;
 }
 
