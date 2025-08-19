@@ -47,11 +47,12 @@ export function showCurtains(animate = true) {
   return tl;
 }
 
-export function hideCurtains() {
+export function hideCurtains(delay = 0) {
   const tl = gsap.timeline();
   tl.to(".barba-load-container", {
     y: "-100%",
     duration: 1.5,
+    delay,
     ease: "power4.inOut",
   });
 
