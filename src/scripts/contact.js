@@ -5,11 +5,7 @@ let contactPageGsapContext;
 
 export function initContactPage() {
   try {
-    console.log("Executing initContactPage");
     if (!contactPageGsapContext) {
-      console.log(
-        "GSAP ContactPage context not found. Initializing new context."
-      );
       contactPageGsapContext = gsap.context(() => {
         const stickyTimeline = gsap.timeline();
 
@@ -81,9 +77,5 @@ export function cleanupContactPage() {
   if (contactPageGsapContext) {
     contactPageGsapContext.revert(); // Kills all animations and ScrollTriggers within this context
     contactPageGsapContext = null; // Clear the context variable
-    console.log(
-      "GSAP Contact Page Context and its animations/ScrollTriggers have been reverted."
-    );
   }
 }
-

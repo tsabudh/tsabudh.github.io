@@ -1,7 +1,6 @@
 import gsap from "./gsap";
 
 export function initStickyNavigationHeader() {
-  console.log("executing initStickyNavigationHeader");
   const stickyTimeline = gsap.timeline();
 
   // Animate nav with ScrollTrigger directly inside tl.to
