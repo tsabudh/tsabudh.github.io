@@ -14,7 +14,27 @@ import { cleanupHomePage, initHomePage } from "./home.js";
 import { cleanupContactPage, initContactPage } from "./contact.js";
 
 barba.init({
-  prevent: ({ el, href }) => href == "#",
+  preventRunning: true,
+  prevent: ({ el, event, href }) => {
+    console.log("Preventing navigation for:", href);
+    event.preventDefault();
+    // prevent on hash links
+    if (href === "#") {
+      event.preventDefault();
+      return true;
+    }
+
+    // prevent if clicking link to the same namespace
+    const nextNamespace = el?.getAttribute("data-barba-namespace");
+    const currentNamespace = barba?.history?.current?.namespace;
+
+    if (nextNamespace && currentNamespace === nextNamespace) {
+      event.preventDefault();
+      return true;
+    }
+
+    return false;
+  },
 
   views: [
     {
@@ -40,7 +60,7 @@ barba.init({
     },
     {
       namespace: "contact",
-      afteEnter() {
+      afterEnter() {
         initScrollSmoother();
         initContactPage();
       },
@@ -69,7 +89,6 @@ barba.init({
             nextTitle = getTitleFromHref(href);
           } else {
             // Back/Forward navigation → we don’t have an href
-            console.log("Back/Forward nav → run curtains anyway");
             nextTitle = next.namespace || "Loading";
           }
 
@@ -84,9 +103,6 @@ barba.init({
         try {
           if (!(trigger instanceof HTMLElement)) {
             // Back/forward → no curtain to hide
-            console.log(
-              "AFTER AFTER AFTER AFTER AFTER AFTER AFTER AFTER AFTER AFTER AFTER AFTER skipping curtain +++++++++++++++++++++++++++++++++++++++++++++"
-            );
           }
           return hideCurtains();
         } catch (error) {
@@ -104,7 +120,7 @@ barba.init({
         }
       },
       afterOnce() {
-        hideCurtains();
+        hideCurtains(1);
       },
     },
   ],
