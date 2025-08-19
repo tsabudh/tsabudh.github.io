@@ -111,9 +111,8 @@ export function initHomePage() {
               height: "0%",
             },
             duration: 1,
-            ease: "power2.inOut",
+            ease: "power2.out",
           });
-          
         });
 
         container.addEventListener("mouseleave", () => {
@@ -129,7 +128,6 @@ export function initHomePage() {
             duration: 1,
             ease: "power2.inOut",
           });
-        
         });
 
         // STICKY NAVIGATION
