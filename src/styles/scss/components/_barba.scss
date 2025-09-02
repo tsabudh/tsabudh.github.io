@@ -13,16 +13,19 @@
       white-space: nowrap;
     }
     & p:nth-child(even) {
-      animation: marquee 8s ease-in-out infinite;
+      animation: marquee 10s ease-in-out reverse infinite;
     }
     & p:nth-child(odd) {
-      animation: marquee 5s ease-in reverse infinite;
+      animation: marquee 9s ease-in  infinite;
     }
     & p:nth-child(3) {
-      animation: marquee 4s linear infinite;
+      animation: marquee 7s linear reverse infinite;
+    }
+    & p:nth-child(4) {
+      animation: marquee 7s ease-out infinite;
     }
     & p:nth-child(5) {
-      animation: marquee 7s ease-out reverse infinite;
+      animation: marquee 8s ease-out reverse infinite;
     }
   }
 }

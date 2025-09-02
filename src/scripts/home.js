@@ -2,11 +2,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import gsap, { smoother } from "./gsap.js";
 let homePageGsapContext;
 
-export function initHomePage(barbaContainer) {
+export function initHomePage() {
   try {
-    console.log("Executing initHomePage");
     if (!homePageGsapContext) {
-      console.log("GSAP HomePage context not found. Initializing new context.");
       homePageGsapContext = gsap.context(() => {
         const tl = gsap.timeline();
         let letters = gsap.utils.toArray("#sabudh span");
@@ -113,7 +111,7 @@ export function initHomePage(barbaContainer) {
               height: "0%",
             },
             duration: 1,
-            ease: "power2.inOut",
+            ease: "power2.out",
           });
         });
 
@@ -136,7 +134,6 @@ export function initHomePage(barbaContainer) {
         ScrollTrigger.refresh();
         const stickyTimeline = gsap.timeline();
         let smootherContentEl = smoother.content();
-        console.log(smootherContentEl);
 
         // Animate nav with ScrollTrigger directly inside tl.to
         stickyTimeline.to(".stickynavigationhome", {
@@ -155,10 +152,7 @@ export function initHomePage(barbaContainer) {
 
             // markers: true,
             // scroller: smootherContentEl,
-            onEnter: () =>
-              console.log(
-                "sticky navigation ++++++++++++++++++++++++++++++++++"
-              ),
+
             onComplete: () => {
               ScrollTrigger.refresh(true);
             },
@@ -211,7 +205,6 @@ export function initHomePage(barbaContainer) {
           },
           ">"
         );
-        console.log("inside gsap context");
       });
     }
   } catch (error) {
@@ -223,9 +216,6 @@ export function cleanupHomePage() {
   if (homePageGsapContext) {
     homePageGsapContext.revert(); // Kills all animations and ScrollTriggers within this context
     homePageGsapContext = null; // Clear the context variable
-    console.log(
-      "GSAP Home Page Context and its animations/ScrollTriggers have been reverted."
-    );
   }
 }
 

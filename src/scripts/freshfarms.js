@@ -1,21 +1,21 @@
 import gsap, { initScrollSmoother } from "./gsap.js";
 
 // initStickyNavigationHeader();
-let contactPageGsapContext;
+let freshfarmsPageGsapContext;
 
-export function initContactPage() {
+export function initFreshfarmsPage() {
   try {
-    if (!contactPageGsapContext) {
-      contactPageGsapContext = gsap.context(() => {
+    if (!freshfarmsPageGsapContext) {
+      freshfarmsPageGsapContext = gsap.context(() => {
         const stickyTimeline = gsap.timeline();
 
         // Animate nav with ScrollTrigger directly inside tl.to
-        stickyTimeline.to(".stickynavigationcontact", {
+        stickyTimeline.to(".stickynavigationfreshfarms", {
           y: 0,
           duration: 0.5,
           ease: "power2.out",
           scrollTrigger: {
-            trigger: ".stickynavigationcontact",
+            trigger: ".stickynavigationfreshfarms",
             start: "top top",
             endTrigger: "#smooth-content",
             end: "bottom top",
@@ -29,13 +29,13 @@ export function initContactPage() {
 
         // Animate text with its own scrollTrigger inside timeline
         stickyTimeline.to(
-          ".stickysabudhthapatextcontact",
+          ".stickysabudhthapatextfreshfarms",
           {
             y: 0,
             duration: 0.5,
             ease: "power2.out",
             scrollTrigger: {
-              trigger: ".stickysabudhthapatextcontact",
+              trigger: ".stickysabudhthapatextfreshfarms",
               start: "top top",
               endTrigger: "#smooth-content",
               end: "bottom top",
@@ -49,12 +49,12 @@ export function initContactPage() {
           ">"
         );
         stickyTimeline.to(
-          ".stickysabudhthapatextcontact a",
+          ".stickysabudhthapatextfreshfarms a",
           {
             opacity: 1,
             duration: 2,
             scrollTrigger: {
-              trigger: ".stickysabudhthapatextcontact a",
+              trigger: ".stickysabudhthapatextfreshfarms a",
               start: "top top",
               end: "+=100px",
               pin: true,
@@ -73,9 +73,9 @@ export function initContactPage() {
   }
 }
 
-export function cleanupContactPage() {
-  if (contactPageGsapContext) {
-    contactPageGsapContext.revert(); // Kills all animations and ScrollTriggers within this context
-    contactPageGsapContext = null; // Clear the context variable
+export function cleanupFreshfarmsPage() {
+  if (freshfarmsPageGsapContext) {
+    freshfarmsPageGsapContext.revert(); // Kills all animations and ScrollTriggers within this context
+    freshfarmsPageGsapContext = null; // Clear the context variable
   }
 }

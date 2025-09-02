@@ -5,9 +5,7 @@ let aboutPageGsapContext;
 
 export function initAboutPage() {
   try {
-    console.log("Executing initAboutPage");
     if (!aboutPageGsapContext) {
-      console.log("GSAP AboutPage context not found. Initializing new context.");
       aboutPageGsapContext = gsap.context(() => {
         const text = document.querySelector(".about_hero_text");
         text.innerHTML = text.innerText
