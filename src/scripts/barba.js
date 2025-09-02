@@ -12,6 +12,7 @@ import {
 import { cleanupAboutPage, initAboutPage } from "./about.js";
 import { cleanupHomePage, initHomePage } from "./home.js";
 import { cleanupContactPage, initContactPage } from "./contact.js";
+import { cleanupFreshfarmsPage, initFreshfarmsPage } from "./freshfarms.js";
 
 barba.init({
   preventRunning: true,
@@ -66,6 +67,16 @@ barba.init({
       },
       afterLeave() {
         cleanupContactPage();
+      },
+    },
+    {
+      namespace: "freshfarms",
+      afterEnter() {
+        initScrollSmoother();
+        initFreshfarmsPage();
+      },
+      afterLeave() {
+        cleanupFreshfarmsPage();
       },
     },
   ],
