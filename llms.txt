@@ -1,0 +1,24 @@
+# Sabudh Thapa
+
+Sabudh Thapa is a backend, platform, and data infrastructure engineer in Kathmandu, Nepal. His strongest public signal is production systems work around event-driven workers, PostgreSQL, Kafka, DuckDB, Parquet, S3, OpenTelemetry, Rust precision paths, data provenance, and recovery from partial failure.
+
+Primary pages:
+- Home: https://tsabudh.com.np/
+- About: https://tsabudh.com.np/about/
+- Resume: https://tsabudh.com.np/resume/
+- Blog: https://tsabudh.com.np/blog/
+- Contact: https://tsabudh.com.np/contact/
+- Backpressure system note: https://tsabudh.com.np/systems/backpressure/
+
+Selected technical signal:
+- Multi-source SEC identity projection with canonical people, affiliations, roles, resumable per-company runs, and field-level provenance.
+- Wide screener query optimization from 8-22 seconds to under 600ms by routing analytical workloads to DuckDB over S3-backed Parquet snapshots.
+- Kafka worker hardening with idempotent producers, deduplication keys, DLQ routing, retry/backoff, health probes, consumer-lag visibility, resource limits, and ordered shutdown.
+- Production data recovery from a point-in-time database branch using PostgreSQL dblink, followed by migration safety checks for destructive SQL patterns.
+- Rust Decimal arithmetic across a Python/Rust boundary for finance-safe precision paths.
+
+External profiles:
+- GitHub: https://github.com/tsabudh
+- LinkedIn: https://www.linkedin.com/in/tsabudh
+- Medium: https://medium.com/@tsabudh
+- Email: tsabudh@gmail.com
