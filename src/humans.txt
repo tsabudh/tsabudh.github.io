@@ -1,0 +1,15 @@
+/* TEAM */
+
+Owner: Sabudh Thapa
+Focus: Backend, platform, data infrastructure, distributed systems path
+Location: Kathmandu, Nepal
+Email: tsabudh@gmail.com
+GitHub: https://github.com/tsabudh
+LinkedIn: https://www.linkedin.com/in/tsabudh
+Medium: https://medium.com/@tsabudh
+
+/* SITE */
+
+Canonical domain: https://tsabudh.com.np
+Stack: Eleventy, Vite, Tailwind CSS
+Primary signal: backend systems, event-driven workers, PostgreSQL, Kafka, DuckDB, Parquet, OpenTelemetry, Rust precision paths

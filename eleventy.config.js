@@ -17,6 +17,12 @@ export default function (eleventyConfig) {
 
   eleventyConfig.addPassthroughCopy("CNAME");
   eleventyConfig.addPassthroughCopy("src/scripts");
+  eleventyConfig.addPassthroughCopy({
+    "src/sitemap.xml": "sitemap.xml",
+    "src/robots.txt": "robots.txt",
+    "src/llms.txt": "llms.txt",
+    "src/humans.txt": "humans.txt",
+  });
 
   eleventyConfig.addPlugin(dirOutputPlugin);
   eleventyConfig.addPlugin(HtmlBasePlugin);

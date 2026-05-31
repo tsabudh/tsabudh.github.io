@@ -13,6 +13,10 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         { src: "CNAME", dest: "." },
+        { src: "sitemap.xml", dest: "." },
+        { src: "robots.txt", dest: "." },
+        { src: "llms.txt", dest: "." },
+        { src: "humans.txt", dest: "." },
       ],
     }),
   ],
