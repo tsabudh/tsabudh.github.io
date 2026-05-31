@@ -4,8 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Freshfarms | tsabudh</title>
-    <script type="module" crossorigin src="/assets/barba-3qq_jX7p.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/barba-DtF6F1X3.css">
+    <link rel="stylesheet" href="/styles/main.css"  type="text/css"/>
+    <link rel="stylesheet" href="/styles/compiled.css"  type="text/css"/>
+    <link rel="stylesheet" href="/styles/tailwind.css"  type="text/css"/>
+    
+    <script>
+      window.__PORTFOLIO_GA_MEASUREMENT_ID__ = "";
+    </script>
+    
+    <script type="module" src="/scripts/barba.js"></script>
   </head>
   <body class="text-slate-950">
     <div class="barba-load-container bg-slate-700">
@@ -16,28 +23,28 @@
           class="barba-load-container_bg-texts absolute inset-0 text-slate-600 text-9xl opacity-45 rotate-12 scale-150 whitespace-nowrap space-y-9 font-lexend font-bold"
         >
           <p>
-            <span> BUILDING SOFTWARE THAT PERFORMS </span>
-            <span> BUILDING SOFTWARE THAT PERFORMS </span>
+            <span> SYSTEMS THAT KEEP WORK MOVING </span>
+            <span> SYSTEMS THAT KEEP WORK MOVING </span>
           </p>
           <p>
-            <span> RESILIENT SYSTEMS THAT HANDLES FAILURE GRACEFULLY </span>
-            <span> RESILIENT SYSTEMS THAT HANDLES FAILURE GRACEFULLY </span>
+            <span> DATA THAT STAYS CORRECT UNDER FAILURE </span>
+            <span> DATA THAT STAYS CORRECT UNDER FAILURE </span>
           </p>
           <p>
-            <span> CREATIVE DESIGNS AND SOLUTIONS </span>
-            <span> CREATIVE DESIGNS AND SOLUTIONS </span>
+            <span> IDEMPOTENT JOBS THAT RETRY SAFELY </span>
+            <span> IDEMPOTENT JOBS THAT RETRY SAFELY </span>
           </p>
           <p>
-            <span> DELIVERING SOFTWARE THAT GOES AN EXTRA MILE </span>
-            <span> DELIVERING SOFTWARE THAT GOES AN EXTRA MILE </span>
+            <span> QUERIES SHAPED FOR THE DATA THEY READ </span>
+            <span> QUERIES SHAPED FOR THE DATA THEY READ </span>
           </p>
           <p>
-            <span> WEB APP THAT FEELS INTUIATIVE </span>
-            <span> WEB APP THAT FEELS INTUIATIVE </span>
+            <span> POINT-IN-TIME RECOVERY BEFORE INCIDENTS </span>
+            <span> POINT-IN-TIME RECOVERY BEFORE INCIDENTS </span>
           </p>
           <p>
-            <span> FRONTEND & BACKEND MAKES FULLSTACK </span>
-            <span> FRONTEND & BACKEND MAKES FULLSTACK </span>
+            <span> DISTRIBUTED TRACING AT SERVICE BOUNDARIES </span>
+            <span> DISTRIBUTED TRACING AT SERVICE BOUNDARIES </span>
           </p>
         </div>
         <h1
@@ -66,13 +73,19 @@
   </div>
   <div class="stickynavigation font-semibold self-start text-white ">
     <a
-      href="/about"
+      href="/about/"
       class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300"
       >About</a
     >
     ,
     <a
-      href="/contact"
+      href="/blog/"
+      class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300"
+      >Blog</a
+    >
+    ,
+    <a
+      href="/contact/"
       class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300"
       >Contact</a
     >
@@ -86,10 +99,13 @@
     </a>
   </div>
   <div class="stickynavigationfreshfarms font-semibold self-start  max-md:text-right">
-    <a href="/about"
+    <a href="/about/"
       class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">About</a>
     ,
-    <a href="/contact"
+    <a href="/blog/"
+      class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">Blog</a>
+    ,
+    <a href="/contact/"
       class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">Contact</a>
   </div>
 </header>
@@ -99,14 +115,14 @@
         <div class="basis-3/4 h-3/4 shrink-0 flex flex-col justify-center items-center">
 
             <h1 class="text-5xl">Freshfarms</h1>
-            <h2 class="text-xl">Project Lead</h2>
+            <h2 class="text-xl">Customer credit ledger for a farm outlet</h2>
         </div>
         <div class="flex gap-10 basis-1/4 justify-around flex-wrap">
             <div class="flex flex-col  text-center">
                 <span class="uppercase text-2xl font-medium">Role</span>
-                <h3>Project Lead</h3>
-                <h3>Backend Developer</h3>
-                <h3>Frontend Developer</h3>
+                <h3>Product owner</h3>
+                <h3>Backend engineer</h3>
+                <h3>Application engineer</h3>
             </div>
             <div class="flex flex-col text-center">
                 <span class="uppercase text-2xl font-medium">Team</span>
@@ -122,102 +138,90 @@
         </div>
     </section>
 </main>
+
 <main class="px-5">
     <section class="py-6 flex flex-col gap-10 justify-between items-center">
         <div class="flex flex-col gap-4 justify-center items-center">
             <h2 class="text-4xl">Overview</h2>
             <p class="flex flex-col max-w-3xl">
-                Freshfarms is a web application designed to record the transactions of a local farm's outlet. It is
-                built
-                with only one goal in mind:
-                to make it easy for the farm's outlet to keep track of their customers' purchases and payments therefore
-                reducing conflicts during payments.
+                Freshfarms is a customer credit ledger for a local farm outlet. It records purchases, partial payments,
+                outstanding balances, and customer transaction history so staff can reconcile end-of-month credit
+                accounts without relying on memory or paper notes.
 
             </p>
         </div>
         <div class="flex flex-col gap-4 justify-center items-center">
             <h2 class="text-4xl">Problem</h2>
             <p class="flex flex-col max-w-3xl">
-                Local farms operate on credits and often struggle with managing customer transactions, leading to
-                confusion
-                and disputes.
-                Freshfarms addresses this issue by providing a simple and efficient way to log all transactions,
-                ensuring
-                transparency and accountability.
-                The application is built with a modern tech stack, including React.js, Tailwind CSS, Express and
-                MongoDB. It
-                is deployed on Netlify for a demo.
-                This project was built for reassurance for the farm's outlet owner, who was concerned about potential
-                conflicts with customers over payments.
-                Now, with freshfarms in place, the staffs as well as the customers can view their transactions and
-                maintain
-                positive relationships with each other.
+                The outlet sells on customer credit, which creates an accounts-receivable problem: staff need a
+                trustworthy transaction record, customers need balance visibility, and disputed payments need a clear
+                audit trail. Freshfarms solves that by making purchase and payment events visible from the customer
+                profile, with a simple operational workflow for staff who are not technical users.
             </p>
         </div>
         <div class="flex flex-col gap-4 justify-center items-center">
            
             <h2 class="text-4xl">Design</h2>
             <p class="flex flex-col max-w-3xl">
-                The design was created without using Figma or other design tools. Instead, it focused on simplicity and
-                usability, ensuring that even staff members with limited computer skills could easily navigate and use
-                the application. The interface uses clear layouts, large buttons, and straightforward workflows to
-                minimize confusion and make daily operations efficient.
+                The interface is optimized for low-friction daily operations: staff can record purchases, register
+                payments, inspect balances, and answer customer questions without moving through unrelated screens.
+                The constraint was operational reliability, not visual novelty.
             </p>
         </div>
         <h2 class="text-4xl">Features</h2>
         <div class="flex flex-col items-center gap-6 -mt-5">
             <div class="flex flex-col gap-4 basis-1/2 max-w-3xl">
                 <h3 class="text-2xl">
-                    Transaction Logging
+                    Transaction ledger
                 </h3>
                 <ul>
-                    <li> Logs all transactions made by users, including purchases on credits, partial and full payments.
+                    <li>Records purchase and payment events, including credit purchases, partial payments, and full settlement.
                     </li>
-                    <li>Provides a detailed history of all financial activities for transparency and accountability.
+                    <li>Provides a customer-level transaction history for reconciliation and dispute resolution.
                     </li>
-                    <li>Allows users to view their transaction history and track their financial activities.</li>
+                    <li>Shows current balance and historical activity from the same workflow.</li>
 
                 </ul>
             </div>
             <div>
                 <figure class="flex basis-1/2 gap-6 items-start justify-center flex-wrap mt-6">
                     <img class="max-h-[350px] object-contain rounded-2xl border-slate-700 border"
-                        src="/assets/freshfarmspurchase-vn3Dhjo3.png" alt="Transaction Logging">
+                        src="/assets/images/freshfarmspurchase.png" alt="Transaction Logging">
                     <img class="max-h-[350px] object-contain rounded-2xl border-slate-700 border"
-                        src="/assets/freshfarmspayment-BeEUDB8b.png" alt="Transaction Logging">
+                        src="/assets/images/freshfarmspayment.png" alt="Transaction Logging">
                     <img class="max-h-[550px] object-contain rounded-2xl border-slate-700 border"
-                        src="/assets/freshfarmstransactiondetail-B81vyIu6.png" alt="Transaction Logging">
+                        src="/assets/images/freshfarmstransactiondetail.png" alt="Transaction Logging">
                     <img class="max-h-[550px] object-contain rounded-2xl border-slate-700 border"
-                        src="/assets/freshfarmstransactions-sf_mfVsi.png" alt="Transaction Logging">
+                        src="/assets/images/freshfarmstransactions.png" alt="Transaction Logging">
                 </figure>
             </div>
         </div>
         <div class="flex flex-col items-center">
             <div class="flex flex-col gap-4 basis-1/2">
                 <h3 class="text-2xl">
-                    Customer Profile
+                    Customer account view
                 </h3>
                 <ul>
-                    <li> Provides a detailed profile on a customer, their delivery location and latest transations.</li>
-                    <li>Summarizes the customer's total spending and outstanding balance for easy reference.</li>
-                    <li>Allows editing directly on details page.</li>
+                    <li>Maintains customer identity, delivery location, latest transactions, and account balance.</li>
+                    <li>Summarizes total purchases, payments, and outstanding credit for quick staff lookup.</li>
+                    <li>Allows account updates directly from the detail page.</li>
 
                 </ul>
             </div>
             <div class="flex flex-col">
                 <figure class="flex basis-1/2 gap-6 items-start justify-center flex-wrap mt-6">
                     <img class="max-h-[550px] object-contain rounded-2xl border-slate-700 border"
-                        src="/assets/freshfarmscustomer-CI5D3PqV.png" alt="Transaction Logging">
+                        src="/assets/images/freshfarmscustomer.png" alt="Transaction Logging">
                 </figure>
             </div>
         </div>
         <div class="flex flex-col items-center">
             <div class="flex flex-col gap-4 basis-1/2 max-w-3xl">
                 <h3 class="text-2xl">
-                    Realtime Chatting
+                    Real-time support channel
                 </h3>
                 <ul>
-                    <li> Enables real-time communication between users and the admin for quick support and inquiries.
+                    <li>Enables real-time communication between customers and the outlet admin for payment or delivery questions.
                     </li>
 
                 </ul>
@@ -225,7 +229,7 @@
             <div class="flex flex-col">
                 <figure class="flex basis-1/2 gap-6 items-start justify-center flex-wrap mt-6">
                     <img class="max-h-[550px] object-contain rounded-2xl border-slate-700 border"
-                        src="/assets/freshfarmschat-PYxQ4FJx.png" alt="Transaction Logging">
+                        src="/assets/images/freshfarmschat.png" alt="Transaction Logging">
                 </figure>
             </div>
         </div>
@@ -234,21 +238,17 @@
 
             <h2 class="text-4xl">Result</h2>
             <p class="flex flex-col max-w-3xl">
-                The implementation of Freshfarms has significantly improved the management of customer transactions at
-                the local farm's outlet. Staff members can now easily log and track purchases and payments, reducing
-                the likelihood of disputes with customers. The transparency provided by the transaction history has
-                fostered trust between the farm and its customers, leading to better relationships and increased
-                customer satisfaction. Overall, Freshfarms has streamlined operations and enhanced the financial
-                management of
-                the outlet. Summary of purchases and payments are now easily accessible for customers that purchase on
-                credits and pay at end of month, <span class="font-medium"> ensuring clarity and reducing
-                    misunderstandings.</span>
+                Freshfarms turned an informal credit process into a visible ledger. Staff can log purchases and
+                payments, customers can inspect their own transaction history, and end-of-month balances are easier to
+                verify. The important outcome is operational trust: fewer payment misunderstandings because the source
+                of truth is visible to both sides.
 
 
             </p>
         </div>
     </section>
 </main>
+
 <main class="px-5">
     <section class="py-6 flex flex-col gap-10">
 
@@ -265,9 +265,16 @@
                 </div>
                 <div class="_wrapper">
 
-                    <a href="/about"
+                    <a href="/about/"
                         class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
                         About
+                    </a>
+                </div>
+                <div class="_wrapper">
+
+                    <a href="/blog/"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        Blog
                     </a>
                 </div>
                 <div class="_wrapper">
@@ -306,6 +313,7 @@
 
     </section>
 </main>
+
           </div>
         </div>
       </div>
