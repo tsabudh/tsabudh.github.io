@@ -1,48 +1,45 @@
 <main class="px-5 mx-auto">
-  <section class="py-6">
-    <div class="flex flex-col gap-10">
-      <section class="flex gap-6 max-md:flex-col">
-        <div
-          class="skd relative h-[600px] w-3/5 shrink-0 max-w-[860px] rounded-md bg-amber-700 bg-[url(/assets/images/freshfarmsmockup.webp)] bg-no-repeat bg-center bg-cover max-md:w-full"
-          data-lag="0.2"
-        >
-          <div
-            class="absolute inset-0 text-rose-50 font-lexend uppercase text-8xl font-bold max-md:text-7xl"
-          >
-            <h3 class="absolute top-0 left-0 p-10">fresh</h3>
-            <h3 class="absolute bottom-0 right-0 p-10">farms</h3>
-          </div>
-        </div>
-        <div class="text-2xl" data-lag="0.3">
-          <p>Digital book keeping for precise logging.</p>
+  <section class="py-16 border-t border-slate-300">
+    <div class="grid grid-cols-[0.8fr_1.2fr] gap-10 max-md:grid-cols-1">
+      <div>
+        <p class="uppercase font-lexend text-sm font-semibold tracking-wide text-amber-600">
+          Current signal
+        </p>
+        <h2 class="mt-4 font-lexend text-5xl font-bold leading-tight text-slate-900 max-md:text-4xl">
+          I build the plumbing behind reliable products.
+        </h2>
+      </div>
+      <div class="grid gap-6">
+        <article class="border-t border-slate-300 pt-6">
+          <h3 class="font-lexend text-2xl font-bold text-slate-950">
+            Service-oriented backend systems
+          </h3>
+          <p class="mt-3 text-xl leading-relaxed text-slate-600">
+            APIs, workers, database-backed workflows, and service boundaries for production financial-data products.
+          </p>
+        </article>
+        <article class="border-t border-slate-300 pt-6">
+          <h3 class="font-lexend text-2xl font-bold text-slate-950">
+            Idempotent job processing
+          </h3>
+          <p class="mt-3 text-xl leading-relaxed text-slate-600">
+            Event-driven workers designed for duplicate messages, retries, delayed processing, graceful shutdown, dead-letter queues, and visible lag.
+          </p>
           <a
-            href="/freshfarms"
-            class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300 text-amber-500 "
-            >Learn more &#x2192;</a
+            href="/systems/backpressure/"
+            class="mt-3 inline-block text-xl text-amber-600 relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300"
+            >Open the backpressure playground</a
           >
-        </div>
-      </section>
-      <section class="flex gap-6 max-md:flex-col">
-        <div
-          class="skd relative h-[600px] w-3/5 shrink-0 max-w-[860px] rounded-md bg-sky-700 bg-[url(/assets/images/telequeuemockup.webp)] bg-no-repeat bg-center bg-cover max-md:w-full"
-          data-lag="0.2"
-        >
-          <div
-            class="absolute inset-0 text-sky-50 font-lexend uppercase text-8xl font-bold max-md:text-7xl"
-          >
-            <h3 class="absolute top-0 left-0 p-10">tele</h3>
-            <h3 class="absolute bottom-0 right-0 p-10">queue</h3>
-          </div>
-        </div>
-        <div class="text-2xl" data-lag="0.3">
-          <p>Booking system that can handle the real spikes.</p>
-          <a
-            href=""
-            class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300 text-amber-500 cursor-default"
-            >Coming soon
-          </a>
-        </div>
-      </section>
+        </article>
+        <article class="border-t border-slate-300 pt-6">
+          <h3 class="font-lexend text-2xl font-bold text-slate-950">
+            Recovery engineering and auditability
+          </h3>
+          <p class="mt-3 text-xl leading-relaxed text-slate-600">
+            Point-in-time recovery, migration safety, field-level audit trails, distributed tracing, precision-critical components, and failure-first engineering habits.
+          </p>
+        </article>
+      </div>
     </div>
   </section>
 </main>

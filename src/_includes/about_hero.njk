@@ -1,79 +1,85 @@
 <header
-  class="fixed mix-blend-normal  top-0 w-full px-4 pt-1 flex gap-4 justify-between bg-transparent z-[9000] "
+  class="fixed mix-blend-normal top-0 w-full px-4 pt-1 flex gap-4 justify-between bg-transparent z-[9000]"
 >
   <div class="stickysabudhthapatext z-1000 w-fit">
-    <a
-      href="/"
-      class="uppercase font-lexend font-semibold text-slate-900 "
-    >
+    <a href="/" class="uppercase font-lexend font-semibold text-slate-950">
       t.sabudh
     </a>
   </div>
-  <div class="stickynavigation font-semibold self-start  max-md:text-right">
+  <div class="stickynavigation font-semibold self-start max-md:text-right">
     <a
-      href="/about"
+      href="/about/"
       class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300"
       >About</a
-    >
-    ,
+    >,
     <a
-      href="/contact"
+      href="/blog/"
+      class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300"
+      >Blog</a
+    >,
+    <a
+      href="/contact/"
       class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300"
       >Contact</a
     >
   </div>
 </header>
 
-<main
-  class="about_hero_main relative min-h-dvh  w-full h-full bg-[#efefef] flex items-center justify-center"
->
-
-  <section class="about_hero_content relative p-4 mt-[5vh] md:mt-10 flex flex-col gap-8"
-      data-lag="0.1"
-  >
-    <div
-      class="about_hero_h1 flex flex-col gap-2 text-8xl max-xl:text-7xl max-lg:text-6xl"
-    >
-      <h1
-        class="text-center italic text-zinc-950 font-medium font-runtime leading-[0.85]"
-      >
-        <span class="text-zinc-600"> System that survives, </span>
+<main class="w-full bg-[#efefef] px-4 pt-28 pb-16">
+  <section class="mx-auto grid min-h-[82vh] max-w-7xl grid-cols-[1.15fr_0.85fr] gap-12 border-b border-slate-300 pb-14 max-lg:grid-cols-1">
+    <div class="flex flex-col justify-end">
+      <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-amber-600">
+        Backend / platform / reliable data systems
+      </p>
+      <h1 class="mt-6 max-w-5xl font-lexend text-7xl font-bold leading-[0.95] tracking-normal text-slate-950 max-xl:text-6xl max-md:text-5xl">
+        I build backend systems where data stays correct under load, retries, and failure.
       </h1>
-      <h1
-        class="text-center text-zinc-950 font-medium font-runtime leading-[0.85]"
-      >
-        software that performs
-      </h1>
-    </div>
-    <div
-      class="about_hero_h2 text-zinc-600 text-center text-4xl max-xl:text-3xl max-md:text-2xl leading-[0.9] tracking-[0.1ch]"
-    >
-      <h2 class="font-glametrix">
-        I am a<span>&nbsp;software engineer&nbsp;</span>building scalable
-        systems.
-      </h2>
-      <h2 class="font-glametrix">
-        I excel in&nbsp;<span class="text-zinc-800"
-          >Web Apps & Distributed System</span
-        >&nbsp;domain.
-      </h2>
-    </div>
-  </section>
-
-
-
-  <section class="absolute right-0 bottom-0">
-    <div
-      class="relative w-20 h-20 rounded-full flex justify-center items-center text-white"
-    >
-      <div
-        class="absolute w-20 h-20 rounded-full text-zinc-300 bg-[url(/assets/images/scroll-down-svg.svg)] bg-center bg-size-[40px] bg-no-repeat"
-      ></div>
-      <div
-        class="about_hero_text absolute w-full h-full text-black font-glametrix text-sm tracking-wide"
-      >
-        <p>&nbsp;Scroll down&nbsp;</p>
+      <p class="mt-8 max-w-3xl text-2xl leading-relaxed text-slate-700 max-md:text-xl">
+        I build backend platforms, event-driven workers, query paths, and observability surfaces for systems where duplicate work, delayed jobs, data drift, and partial failure have to be handled correctly.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3 font-lexend text-sm font-semibold uppercase tracking-wide text-slate-700">
+        <span class="border border-slate-300 px-3 py-2">Event-driven architecture</span>
+        <span class="border border-slate-300 px-3 py-2">Record linkage</span>
+        <span class="border border-slate-300 px-3 py-2">Query optimization</span>
+        <span class="border border-slate-300 px-3 py-2">Production recovery</span>
+        <span class="border border-slate-300 px-3 py-2">Observability</span>
       </div>
     </div>
+
+    <aside class="flex flex-col justify-end gap-5">
+      <article class="border-t border-slate-300 pt-5">
+        <p class="font-lexend text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Query optimization
+        </p>
+        <strong class="mt-2 block font-lexend text-4xl font-bold text-slate-950">
+          8-22s -> sub-600ms
+        </strong>
+        <p class="mt-3 text-slate-600">
+          Separated analytical reads from transactional database paths so large stock-screener results could load in under a second instead of tens of seconds.
+        </p>
+      </article>
+      <article class="border-t border-slate-300 pt-5">
+        <p class="font-lexend text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Event reliability
+        </p>
+        <strong class="mt-2 block font-lexend text-4xl font-bold text-slate-950">
+          Idempotent job processing
+        </strong>
+        <p class="mt-3 text-slate-600">
+          Made notification workers safe under retries, duplicate messages, shutdowns, and delayed processing.
+        </p>
+      </article>
+      <article class="border-t border-slate-300 pt-5">
+        <p class="font-lexend text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Multi-source entity resolution
+        </p>
+        <strong class="mt-2 block font-lexend text-4xl font-bold text-slate-950">
+          Canonical records from messy sources
+        </strong>
+        <p class="mt-3 text-slate-600">
+          Linked records for the same real-world entity across independent sources, then produced stable canonical records with evidence scoring, resumable runs, conflict cleanup, and traceable audit history.
+        </p>
+      </article>
+    </aside>
   </section>
 </main>

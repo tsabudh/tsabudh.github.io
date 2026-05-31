@@ -7,6 +7,20 @@
     <link rel="stylesheet" href="/styles/main.css"  type="text/css"/>
     <link rel="stylesheet" href="/styles/compiled.css"  type="text/css"/>
     <link rel="stylesheet" href="/styles/tailwind.css"  type="text/css"/>
+    {% if site.googleAnalyticsMeasurementId %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.googleAnalyticsMeasurementId }}"></script>
+    <script>
+      window.__PORTFOLIO_GA_MEASUREMENT_ID__ = "{{ site.googleAnalyticsMeasurementId }}";
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "{{ site.googleAnalyticsMeasurementId }}", { send_page_view: false });
+    </script>
+    {% else %}
+    <script>
+      window.__PORTFOLIO_GA_MEASUREMENT_ID__ = "";
+    </script>
+    {% endif %}
     <script type="module" src="/scripts/barba.js"></script>
   </head>
   <body class="text-slate-950">
@@ -18,28 +32,28 @@
           class="barba-load-container_bg-texts absolute inset-0 text-slate-600 text-9xl opacity-45 rotate-12 scale-150 whitespace-nowrap space-y-9 font-lexend font-bold"
         >
           <p>
-            <span> BUILDING SOFTWARE THAT PERFORMS </span>
-            <span> BUILDING SOFTWARE THAT PERFORMS </span>
+            <span> SYSTEMS THAT KEEP WORK MOVING </span>
+            <span> SYSTEMS THAT KEEP WORK MOVING </span>
           </p>
           <p>
-            <span> RESILIENT SYSTEMS THAT HANDLES FAILURE GRACEFULLY </span>
-            <span> RESILIENT SYSTEMS THAT HANDLES FAILURE GRACEFULLY </span>
+            <span> DATA THAT STAYS CORRECT UNDER FAILURE </span>
+            <span> DATA THAT STAYS CORRECT UNDER FAILURE </span>
           </p>
           <p>
-            <span> CREATIVE DESIGNS AND SOLUTIONS </span>
-            <span> CREATIVE DESIGNS AND SOLUTIONS </span>
+            <span> IDEMPOTENT JOBS THAT RETRY SAFELY </span>
+            <span> IDEMPOTENT JOBS THAT RETRY SAFELY </span>
           </p>
           <p>
-            <span> DELIVERING SOFTWARE THAT GOES AN EXTRA MILE </span>
-            <span> DELIVERING SOFTWARE THAT GOES AN EXTRA MILE </span>
+            <span> QUERIES SHAPED FOR THE DATA THEY READ </span>
+            <span> QUERIES SHAPED FOR THE DATA THEY READ </span>
           </p>
           <p>
-            <span> WEB APP THAT FEELS INTUIATIVE </span>
-            <span> WEB APP THAT FEELS INTUIATIVE </span>
+            <span> POINT-IN-TIME RECOVERY BEFORE INCIDENTS </span>
+            <span> POINT-IN-TIME RECOVERY BEFORE INCIDENTS </span>
           </p>
           <p>
-            <span> FRONTEND & BACKEND MAKES FULLSTACK </span>
-            <span> FRONTEND & BACKEND MAKES FULLSTACK </span>
+            <span> DISTRIBUTED TRACING AT SERVICE BOUNDARIES </span>
+            <span> DISTRIBUTED TRACING AT SERVICE BOUNDARIES </span>
           </p>
         </div>
         <h1

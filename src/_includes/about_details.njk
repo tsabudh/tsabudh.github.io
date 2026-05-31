@@ -1,53 +1,89 @@
 <main class="px-4">
-  <section class="py-20">
-    <div class="flex flex-col gap-6">
-      <div class="flex gap-6 max-md:flex-col-reverse">
-        <section class="basis-1/2 self-center">
-          <p>
-            I&apos;m a full stack software engineer who ships scalable,
-            production ready web apps. I build accessible, fast interfaces and
-            well structured services with clear API contracts, solid tests, and
-            useful observability.
-          </p>
-        </section>
-        <section class="basis-1/2">
-          <figure class="bg-amber-300 rounded-sm flex justify-center h-[400px]">
-            <img src="/assets/images/sabudh.png" alt="Sabudh Bahadur Thapa" />
-          </figure>
-        </section>
+  <section class="mx-auto max-w-7xl py-16">
+    <div class="grid grid-cols-[0.85fr_1.15fr] gap-12 max-lg:grid-cols-1">
+      <div>
+        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-amber-600">
+          Engineering profile
+        </p>
+        <h2 class="mt-4 font-lexend text-5xl font-bold leading-tight text-slate-950 max-md:text-4xl">
+          Backend-heavy work, measured by failure behavior.
+        </h2>
       </div>
-      <div class="flex gap-6 max-md:flex-col-reverse">
-        <section class="basis-1/2">
-          <p>
-            I also build accessible, high-performance interfaces with clear
-            interaction flow and consistent component architecture. I design
-            responsive layouts with predictable state, using transitions and
-            animation to establish visual hierarchy and smooth navigation.
-            Performance is improved through bundle trimming, asset optimization,
-            targeted prefetching, and elimination of render bottlenecks via
-            memoization and virtualization. I build reliable forms, robust
-            real-time interactions, and consistent handling of error and empty
-            states. Semantic markup and accessibility features ensure
-            inclusivity, while design-system alignment and typed testing keep
-            delivery fast and dependable.
-          </p>
-        </section>
-        <section class="basis-1/2">
-          <p>
-            I design stateless APIs and scalable services with layered
-            architectures that isolate business logic and support versioned
-            contracts. I apply event-driven patterns and CQRS for decoupling,
-            and model data with boundaries balancing normalization and
-            consistency trade-offs. I manage backpressure through queues, flow
-            control, and rate-aware consumers, and plan recovery with retries,
-            idempotency, and compensating workflows. I work with relational and
-            NoSQL databases, applying partitioning, replication, and indexing
-            for performance. I tune systems by profiling, query optimization,
-            and layered caching, and increase resilience through monitoring,
-            tracing, failure testing, and progressive delivery.
-          </p>
-        </section>
+      <div class="space-y-6 text-xl leading-relaxed text-slate-700">
+        <p>
+          My strongest work is in systems where the hard part is not drawing the interface, but keeping data correct while load, retries, schema changes, and partial failure are happening at the same time.
+        </p>
+        <p>
+          The systems I want to keep building are change data capture pipelines, event-driven workers, analytical query paths, database performance work, data reconciliation, precision-critical components, and observability surfaces that prove the system is healthy.
+        </p>
+        <p>
+          I design service boundaries around clear contracts, idempotent job processing, bounded queues, recovery paths, and database queries that match how the storage engine actually reads data.
+        </p>
       </div>
     </div>
+
+    <section class="mt-20 border-t border-slate-300 pt-14">
+      <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-amber-600">
+        Accomplishments
+      </p>
+      <div class="mt-8 grid grid-cols-2 gap-8 max-md:grid-cols-1">
+        <article class="border-t border-slate-300 pt-6">
+          <h3 class="font-lexend text-2xl font-bold text-slate-950">
+            Query optimization for stock screeners
+          </h3>
+          <p class="mt-3 text-slate-600">
+            Reworked slow stock-screener workloads so large result sets moved from 8-22 seconds to under 600ms, using read-model separation to keep transactional database paths isolated from analytical reads.
+          </p>
+        </article>
+        <article class="border-t border-slate-300 pt-6">
+          <h3 class="font-lexend text-2xl font-bold text-slate-950">
+            Idempotent notification processing
+          </h3>
+          <p class="mt-3 text-slate-600">
+            Made notification workers safe under duplicate messages, retries, failed deliveries, graceful shutdowns, delayed processing, and replay from dead-letter queues.
+          </p>
+        </article>
+        <article class="border-t border-slate-300 pt-6">
+          <h3 class="font-lexend text-2xl font-bold text-slate-950">
+            Multi-source entity resolution
+          </h3>
+          <p class="mt-3 text-slate-600">
+            Linked records across eight independent sources, produced stable canonical records, and preserved evidence scoring, conflict cleanup, field-level audit trails, resumable runs, and distributed traces.
+          </p>
+        </article>
+        <article class="border-t border-slate-300 pt-6">
+          <h3 class="font-lexend text-2xl font-bold text-slate-950">
+            Point-in-time recovery and migration safety
+          </h3>
+          <p class="mt-3 text-slate-600">
+            Recovered deleted production rows from a point-in-time database branch, then added migration safety checks that block known destructive SQL patterns before deployment.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="mt-20 border-t border-slate-300 pt-14">
+      <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-amber-600">
+        Project lanes
+      </p>
+      <div class="mt-8 grid grid-cols-4 gap-6 max-lg:grid-cols-2 max-sm:grid-cols-1">
+        <div class="border-t border-slate-300 pt-4">
+          <h3 class="font-lexend text-xl font-bold text-slate-950">Backend platforms</h3>
+          <p class="mt-2 text-slate-600">APIs, workers, auth, service boundaries, and production recovery.</p>
+        </div>
+        <div class="border-t border-slate-300 pt-4">
+          <h3 class="font-lexend text-xl font-bold text-slate-950">Data infrastructure</h3>
+          <p class="mt-2 text-slate-600">Query optimization, read-model separation, audit trails, and query routing.</p>
+        </div>
+        <div class="border-t border-slate-300 pt-4">
+          <h3 class="font-lexend text-xl font-bold text-slate-950">Distributed systems</h3>
+          <p class="mt-2 text-slate-600">Event-driven workers, idempotent processing, bounded queues, replay, ordering, and lag visibility.</p>
+        </div>
+        <div class="border-t border-slate-300 pt-4">
+          <h3 class="font-lexend text-xl font-bold text-slate-950">Systems components</h3>
+          <p class="mt-2 text-slate-600">Precision-critical components, protocol-adjacent tooling, and latency-sensitive code.</p>
+        </div>
+      </div>
+    </section>
   </section>
 </main>
