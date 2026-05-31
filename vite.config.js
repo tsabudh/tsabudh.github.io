@@ -11,7 +11,10 @@ export default defineConfig({
   root: ".", // project root
   plugins: [
     viteStaticCopy({
-      targets: [{ src: "CNAME", dest: "." }],
+      targets: [
+        { src: "CNAME", dest: "." },
+        { src: "src/assets/wasm/backpressure_sim.wasm", dest: "assets/wasm" },
+      ],
     }),
   ],
   build: {
