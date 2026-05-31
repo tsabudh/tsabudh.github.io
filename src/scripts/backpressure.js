@@ -1,5 +1,7 @@
 import { newInstance } from "@jsplumb/browser-ui";
 
+const wasmUrl = new URL("../assets/wasm/backpressure_sim.wasm", import.meta.url);
+
 const controlDefs = [
   ["requestRate", "Request rate", 0, 600, 120, 10, "/s"],
   ["gatewayCpu", "Gateway CPU", 0.2, 3, 1, 0.1, "x"],
@@ -359,7 +361,7 @@ function mountControls() {
 export async function initBackpressurePlayground() {
   if (!document.getElementById("bp-controls")) return;
 
-  const response = await fetch("/assets/wasm/backpressure_sim.wasm");
+  const response = await fetch(wasmUrl);
   const bytes = await response.arrayBuffer();
   const instance = await WebAssembly.instantiate(bytes, {});
   wasm = instance.instance.exports;
