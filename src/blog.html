@@ -1,0 +1,75 @@
+---
+title: Blog | Sabudh Thapa
+layout: layout.njk
+namespace: blog
+---
+
+<header class="fixed top-0 w-full px-4 pt-1 flex gap-4 justify-between bg-transparent z-[9000]">
+  <div class="z-1000 w-fit">
+    <a href="/" class="uppercase font-lexend font-semibold text-slate-900">
+      t.sabudh
+    </a>
+  </div>
+  <nav class="font-semibold self-start max-md:text-right" aria-label="Primary navigation">
+    <a href="/about/" class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">About</a>,
+    <a href="/blog/" class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">Blog</a>,
+    <a href="/contact/" class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">Contact</a>
+  </nav>
+</header>
+
+<main class="px-5">
+  <section class="min-h-[55dvh] py-24 flex flex-col justify-end gap-8">
+    <p class="uppercase font-lexend text-sm font-semibold tracking-wide text-amber-600">
+      Engineering notes
+    </p>
+    <div class="max-w-5xl">
+      <h1 class="font-lexend font-bold text-slate-900 text-[clamp(56px,9vw,112px)] leading-[0.92]">
+        Writing about backend systems, data infrastructure, and reliability.
+      </h1>
+    </div>
+  </section>
+
+  <section class="py-10 border-t border-slate-300">
+    <div class="flex flex-col">
+      <article class="py-12 grid grid-cols-[160px_1fr] gap-8 border-b border-slate-200 max-md:grid-cols-1">
+        <div class="h-28 rounded-md bg-[#f7f3eb] flex items-center justify-center font-lexend text-xs font-semibold uppercase text-slate-500">
+          PostgreSQL
+        </div>
+        <div class="max-w-4xl">
+          <a href="https://medium.com/@tsabudh" target="_blank" rel="noopener" class="group inline-block">
+            <h2 class="font-lexend text-3xl font-bold leading-tight text-slate-950 group-hover:text-amber-600">
+              Indexing Is Query Design, Not Column Decoration
+            </h2>
+          </a>
+          <p class="mt-4 text-xl text-slate-600 leading-relaxed">
+            A PostgreSQL indexing piece that reframes indexes as physical access paths for query shapes, not generic column-level speed buttons.
+          </p>
+          <p class="mt-5 text-slate-500">
+            Medium · 15 min read
+          </p>
+        </div>
+      </article>
+
+      <article class="py-12 grid grid-cols-[160px_1fr] gap-8 border-b border-slate-200 max-md:grid-cols-1">
+        <div class="h-28 rounded-md bg-slate-900 flex items-center justify-center font-lexend text-xs font-semibold uppercase text-slate-100">
+          Scaling
+        </div>
+        <div class="max-w-4xl">
+          <a href="https://medium.com/@tsabudh/why-your-app-slows-down-when-users-increase-f5c163a9dda0" target="_blank" rel="noopener" class="group inline-block">
+            <h2 class="font-lexend text-3xl font-bold leading-tight text-slate-950 group-hover:text-amber-600">
+              Why Your App Slows Down When Users Increase?
+            </h2>
+          </a>
+          <p class="mt-4 text-xl text-slate-600 leading-relaxed">
+            A practical backend scaling note on database bottlenecks, connection pooling, caching, and measuring before optimizing.
+          </p>
+          <p class="mt-5 text-slate-500">
+            Medium · 6 min read · Published Oct 28, 2025
+          </p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  {% include "footer.njk" %}
+</main>

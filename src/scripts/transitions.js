@@ -28,6 +28,10 @@ export function getTitleFromHref(href) {
         return "Contact";
       case "about":
         return "About";
+      case "blog":
+        return "Blog";
+      case "systems/backpressure":
+        return "Backpressure";
       default:
         return slug.charAt(0).toUpperCase() + slug.slice(1);
     }

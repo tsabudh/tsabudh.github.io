@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Backpressure Playground | Sabudh Thapa</title>
+    
+    <script>
+      window.__PORTFOLIO_GA_MEASUREMENT_ID__ = "";
+    </script>
+    
+    <script type="module" crossorigin src="/assets/barba-wYMMIXpp.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/barba-Cyuvi-HG.css">
+  </head>
+  <body class="text-slate-950">
+    <div class="barba-load-container bg-slate-700">
+      <div
+        class="loading-screen relative h-full w-full flex items-center justify-center overflow-hidden"
+      >
+        <div
+          class="barba-load-container_bg-texts absolute inset-0 text-slate-600 text-9xl opacity-45 rotate-12 scale-150 whitespace-nowrap space-y-9 font-lexend font-bold"
+        >
+          <p>
+            <span> SYSTEMS THAT KEEP WORK MOVING </span>
+            <span> SYSTEMS THAT KEEP WORK MOVING </span>
+          </p>
+          <p>
+            <span> DATA THAT STAYS CORRECT UNDER FAILURE </span>
+            <span> DATA THAT STAYS CORRECT UNDER FAILURE </span>
+          </p>
+          <p>
+            <span> IDEMPOTENT JOBS THAT RETRY SAFELY </span>
+            <span> IDEMPOTENT JOBS THAT RETRY SAFELY </span>
+          </p>
+          <p>
+            <span> QUERIES SHAPED FOR THE DATA THEY READ </span>
+            <span> QUERIES SHAPED FOR THE DATA THEY READ </span>
+          </p>
+          <p>
+            <span> POINT-IN-TIME RECOVERY BEFORE INCIDENTS </span>
+            <span> POINT-IN-TIME RECOVERY BEFORE INCIDENTS </span>
+          </p>
+          <p>
+            <span> DISTRIBUTED TRACING AT SERVICE BOUNDARIES </span>
+            <span> DISTRIBUTED TRACING AT SERVICE BOUNDARIES </span>
+          </p>
+        </div>
+        <h1
+          id="loading-screen-text"
+          class="font-delight text-9xl text-white z-50"
+        >
+          Loading
+        </h1>
+      </div>
+    </div>
+    <div id="smooth-wrapper">
+      <div id="smooth-content" class="">
+        <div data-barba="wrapper">
+          <div data-barba="container" data-barba-namespace="backpressure">
+            
+<header class="fixed top-0 w-full px-4 pt-1 flex gap-4 justify-between bg-transparent z-[9000]">
+  <div class="z-1000 w-fit">
+    <a href="/" class="uppercase font-lexend font-semibold text-slate-900">
+      t.sabudh
+    </a>
+  </div>
+  <nav class="font-semibold self-start max-md:text-right" aria-label="Primary navigation">
+    <a href="/about/" class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">About</a>,
+    <a href="/blog/" class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">Blog</a>,
+    <a href="/contact/" class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">Contact</a>
+  </nav>
+</header>
+
+<main class="px-5 bg-[#f5f5f2] text-slate-950">
+  <section class="min-h-[52dvh] py-24 flex flex-col justify-end gap-8">
+    <p class="uppercase font-lexend text-sm font-semibold tracking-wide text-amber-600">
+      Systems lab
+    </p>
+    <div class="max-w-6xl">
+      <h1 class="font-lexend font-bold text-[clamp(48px,8vw,112px)] leading-[0.92]">
+        Backpressure playground for event propagation under failure.
+      </h1>
+    </div>
+    <p class="max-w-3xl text-2xl leading-relaxed text-slate-600">
+      Tune producer rate, node capacity, retries, poison events, and DLQ replay. Rust/WASM owns the deterministic event-flow model; the browser renders the pipeline.
+    </p>
+  </section>
+
+  <section class="pb-20">
+    <aside class="mb-6 rounded-md border border-slate-300 bg-white p-5">
+      <div class="flex items-center justify-between gap-4">
+        <h2 class="font-lexend text-2xl font-bold">Controls</h2>
+        <div class="flex gap-3">
+          <button id="bp-process-dlq" class="rounded-sm bg-slate-950 px-3 py-2 font-semibold text-white hover:bg-amber-600">
+            Process DLQ
+          </button>
+          <button id="bp-burst" class="rounded-sm border border-slate-300 px-3 py-2 font-semibold hover:border-amber-500">
+            Burst 10s
+          </button>
+          <button id="bp-reset" class="rounded-sm border border-slate-300 px-3 py-2 font-semibold hover:border-amber-500">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <div id="bp-controls" class="mt-6 grid grid-cols-4 gap-x-6 gap-y-5 max-2xl:grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1"></div>
+    </aside>
+
+    <div class="min-w-0">
+      <div class="bp-graph" aria-label="Directed event propagation graph">
+        <div class="bp-service bp-source" style="left: 32px; top: 70px" data-node="clients">
+          <span>Clients</span>
+          <strong id="bp-ingress-rate">0/s</strong>
+        </div>
+        <div class="bp-service" style="left: 245px; top: 70px" data-node="gateway">
+          <span>API Gateway</span>
+          <strong id="bp-gateway-pressure">0%</strong>
+        </div>
+        <div class="bp-service" style="left: 520px; top: 70px" data-node="sequencer">
+          <span>Sequencer</span>
+          <strong id="bp-sequencer-rate">0/s</strong>
+        </div>
+        <div class="bp-service" style="left: 245px; top: 230px" data-node="appointment">
+          <span>Appointments service</span>
+          <strong>request slot</strong>
+        </div>
+        <div class="bp-service" style="left: 520px; top: 230px" data-node="command">
+          <span>Command handler</span>
+          <strong id="bp-command-machines">2x</strong>
+        </div>
+        <div class="bp-service bp-queue" style="left: 520px; top: 410px" data-node="command-kafka">
+          <span>Kafka command topic</span>
+          <strong id="bp-command-queue">0</strong>
+        </div>
+        <div class="bp-service bp-queue" style="left: 245px; top: 410px" data-node="query-kafka">
+          <span>Kafka query topic</span>
+          <strong id="bp-indexer-queue">0</strong>
+        </div>
+        <div class="bp-service" style="left: 520px; top: 560px" data-node="dlq">
+          <span>DLQ</span>
+          <strong id="bp-dlq-queue">0</strong>
+        </div>
+        <div class="bp-service" style="left: 760px; top: 410px" data-node="persistence">
+          <span>Persistence worker</span>
+          <strong id="bp-persistence-lag">0ms</strong>
+        </div>
+        <div class="bp-service" style="left: 245px; top: 560px" data-node="indexer">
+          <span>Indexer worker</span>
+          <strong id="bp-indexer-lag">0ms</strong>
+        </div>
+        <div class="bp-service" style="left: 1000px; top: 410px" data-node="postgres">
+          <span>PostgreSQL</span>
+          <strong id="bp-completed">0</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid grid-cols-[0.9fr_1.1fr] gap-8 border-t border-slate-300 py-16 max-lg:grid-cols-1">
+    <div>
+      <p class="uppercase font-lexend text-sm font-semibold tracking-wide text-amber-600">
+        Runtime state
+      </p>
+      <h2 id="bp-status" class="mt-4 font-lexend text-5xl font-bold leading-tight">
+        Loading simulator
+      </h2>
+      <p id="bp-explanation" class="mt-5 text-xl leading-relaxed text-slate-600">
+        WebAssembly is initializing.
+      </p>
+    </div>
+    <div class="grid grid-cols-3 gap-4 max-md:grid-cols-2 max-sm:grid-cols-1">
+      <div class="bp-metric">
+        <span>Accepted</span>
+        <strong id="bp-accepted">0</strong>
+      </div>
+      <div class="bp-metric">
+        <span>Rejected</span>
+        <strong id="bp-rejected">0</strong>
+      </div>
+      <div class="bp-metric">
+        <span>Dropped</span>
+        <strong id="bp-dropped">0</strong>
+      </div>
+      <div class="bp-metric">
+        <span>Retry queue</span>
+        <strong id="bp-retry-queue">0</strong>
+      </div>
+      <div class="bp-metric">
+        <span>DLQ replayed</span>
+        <strong id="bp-dlq-replayed">0</strong>
+      </div>
+      <div class="bp-metric">
+        <span>Memory pressure</span>
+        <strong id="bp-memory">0%</strong>
+      </div>
+      <div class="bp-metric">
+        <span>Indexed</span>
+        <strong id="bp-indexed">0</strong>
+      </div>
+      <div class="bp-metric">
+        <span>Transient failures</span>
+        <strong id="bp-transient-failed">0</strong>
+      </div>
+      <div class="bp-metric">
+        <span>Poison failures</span>
+        <strong id="bp-poison-failed">0</strong>
+      </div>
+    </div>
+  </section>
+</main>
+
+<style>
+  .bp-graph {
+    position: relative;
+    min-height: 660px;
+    overflow: hidden;
+    border: 1px solid rgb(203, 213, 225);
+    border-radius: 6px;
+    background:
+      linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+      #ffffff;
+    background-size: 36px 36px;
+  }
+
+  .bp-service {
+    position: absolute;
+    z-index: 3;
+    width: 160px;
+    border: 1px solid rgba(15, 23, 42, 0.22);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.94);
+    padding: 10px 12px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+    font-family: Lexend, Urbanist, sans-serif;
+  }
+
+  .jtk-connector {
+    z-index: 1;
+  }
+
+  .jtk-endpoint {
+    z-index: 2;
+  }
+
+  .jtk-overlay {
+    z-index: 2;
+  }
+
+  .bp-source {
+    background: rgb(15, 23, 42);
+  }
+
+  .bp-source span,
+  .bp-source strong {
+    color: white;
+  }
+
+  .bp-service span,
+  .bp-metric span {
+    display: block;
+    color: rgb(71, 85, 105);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .bp-service strong,
+  .bp-metric strong {
+    display: block;
+    color: rgb(15, 23, 42);
+    font-size: 21px;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+
+  .bp-service[data-pressure="warm"] {
+    border-color: rgb(245, 158, 11);
+    background: rgba(255, 251, 235, 0.96);
+  }
+
+  .bp-service[data-pressure="hot"] {
+    border-color: rgb(220, 38, 38);
+    background: rgba(254, 226, 226, 0.96);
+  }
+
+  .bp-queue::after {
+    content: "";
+    display: block;
+    height: 7px;
+    margin-top: 8px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--queue-color, rgb(34, 197, 94)) var(--fill, 0%), rgb(226, 232, 240) var(--fill, 0%));
+  }
+
+  .bp-metric {
+    border-top: 1px solid rgb(203, 213, 225);
+    padding-top: 16px;
+  }
+
+  .bp-control label {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-weight: 700;
+  }
+
+  .bp-control input {
+    width: 100%;
+    margin-top: 8px;
+    accent-color: rgb(245, 158, 11);
+  }
+
+  @media (width < 48rem) {
+    .bp-graph {
+      min-height: 560px;
+      overflow-x: auto;
+    }
+
+    .bp-service {
+      width: 142px;
+    }
+  }
+</style>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -18,7 +18,8 @@
     "tsabudh",
     "Sabudh",
     "Bahadur",
-    "Thapa"
+    "Thapa",
+    "सबुध"
   ],
   "author": "Sabudh Bahadur Thapa",
   "license": "ISC",
@@ -30,6 +31,7 @@
     "@11ty/eleventy": "^3.1.2",
     "@11ty/eleventy-plugin-directory-output": "^1.0.1",
     "@barba/core": "^2.10.3",
+    "@jsplumb/browser-ui": "6.2.10",
     "@tailwindcss/postcss": "^4.1.11",
     "autoprefixer": "^10.4.21",
     "eleventy": "^1.0.7",

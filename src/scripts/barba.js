@@ -13,6 +13,10 @@ import { cleanupAboutPage, initAboutPage } from "./about.js";
 import { cleanupHomePage, initHomePage } from "./home.js";
 import { cleanupContactPage, initContactPage } from "./contact.js";
 import { cleanupFreshfarmsPage, initFreshfarmsPage } from "./freshfarms.js";
+import { initLinkTracking, trackPageView } from "./analytics.js";
+import { initBackpressurePlayground } from "./backpressure.js";
+
+initLinkTracking();
 
 barba.init({
   preventRunning: true,
@@ -79,6 +83,19 @@ barba.init({
         cleanupFreshfarmsPage();
       },
     },
+    {
+      namespace: "blog",
+      afterEnter() {
+        initScrollSmoother();
+      },
+    },
+    {
+      namespace: "backpressure",
+      afterEnter() {
+        initScrollSmoother();
+        initBackpressurePlayground();
+      },
+    },
   ],
   transitions: [
     {
@@ -115,6 +132,7 @@ barba.init({
           if (!(trigger instanceof HTMLElement)) {
             // Back/forward → no curtain to hide
           }
+          trackPageView(window.location.pathname, document.title);
           return hideCurtains();
         } catch (error) {
           console.error(error.message);
@@ -130,7 +148,11 @@ barba.init({
           console.error(err.message);
         }
       },
-      afterOnce() {
+      afterOnce({ current }) {
+        if (current?.namespace === "backpressure") {
+          initBackpressurePlayground();
+        }
+        trackPageView(window.location.pathname, document.title);
         hideCurtains(1);
       },
     },
