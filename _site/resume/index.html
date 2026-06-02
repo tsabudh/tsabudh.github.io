@@ -1,16 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    
+    
+    
+    
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Resume</title>
+    <title>Resume - Sabudh Thapa, Software Engineer</title>
+    <meta name="description" content="Resume for Sabudh Thapa, Software Engineer focused on backend systems, platform engineering, data infrastructure, PostgreSQL, Kafka, Rust, and production reliability." />
+    <meta name="author" content="Sabudh Thapa" />
+    <link rel="canonical" href="https://tsabudh.com.np/resume/" />
+    
+    <meta name="robots" content="index, follow" />
+    
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Sabudh Thapa" />
+    <meta property="og:title" content="Resume - Sabudh Thapa, Software Engineer" />
+    <meta property="og:description" content="Resume for Sabudh Thapa, Software Engineer focused on backend systems, platform engineering, data infrastructure, PostgreSQL, Kafka, Rust, and production reliability." />
+    <meta property="og:url" content="https://tsabudh.com.np/resume/" />
+    <meta property="og:image" content="https://tsabudh.com.np/assets/images/sabudh.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Resume - Sabudh Thapa, Software Engineer" />
+    <meta name="twitter:description" content="Resume for Sabudh Thapa, Software Engineer focused on backend systems, platform engineering, data infrastructure, PostgreSQL, Kafka, Rust, and production reliability." />
+    <meta name="twitter:image" content="https://tsabudh.com.np/assets/images/sabudh.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "@id": "https://tsabudh.com.np/#sabudh-thapa",
+        "name": "Sabudh Thapa",
+        "alternateName": "tsabudh",
+        "jobTitle": "Software Engineer",
+        "description": "Sabudh Thapa (tsabudh) is a Software Engineer in Kathmandu, Nepal building backend systems, distributed systems, data infrastructure, and reliable production platforms.",
+        "url": "https://tsabudh.com.np/",
+        "image": "https://tsabudh.com.np/assets/images/sabudh.png",
+        "email": "mailto:tsabudh@gmail.com",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Kathmandu",
+          "addressCountry": "NP"
+        },
+        "knowsAbout": [
+          "Software Engineering",
+          "Distributed Systems",
+          "Backend Engineering",
+          "Data Infrastructure",
+          "PostgreSQL",
+          "Kafka",
+          "Rust"
+        ],
+        "sameAs": [
+          "https://github.com/tsabudh",
+          "https://www.linkedin.com/in/tsabudh",
+          "https://medium.com/@tsabudh"
+        ]
+      }
+    </script>
     
     <script>
       window.__PORTFOLIO_GA_MEASUREMENT_ID__ = "";
     </script>
     
-    <script type="module" crossorigin src="/assets/barba-B06an0q7.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/barba-BJi29dyH.css">
+    <script type="module" crossorigin src="/assets/barba-BgeeH0N_.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/barba-_L4HHDOx.css">
   </head>
   <body class="text-slate-950">
     <div class="barba-load-container bg-slate-700">
@@ -134,13 +188,18 @@
           <span class="border border-slate-300 px-3 py-2">TypeScript</span>
           <span class="border border-slate-300 px-3 py-2">Node.js</span>
           <span class="border border-slate-300 px-3 py-2">Fastify</span>
+          <span class="border border-slate-300 px-3 py-2">Express</span>
           <span class="border border-slate-300 px-3 py-2">Python</span>
           <span class="border border-slate-300 px-3 py-2">Rust</span>
           <span class="border border-slate-300 px-3 py-2">Kafka</span>
+          <span class="border border-slate-300 px-3 py-2">Avro / Schema Registry</span>
           <span class="border border-slate-300 px-3 py-2">PostgreSQL</span>
+          <span class="border border-slate-300 px-3 py-2">Prisma / Sequelize</span>
           <span class="border border-slate-300 px-3 py-2">Redis</span>
           <span class="border border-slate-300 px-3 py-2">Docker</span>
           <span class="border border-slate-300 px-3 py-2">AWS</span>
+          <span class="border border-slate-300 px-3 py-2">Nginx / Kubernetes</span>
+          <span class="border border-slate-300 px-3 py-2">Prometheus / Grafana / Loki</span>
         </div>
       </div>
 
@@ -193,7 +252,7 @@
               Hardened Kafka workers around idempotency, replay, and shutdown behavior.
             </h2>
             <p class="mt-3 text-lg leading-relaxed text-slate-700">
-              Added idempotent producer settings, deduplication keys, DLQ routing, retry/backoff, health probes, consumer-lag visibility, resource limits, and ordered shutdown so redeploys and malformed events fail visibly.
+              Added Avro schemas, idempotent producer settings, manual commit semantics, deduplication keys, DLQ routing/replay, retry/backoff, health probes, consumer-lag visibility, resource limits, and ordered shutdown so redeploys and malformed events fail visibly.
             </p>
           </div>
         </article>
@@ -221,6 +280,18 @@
             </p>
           </div>
         </article>
+
+        <article class="grid grid-cols-[8rem_1fr] gap-6 border-t border-slate-300 pt-6 max-sm:grid-cols-1 max-sm:gap-2">
+          <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">2025-2026</p>
+          <div>
+            <h2 class="font-lexend text-3xl font-bold leading-tight text-slate-950">
+              Hardened payment and subscription flows without webhook guarantees.
+            </h2>
+            <p class="mt-3 text-lg leading-relaxed text-slate-700">
+              Preserved incomplete checkout attempts, added gateway-initiation audit trails, and built polling-based wallet recovery with transactional row locking so automated sweeps and admin resolution could not lose updates.
+            </p>
+          </div>
+        </article>
       </div>
     </div>
   </section>
@@ -229,31 +300,70 @@
     <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-amber-600">
       Experience spine
     </p>
-    <div class="mt-8 grid grid-cols-[1fr_1fr_1fr_auto] gap-8 max-lg:grid-cols-1">
+    <div class="mt-8 grid grid-cols-3 gap-8 max-lg:grid-cols-1">
       <article class="border-t border-slate-300 pt-5">
         <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Mar 2026 - Present</p>
         <h2 class="mt-3 font-lexend text-2xl font-bold text-slate-950">Relativity Invest</h2>
         <p class="mt-3 leading-relaxed text-slate-700">
-          Backend/platform/data infrastructure across Fastify APIs, Python Kafka workers, PostgreSQL on RDS/Neon, Redis, DuckDB, S3/Parquet, Docker/EC2, and OpenTelemetry.
+          Backend/platform/data infrastructure across Fastify APIs, Python Kafka workers, PostgreSQL on RDS/Neon, Redis, DuckDB, S3/Parquet, Docker/EC2, and OpenTelemetry. Shipped management/provenance APIs, notification settings, screener alerts, and production observability surfaces.
         </p>
       </article>
       <article class="border-t border-slate-300 pt-5">
-        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Dec 2025 - Present</p>
+        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Dec 2025 - Apr 2026</p>
         <h2 class="mt-3 font-lexend text-2xl font-bold text-slate-950">Niru Studio</h2>
         <p class="mt-3 leading-relaxed text-slate-700">
           Contract backend work for financial transformation flows, precision arithmetic, and partitioned audit logging.
         </p>
       </article>
       <article class="border-t border-slate-300 pt-5">
-        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Mar 2024 - Feb 2026</p>
-        <h2 class="mt-3 font-lexend text-2xl font-bold text-slate-950">Wissenschaft Inc.</h2>
+        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Sep 2025 - Feb 2026</p>
+        <h2 class="mt-3 font-lexend text-2xl font-bold text-slate-950">Global Diary</h2>
+        <p class="mt-3 leading-relaxed text-slate-700">
+          Backend-heavy full-stack work across authentication, news content, subscriptions, payment flows, reporting, feedback, and tenant-aware access controls for a multi-tenant platform.
+        </p>
+      </article>
+      <article class="border-t border-slate-300 pt-5">
+        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Apr 2025 - Feb 2026</p>
+        <h2 class="mt-3 font-lexend text-2xl font-bold text-slate-950">Wissenschaft Inc. - Software Engineer</h2>
         <p class="mt-3 leading-relaxed text-slate-700">
           Backend services in TypeScript, Express, gRPC, Kafka, PostgreSQL, authentication, authorization, query optimization, and service-boundary documentation.
         </p>
       </article>
-      <article class="-ml-3 min-w-20 border-t border-slate-300 pt-5 max-lg:ml-0">
-        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">2022...</p>
+      <article class="border-t border-slate-300 pt-5">
+        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Mar 2024 - Apr 2025</p>
+        <h2 class="mt-3 font-lexend text-2xl font-bold text-slate-950">Wissenschaft Inc. - Associate Software Engineer</h2>
+        <p class="mt-3 leading-relaxed text-slate-700">
+          Modular TypeScript/Sequelize services, JWT/RBAC flows, query optimization with indexing/caching/batching/constraints, shared utilities, API design, and teammate mentoring.
+        </p>
       </article>
+      <article class="border-t border-slate-300 pt-5">
+        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">2022 - 2024</p>
+        <h2 class="mt-3 font-lexend text-2xl font-bold text-slate-950">Earlier engineering work</h2>
+        <p class="mt-3 leading-relaxed text-slate-700">
+          Delivered a commercial bank information-management system as a freelancer, built backend scheduling/message-queue email flows at Brandbuilder Nepal, and worked across React, PostgreSQL, TypeScript, and build tooling at Pagevamp Nepal.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl border-t border-slate-300 py-16">
+    <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-amber-600">
+      Education
+    </p>
+    <div class="mt-8 grid grid-cols-[0.7fr_1.3fr] gap-8 max-lg:grid-cols-1">
+      <div class="border-t border-slate-300 pt-5">
+        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">2017 - 2023</p>
+        <h2 class="mt-3 font-lexend text-2xl font-bold text-slate-950">Advanced College of Engineering and Management</h2>
+        <p class="mt-3 leading-relaxed text-slate-700">
+          Bachelor of Engineering in Computer Engineering, Tribhuvan University.
+        </p>
+      </div>
+      <div class="border-t border-slate-300 pt-5">
+        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Academic systems projects</p>
+        <p class="mt-3 leading-relaxed text-slate-700">
+          Built a protein contact-map prediction pipeline with sequence cleaning, duplicate removal, feature generation, reproducible train/validation/test splits, and CNN experiments; also built a face-recognition pipeline with preprocessing, augmentation, CNN embeddings, L2 normalization, and batch-wise cosine-similarity verification.
+        </p>
+      </div>
     </div>
   </section>
 </main>

@@ -1,5 +1,6 @@
 ---
 title: Blog | Sabudh Thapa
+description: Engineering notes by Sabudh Thapa, Software Engineer, about backend systems, data infrastructure, PostgreSQL, scaling, and reliability.
 layout: layout.njk
 namespace: blog
 ---
@@ -31,6 +32,25 @@ namespace: blog
 
   <section class="py-10 border-t border-slate-300">
     <div class="flex flex-col">
+      <article class="py-12 grid grid-cols-[160px_1fr] gap-8 border-b border-slate-200 max-md:grid-cols-1">
+        <div class="h-28 rounded-md bg-[#e8edf3] flex items-center justify-center font-lexend text-xs font-semibold uppercase text-slate-600">
+          Columnar
+        </div>
+        <div class="max-w-4xl">
+          <a href="https://medium.com/@tsabudh/when-indexing-is-not-enough-a2c8bc3e1ab2" target="_blank" rel="noopener" class="group inline-block">
+            <h2 class="font-lexend text-3xl font-bold leading-tight text-slate-950 group-hover:text-amber-600">
+              When Indexes Stop Helping: Columnar Engines
+            </h2>
+          </a>
+          <p class="mt-4 text-xl text-slate-600 leading-relaxed">
+            A systems-level look at why row-store indexes stop paying off for wide analytical scans, and where columnar execution changes the access pattern.
+          </p>
+          <p class="mt-5 text-slate-500">
+            Medium · 21 min read
+          </p>
+        </div>
+      </article>
+
       <article class="py-12 grid grid-cols-[160px_1fr] gap-8 border-b border-slate-200 max-md:grid-cols-1">
         <div class="h-28 rounded-md bg-[#f7f3eb] flex items-center justify-center font-lexend text-xs font-semibold uppercase text-slate-500">
           PostgreSQL

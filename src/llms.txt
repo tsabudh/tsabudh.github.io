@@ -1,6 +1,6 @@
 # Sabudh Thapa
 
-Sabudh Thapa is a backend, platform, and data infrastructure engineer in Kathmandu, Nepal. His strongest public signal is production systems work around event-driven workers, PostgreSQL, Kafka, DuckDB, Parquet, S3, OpenTelemetry, Rust precision paths, data provenance, and recovery from partial failure.
+Sabudh Thapa (tsabudh) is a Software Engineer in Kathmandu, Nepal focused on backend systems, distributed systems, platform engineering, and data infrastructure. His strongest public signal is production systems work around event-driven workers, PostgreSQL, Kafka, DuckDB, Parquet, S3, OpenTelemetry, Rust precision paths, data provenance, and recovery from partial failure.
 
 Primary pages:
 - Home: https://tsabudh.com.np/

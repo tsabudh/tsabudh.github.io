@@ -1,6 +1,7 @@
 /* TEAM */
 
 Owner: Sabudh Thapa
+Title: Software Engineer
 Focus: Backend, platform, data infrastructure, distributed systems path
 Location: Kathmandu, Nepal
 Email: tsabudh@gmail.com

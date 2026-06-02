@@ -1,9 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    {% set pageTitle = title or site.title %}
+    {% set pageDescription = description or site.description %}
+    {% set pageCanonical = canonicalUrl or (site.url ~ page.url) %}
+    {% set pageImage = image or site.image %}
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ title }}</title>
+    <title>{{ pageTitle }}</title>
+    <meta name="description" content="{{ pageDescription }}" />
+    <meta name="author" content="{{ site.name }}" />
+    <link rel="canonical" href="{{ pageCanonical }}" />
+    {% if noindex %}
+    <meta name="robots" content="noindex, follow" />
+    {% else %}
+    <meta name="robots" content="index, follow" />
+    {% endif %}
+    {% if redirectTo %}
+    <meta http-equiv="refresh" content="0; url={{ redirectTo }}" />
+    {% endif %}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="{{ site.name }}" />
+    <meta property="og:title" content="{{ pageTitle }}" />
+    <meta property="og:description" content="{{ pageDescription }}" />
+    <meta property="og:url" content="{{ pageCanonical }}" />
+    <meta property="og:image" content="{{ pageImage }}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ pageTitle }}" />
+    <meta name="twitter:description" content="{{ pageDescription }}" />
+    <meta name="twitter:image" content="{{ pageImage }}" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "@id": "{{ site.url }}/#sabudh-thapa",
+        "name": "Sabudh Thapa",
+        "alternateName": "tsabudh",
+        "jobTitle": "Software Engineer",
+        "description": "{{ site.description }}",
+        "url": "{{ site.url }}/",
+        "image": "{{ site.image }}",
+        "email": "mailto:{{ site.email }}",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Kathmandu",
+          "addressCountry": "NP"
+        },
+        "knowsAbout": [
+          "Software Engineering",
+          "Distributed Systems",
+          "Backend Engineering",
+          "Data Infrastructure",
+          "PostgreSQL",
+          "Kafka",
+          "Rust"
+        ],
+        "sameAs": [
+          "https://github.com/tsabudh",
+          "https://www.linkedin.com/in/tsabudh",
+          "https://medium.com/@tsabudh"
+        ]
+      }
+    </script>
     <link rel="stylesheet" href="/styles/main.css"  type="text/css"/>
     <link rel="stylesheet" href="/styles/compiled.css"  type="text/css"/>
     <link rel="stylesheet" href="/styles/tailwind.css"  type="text/css"/>

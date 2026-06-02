@@ -1,3 +1,16 @@
 {
+  "name": "Sabudh Thapa",
+  "handle": "tsabudh",
+  "url": "https://tsabudh.com.np",
+  "title": "Sabudh Thapa - Software Engineer",
+  "description": "Sabudh Thapa (tsabudh) is a Software Engineer in Kathmandu, Nepal building backend systems, distributed systems, data infrastructure, and reliable production platforms.",
+  "email": "tsabudh@gmail.com",
+  "location": "Kathmandu, Nepal",
+  "image": "https://tsabudh.com.np/assets/images/sabudh.png",
+  "sameAs": [
+    "https://github.com/tsabudh",
+    "https://www.linkedin.com/in/tsabudh",
+    "https://medium.com/@tsabudh"
+  ],
   "googleAnalyticsMeasurementId": ""
 }
