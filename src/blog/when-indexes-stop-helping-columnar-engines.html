@@ -1,0 +1,826 @@
+---
+title: "When Indexes Stop Helping: Columnar Engines"
+description: "A systems-level look at why row-store indexes stop paying off for wide analytical scans, and where columnar execution changes the access pattern."
+date: 2026-06-02
+category: Columnar
+readTime: 21
+cardStyle: "bg-[#e8edf3] text-slate-600"
+mediumUrl: https://medium.com/@tsabudh/when-indexing-is-not-enough-a2c8bc3e1ab2
+keywords: PostgreSQL, columnar, DuckDB, Parquet, query optimization, analytical queries, backend engineer Nepal
+---
+{% raw %}
+<p><em>A systems-level look at why row-store indexes stop paying off for wide analytical scans, and where columnar execution changes the access pattern.</em></p>
+<p>Indexing is usually the first serious answer to a slow SQL query. That instinct is correct when the query is selective.</p>
+<p>But “slow query” is not one failure mode. A query can be slow because statistics are stale, predicates are non-sargable, joins are correlated accidentally, memory settings force spills, network round trips dominate, or the application is asking a row-oriented SQL database(PostgreSQL) to compute too much derived state on demand.</p>
+<p>This article narrows in on that last case: the point where the query is no longer mostly <strong>a row-finding problem</strong>. At that boundary, the decision is not simply “add another index” versus “buy more compute.” The decision is whether the <strong>workload has become an analytical read-model problem</strong>, and whether a <strong>columnar engine</strong> should own that read path.</p>
+<p>If the application asks for one shipment by ID, the last 50 events for one container, or all pending invoices for one customer, an index can change the query from:</p>
+<pre><code>read too much data</code></pre>
+<p>to:</p>
+<pre><code>seek directly to the rows that matter</code></pre>
+<p>But indexing has a ceiling.</p>
+<p>An index is an access path over stored values. It helps when PostgreSQL can skip irrelevant rows. It does not make every expensive query cheap, because not every expensive query is expensive for the same reason.</p>
+<p>The important distinction is:</p>
+<pre><code>Indexing problem:
+  PostgreSQL already has the answer stored in rows.
+  The bottleneck is finding the right rows without reading too many wrong ones.</code></pre>
+<pre><code>Read-model problem:
+  The answer does not exist as stored rows yet.
+  The query must build it by reading many rows, joining them, aggregating them,
+  then filtering and ranking the derived result.</code></pre>
+<p>Those are different problems.</p>
+<p>The columnar DB migration (DuckDB in this example) is not primarily about “more compute.” It is about using a physical read model and execution engine built for the second shape: large analytical working sets, selected columns, vectorized aggregation, and derived result ranking. Indexes reduce lookup work over stored facts; they do not remove the need to build facts that are produced only during the query.</p>
+<p>This article is about that boundary: when a PostgreSQL query should be fixed with better indexes or query shape, and when the workload has crossed into a shape better served by DuckDB over a derived columnar read model.</p>
+<h2 id="the-scenario">The Scenario</h2>
+<p>Imagine a logistics platform with a cargo lane screener.</p>
+<p>A lane is an origin-destination pair:</p>
+<pre><code>Kathmandu -&gt; Singapore
+Shanghai  -&gt; Rotterdam
+Hamburg   -&gt; Dubai</code></pre>
+<p>The product team wants a screen that finds risky cargo lanes and carriers.</p>
+<p>The user does not ask:</p>
+<pre><code>Show me shipment SHP-100923.</code></pre>
+<p>The user asks:</p>
+<pre><code>For every carrier and cargo lane,
+look at a custom date range,
+compare current transit time against the lane baseline,
+compute exception rate, late delivery rate, dwell time, cost volatility,
+combine those into a risk score,
+filter by the derived metrics,
+sort by risk,
+return the top 100.</code></pre>
+<p>That is not an OLTP lookup. It is an analytical screener.</p>
+<p>OLTP means online transaction processing: create a shipment, update a status, enforce a constraint, fetch one customer, write one transaction.</p>
+<p>OLAP means online analytical processing: scan many rows, read selected columns, aggregate, group, filter, rank.</p>
+<p>PostgreSQL can do plenty of analytics. The question is not whether PostgreSQL is capable. The question is whether an interactive, scan-heavy analytical workload should share the same physical path and failure domain as the transactional source of truth.</p>
+<h2 id="a-simplified-schema">A Simplified Schema</h2>
+<p>Use four tables:</p>
+<pre><code>CREATE TABLE shipments (
+  shipment_id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  carrier_id bigint NOT NULL,
+  customer_id bigint NOT NULL,
+  origin_port text NOT NULL,
+  destination_port text NOT NULL,
+  cargo_type text NOT NULL,
+  departed_at timestamptz NOT NULL,
+  delivered_at timestamptz,
+  quoted_cost numeric NOT NULL,
+  actual_cost numeric,
+  weight_kg numeric NOT NULL
+);
+CREATE TABLE shipment_events (
+  event_id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  shipment_id bigint NOT NULL REFERENCES shipments(shipment_id),
+  event_type text NOT NULL,
+  event_time timestamptz NOT NULL,
+  location_code text NOT NULL
+);
+CREATE TABLE cargo_exceptions (
+  exception_id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  shipment_id bigint NOT NULL REFERENCES shipments(shipment_id),
+  exception_type text NOT NULL,
+  severity text NOT NULL,
+  created_at timestamptz NOT NULL
+);
+CREATE TABLE carrier_lane_targets (
+  carrier_id bigint NOT NULL,
+  origin_port text NOT NULL,
+  destination_port text NOT NULL,
+  target_transit_hours numeric NOT NULL,
+  target_exception_rate numeric NOT NULL,
+  PRIMARY KEY (carrier_id, origin_port, destination_port)
+);</code></pre>
+<p>A normal application query might be:</p>
+<pre><code>SELECT *
+FROM shipments
+WHERE shipment_id = 100923;</code></pre>
+<p>That is selective. The primary key fits the query shape.</p>
+<p>Now compare that with the cargo screener.</p>
+<h2 id="the-cte-query-that-indexing-cannot-fix-alone">The CTE Query That Indexing Cannot Fix Alone</h2>
+<p>The screener query is not looking up stored values. It builds a temporary analytical relation out of several derived metrics.</p>
+<p>The user chooses:</p>
+<pre><code>date range: 2026-01-01 through 2026-06-01
+cargo type: electronics
+minimum shipments per lane: 50
+late rate &gt; 8%
+exception rate &gt; 3%
+cost volatility &gt; 12%
+sort by computed risk score</code></pre>
+<p>A simplified PostgreSQL query looks like this:</p>
+<pre><code>WITH scoped_shipments AS (
+  SELECT
+    s.shipment_id,
+    s.carrier_id,
+    s.origin_port,
+    s.destination_port,
+    s.cargo_type,
+    s.departed_at,
+    s.delivered_at,
+    s.quoted_cost,
+    s.actual_cost,
+    EXTRACT(EPOCH FROM (s.delivered_at - s.departed_at)) / 3600.0 AS transit_hours,
+    (s.actual_cost - s.quoted_cost) / NULLIF(s.quoted_cost, 0) AS cost_delta_ratio
+  FROM shipments s
+  WHERE s.departed_at &gt;= TIMESTAMPTZ '2026-01-01'
+    AND s.departed_at &lt;  TIMESTAMPTZ '2026-06-01'
+    AND s.delivered_at IS NOT NULL
+    AND s.cargo_type = 'electronics'
+),
+lane_baselines AS (
+  ...
+),
+shipment_exception_flags AS (
+  ...
+),
+port_dwell AS (
+  ...
+),
+carrier_lane_metrics AS (
+  ...
+),
+scored_lanes AS (
+  ...
+)
+SELECT *
+FROM scored_lanes
+WHERE shipment_count &gt;= 50
+  AND late_rate &gt; 0.08
+  AND serious_exception_rate &gt; 0.03
+  AND cost_volatility &gt; 0.12
+ORDER BY risk_score DESC
+LIMIT 100;</code></pre>
+<p>This query has a fundamentally different shape from a lookup.</p>
+<p>It says:</p>
+<pre><code>filter base shipments
+derive per-shipment facts
+derive per-lane baselines
+derive per-carrier lane metrics
+derive a risk score
+filter and sort by those derived values</code></pre>
+<p>The expensive values are not stored in the base tables:</p>
+<pre><code>median_lane_hours
+p90_lane_hours
+dwell_hours
+late_rate
+serious_exception_rate
+cost_volatility
+risk_score</code></pre>
+<p>That is the core reason indexing alone cannot fix the query.</p>
+<p>The obvious objection is:</p>
+<blockquote><p><strong>Why not store those expensive values in a view, materialized view, or separate table?</strong></p></blockquote>
+<p>That can absolutely help PostgreSQL.</p>
+<p>If the product needs a fixed metric contract, store it:</p>
+<pre><code>carrier-lane risk for last 7 days
+carrier-lane risk for last 30 days
+carrier-lane risk for last 90 days
+late rate by carrier-lane-cargo_type per day
+exception count by severity per day</code></pre>
+<p>In that case, PostgreSQL can index the derived table:</p>
+<pre><code>CREATE TABLE carrier_lane_risk_30d (
+  carrier_id bigint NOT NULL,
+  origin_port text NOT NULL,
+  destination_port text NOT NULL,
+  cargo_type text NOT NULL,
+  shipment_count integer NOT NULL,
+  late_rate numeric NOT NULL,
+  serious_exception_rate numeric NOT NULL,
+  cost_volatility numeric NOT NULL,
+  risk_score numeric NOT NULL,
+  computed_at timestamptz NOT NULL,
+  PRIMARY KEY (carrier_id, origin_port, destination_port, cargo_type)
+);</code></pre>
+<p>At that point, indexes such as <code>carrier_lane_risk_30d_score_idx</code> and <code>carrier_lane_risk_30d_filters_idx</code> make sense because <code>risk_score</code>, <code>late_rate</code>, and <code>serious_exception_rate</code> are now stored columns.</p>
+<p>Now the query is back in indexing territory:</p>
+<pre><code>SELECT *
+FROM carrier_lane_risk_30d
+WHERE cargo_type = 'electronics'
+  AND shipment_count &gt;= 50
+  AND late_rate &gt; 0.08
+  AND serious_exception_rate &gt; 0.03
+  AND cost_volatility &gt; 0.12
+ORDER BY risk_score DESC
+LIMIT 100;</code></pre>
+<p>That is fast because the answer now exists as stored rows. PostgreSQL is no longer building the screener result from raw shipments on every request. It is finding and sorting precomputed facts.</p>
+<p>But this only works when the precomputed shape matches the product question.</p>
+<p>It breaks down when users can change:</p>
+<pre><code>date range
+cargo type grouping
+exception severity rules
+late threshold definition
+dwell-time formula
+risk-score weights
+sort metric</code></pre>
+<p>Precomputing <code>carrier_lane_risk_30d</code> does not answer <code>last 17 days</code>. Precomputing daily rollups can help, but the query may still need to combine many daily rows, recompute percentiles, apply new weights, and rank the result. Precomputing every possible <code>(start_date, end_date, cargo_type, severity_rule, score_formula)</code> combination creates state explosion.</p>
+<p>So the decision is not:</p>
+<blockquote><p><strong>Materialization versus DuckDB</strong></p></blockquote>
+<p>The decision is:</p>
+<blockquote><p><strong>Is the derived metric contract stable enough to store,<br>or is the product asking for ad hoc analytical exploration?</strong></p></blockquote>
+<p>Stable derived facts belong in PostgreSQL tables or materialized views. Ad hoc analytical exploration is where a columnar read model starts to make sense.</p>
+<h2 id="the-indexes-that-help">The Indexes That Help</h2>
+<p>The obvious indexes are not wrong.</p>
+<p>Indexes like <code>shipments_cargo_departed_delivered_idx</code>, <code>shipments_lane_carrier_idx</code>, <code>cargo_exceptions_shipment_idx</code>, and <code>shipment_events_shipment_type_time_idx</code> can help PostgreSQL find the base rows, join exceptions to shipments, and join events to shipments.</p>
+<p>But they do not make the screener cheap.</p>
+<p>Assume:</p>
+<pre><code>20 million shipments
+80 million shipment events
+3 million cargo exceptions
+date range selects 2 million delivered electronics shipments
+those shipments cover 40,000 carrier-lane groups</code></pre>
+<p>The index on <code>(cargo_type, departed_at) WHERE delivered_at IS NOT NULL</code> may reduce <code>shipments</code> from 20 million rows to 2 million rows. For append-heavy time-range data, partitioning by date or a BRIN index may also be a better first tool than piling on composite B-trees.</p>
+<p>That is useful.</p>
+<p>But the query still has to compute:</p>
+<pre><code>percentiles over each lane
+exception flags per shipment
+dwell time from event pairs
+carrier-lane aggregates
+cost volatility
+risk score
+top-N sort over derived rows</code></pre>
+<p>The plan smell is not “no index used.”</p>
+<p>The plan smell is:</p>
+<pre><code>large index or bitmap scan
+large hash joins
+large hash aggregates
+window or ordered-set aggregate work
+sort over derived result
+high buffer reads</code></pre>
+<p>A representative plan shape looks like:</p>
+<pre><code>Limit
+  -&gt; Sort
+       Sort Key: risk_score DESC
+       -&gt; CTE Scan on scored_lanes
+            Filter:
+              shipment_count &gt;= 50
+              late_rate &gt; 0.08
+              serious_exception_rate &gt; 0.03
+              cost_volatility &gt; 0.12
+CTE scoped_shipments
+  -&gt; Bitmap Heap Scan on shipments
+       Recheck Cond:
+         departed_at &gt;= '2026-01-01'
+         departed_at &lt; '2026-06-01'
+       Filter:
+         delivered_at IS NOT NULL
+         cargo_type = 'electronics'
+       Rows: 2000000
+CTE lane_baselines
+  -&gt; GroupAggregate
+       Group Key: origin_port, destination_port
+       Ordered-set aggregates:
+         percentile_cont(0.50)
+         percentile_cont(0.90)
+CTE shipment_exception_flags
+  -&gt; HashAggregate
+       Group Key: shipment_id
+       -&gt; Hash Left Join
+            -&gt; CTE Scan on scoped_shipments
+            -&gt; Bitmap/Index Scan on cargo_exceptions_shipment_idx
+CTE port_dwell
+  -&gt; HashAggregate
+       Group Key: shipment_id
+       -&gt; Join shipment_events to shipment_events by shipment_id/location/time
+CTE carrier_lane_metrics
+  -&gt; HashAggregate
+       Group Key: carrier_id, origin_port, destination_port
+       Aggregates:
+         avg(transit_hours)
+         avg(dwell_hours)
+         stddev_samp(cost_delta_ratio)
+         avg(case transit_hours &gt; p90_lane_hours)</code></pre>
+<p>Indexes help the input side of this plan.</p>
+<p>They do not remove the middle of the plan.</p>
+<h2 id="why-no-index-can-target-the-final-filters">Why No Index Can Target The Final Filters</h2>
+<p>The final screener predicates are:</p>
+<pre><code>WHERE shipment_count &gt;= 50
+  AND late_rate &gt; 0.08
+  AND serious_exception_rate &gt; 0.03
+  AND cost_volatility &gt; 0.12
+ORDER BY risk_score DESC</code></pre>
+<p>None of those values exists in a base table.</p>
+<p><code>late_rate</code> depends on:</p>
+<pre><code>shipment transit hours
+the lane's p90 transit baseline
+the user's selected date range
+the user's selected cargo type</code></pre>
+<p><code>serious_exception_rate</code> depends on:</p>
+<pre><code>joined exception rows
+severity classification
+grouping by carrier and lane
+the scoped shipment set</code></pre>
+<p><code>cost_volatility</code> depends on:</p>
+<pre><code>actual cost
+quoted cost
+standard deviation over the scoped group</code></pre>
+<p><code>risk_score</code> depends on:</p>
+<pre><code>all previous derived metrics
+weights chosen by the product
+clamping rules such as LEAST(...)</code></pre>
+<p>A B-tree index can be built over stored expressions in a table. It cannot be built over an arbitrary per-request CTE result whose meaning changes with date range, cargo type, grouping key, percentile baseline, and scoring formula.</p>
+<p>That is the concrete indexing ceiling:</p>
+<blockquote><p><strong>An index is a shortcut PostgreSQL prepares ahead of time.<br>It can only point to values that already exist in a table.</strong></p></blockquote>
+<p>For example, an index on <code>shipments(departed_at, cargo_type)</code> contains ordered entries that point to rows in <code>shipments</code>.</p>
+<p>That lets PostgreSQL answer:</p>
+<pre><code>Find shipment rows where departed_at is in this range
+and cargo_type = 'electronics'.</code></pre>
+<p>An index on <code>carrier_lane_risk_30d(risk_score)</code> would also work, because <code>risk_score</code> would be a stored column in a real table or materialized view.</p>
+<p>That lets PostgreSQL answer:</p>
+<pre><code>Find precomputed carrier-lane rows ordered by risk_score.</code></pre>
+<p>But in the CTE query, <code>risk_score</code> is not a stored column. It is produced after PostgreSQL has already:</p>
+<pre><code>selected the shipment range
+joined exception rows
+joined event rows
+computed dwell time
+computed lane baselines
+aggregated carrier-lane metrics
+applied the score formula</code></pre>
+<p>There is nothing for a normal base-table index to point to before that work happens.</p>
+<p>The database cannot jump directly to:</p>
+<pre><code>carrier-lane rows where risk_score &gt; 0.75</code></pre>
+<p>because those carrier-lane rows do not exist yet. They are the output of the query.</p>
+<p>That is what “not seekable” means here: PostgreSQL cannot use an index to seek into a result set that is created only after the query has already done the expensive joins and aggregates.</p>
+<p>You could materialize one version:</p>
+<pre><code>CREATE MATERIALIZED VIEW carrier_lane_risk_30d AS
+SELECT ...</code></pre>
+<p>That may work for a fixed 30-day dashboard.</p>
+<p>It does not solve:</p>
+<pre><code>custom date ranges
+custom cargo types
+new score formulas
+ad hoc metric combinations
+sorting by any derived metric</code></pre>
+<p>For those, the problem is not missing indexes. The problem is that the query is rebuilding an analytical read model at request time.</p>
+<h2 id="why-more-indexes-still-do-not-solve-the-workload">Why More Indexes Still Do Not Solve The Workload</h2>
+<p>At this point, the tempting response is:</p>
+<p><em>“Add more indexes.”</em></p>
+<p>That may help one query variant. It does not solve the general workload. A cargo screener usually has dynamic filters:</p>
+<pre><code>origin_port = ?
+destination_port = ?
+cargo_type = ?
+carrier_id IN (...)
+average dwell time &gt; ?
+late rate over custom dates &gt; ?
+cost volatility over custom dates &gt; ?
+exception rate for severity class &gt; ?
+sort by any visible derived metric</code></pre>
+<p>If users can combine filters freely, composite indexes explode:</p>
+<p>You start considering indexes keyed by <code>cargo_type</code>, <code>departed_at</code>, <code>origin_port</code>, <code>destination_port</code>, <code>carrier_id</code>, and different permutations of those fields. That path does not end.</p>
+<p>It gets worse when the product adds a new metric.</p>
+<p>Suppose the screener adds:</p>
+<pre><code>cold_chain_breach_rate</code></pre>
+<p>This metric means:</p>
+<pre><code>For refrigerated cargo,
+what fraction of shipments had a temperature sensor reading
+outside the allowed range for more than 30 minutes?</code></pre>
+<p>Now the query needs another source table:</p>
+<pre><code>CREATE TABLE temperature_readings (
+  reading_id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  shipment_id bigint NOT NULL REFERENCES shipments(shipment_id),
+  recorded_at timestamptz NOT NULL,
+  temperature_c numeric NOT NULL
+);</code></pre>
+<p>The metric is not a simple column on <code>shipments</code>. It depends on:</p>
+<pre><code>temperature readings
+allowed temperature range for the cargo type
+duration outside the allowed range
+grouping by carrier and lane
+the user's selected date range</code></pre>
+<p>So adding this one visible screener column may require:</p>
+<pre><code>a join to temperature_readings
+a per-shipment breach calculation
+a carrier-lane aggregate
+a new filter: cold_chain_breach_rate &gt; ?
+a new sort option: sort by cold_chain_breach_rate
+possibly a new materialized table or rollup
+possibly new indexes for the rollup</code></pre>
+<p>The index set is now chasing the product surface. Every new derived metric becomes another question:</p>
+<pre><code>Do we compute it live?
+Do we store it for fixed windows?
+Do we index the stored version?
+Do we backfill it?
+What happens when the formula changes?</code></pre>
+<p>That is why dynamic screeners often stop being an indexing problem. They become a read-model design problem.</p>
+<h2 id="the-financial-screener-boundary">The Financial Screener Boundary</h2>
+<p>I hit this same boundary in a financial screener.</p>
+<p>The static metrics were easy to think about:</p>
+<pre><code>market cap
+sector
+latest close price
+gross margin
+free cash flow margin
+return on equity
+valuation multiples</code></pre>
+<p>Those could live in a company metrics snapshot and be filtered like normal stored columns.</p>
+<p>The dynamic metrics were different:</p>
+<pre><code>purchase count over a selected date range
+unique purchasing insiders over a selected date range
+average purchase value = average(shares * price) over selected transactions
+latest purchase date within the selected window
+CEO/CFO/director trade flags from officer-title text matching
+multi-insider same-day signal:
+  group by company and transaction date,
+  then check whether more than one insider traded that day
+multi-insider same-week signal:
+  group by company and transaction week,
+  then check whether more than one insider traded that week</code></pre>
+<p>The important split was:</p>
+<pre><code>standard windows:
+  precompute period-specific columns
+custom windows:
+  aggregate raw transaction history for the exact request</code></pre>
+<p>Before that split, custom-range queries fell back to PostgreSQL and took 8–22 seconds.</p>
+<p>After the split, the same class of queries used a company metrics snapshot plus a transaction history snapshot in DuckDB/Parquet and returned in under 600 ms.</p>
+<p>The accomplishment was not “adding DuckDB.” It was separating stable metrics from dynamic metrics and giving each one the right read path.</p>
+<p>Each index has write cost, storage cost, cache cost, and planner-estimation cost. Worse, many composite indexes only help when the query uses the same leading column order.</p>
+<p>PostgreSQL can combine multiple indexes with bitmap plans, but bitmap plans have their own ceiling. They build candidate row-location sets, combine them, then visit table rows. If the query needs a large fraction of the scoped dataset anyway, the planner may prefer a sequential scan because walking the table in physical order can be cheaper than bouncing through indexes.</p>
+<p>The failure mode is not:</p>
+<pre><code>PostgreSQL is slow.</code></pre>
+<p>The failure mode is:</p>
+<pre><code>the query no longer has a small search space to narrow</code></pre>
+<p>Once most query variants must inspect many candidate rows and derive metrics over them, indexing stops being the main bottleneck. The remaining cost is scan bandwidth, aggregation, tuple materialization, joins, sorting, and repeated derivation.</p>
+<h2 id="the-better-shape-aggregate-once-then-join">The Better Shape: Aggregate Once, Then Join</h2>
+<p>The first improvement is not DuckDB.</p>
+<p>The first improvement is query shape.</p>
+<p>Do not write the screener as:</p>
+<pre><code>for each carrier-lane:
+  run subqueries to calculate shipment count, late rate, exception rate, dwell time, cost volatility</code></pre>
+<p>That creates correlated execution.</p>
+<p>The named principle is decorrelation. Decorrelation means moving work out of per-row dependent subqueries and turning it into relations that can be joined.</p>
+<p>The CTE version above is already closer to the right relational shape:</p>
+<pre><code>scope shipments once
+calculate baselines once
+calculate exception flags once
+calculate dwell once
+aggregate by carrier-lane once
+score once</code></pre>
+<p>This can help PostgreSQL substantially.</p>
+<p>But if the workload is still:</p>
+<pre><code>scan millions of shipments
+read selected metric columns
+join millions of events and exceptions
+aggregate into tens of thousands of groups
+rank derived results</code></pre>
+<p>then a columnar read model becomes a natural next step.</p>
+<h2 id="why-postgresql-pays-extra-cost-here">Why PostgreSQL Pays Extra Cost Here</h2>
+<p>PostgreSQL is not slow because it is badly designed.</p>
+<p>It is doing a different job.</p>
+<p>In this architecture, PostgreSQL is the source-of-truth row store. Its first responsibility is correctness for operational data. That means it protects:</p>
+<pre><code>transactions
+constraints
+concurrent reads and writes
+rollback
+row-level visibility
+indexes for stored facts</code></pre>
+<p>Those features are exactly what you want when the application is creating shipments, updating delivery status, recording exceptions, saving user-facing state, or charging customers.</p>
+<p>But the cargo screener is a different shape. It asks PostgreSQL to read a large historical working set and build a temporary analytical result.</p>
+<p>While doing that, PostgreSQL still has to work through its OLTP storage model.</p>
+<p>The named mechanism is MVCC: multi-version concurrency control. MVCC lets readers and writers use the database at the same time without corrupting each other. A reader sees the version of each row that is valid for its transaction.</p>
+<p>That is valuable.</p>
+<p>It also means a large analytical query is not just reading clean metric arrays. It may have to inspect row versions, check visibility, fetch heap tuples, follow indexes back to table pages, and assemble full row-shaped data before computing the derived metrics.</p>
+<p>For a lookup, that overhead is fine:</p>
+<pre><code>find one shipment
+check that row is visible
+return it</code></pre>
+<p>For the screener, the same model becomes expensive:</p>
+<pre><code>read millions of shipment rows
+check row visibility
+fetch related event and exception rows
+build joined intermediate data
+group by carrier-lane
+compute derived metrics
+sort the derived result</code></pre>
+<p>PostgreSQL can do this. The point is that it is doing analytical work through a storage and execution model built primarily for correct transactional rows.</p>
+<p>That is why this is not only a “compute” problem.</p>
+<p>It is a physical data-access problem:</p>
+<pre><code>PostgreSQL row-store:
+  optimized for correct reads and writes of stored rows
+Columnar read model:
+  optimized for reading selected columns across many rows
+  and aggregating them in batches</code></pre>
+<p>The difference starts with how the data is physically arranged.</p>
+<h2 id="row-stores-and-columnar-engines-optimize-different-shapes">Row Stores And Columnar Engines Optimize Different Shapes</h2>
+<p>A row store physically groups values by row.</p>
+<p>Conceptually:</p>
+<pre><code>shipment 1: carrier_id, origin_port, destination_port, cargo_type, departed_at, delivered_at, costs...
+shipment 2: carrier_id, origin_port, destination_port, cargo_type, departed_at, delivered_at, costs...
+shipment 3: carrier_id, origin_port, destination_port, cargo_type, departed_at, delivered_at, costs...</code></pre>
+<p>That is excellent when the query needs many columns for a small number of rows.</p>
+<p>The earlier <code>shipment_id = 100923</code> lookup is that shape: one row, many columns, direct access.</p>
+<p>A columnar layout physically groups values by column.</p>
+<p>Conceptually:</p>
+<pre><code>carrier_id:        row 1, row 2, row 3, ...
+origin_port:       row 1, row 2, row 3, ...
+destination_port:  row 1, row 2, row 3, ...
+departed_at:       row 1, row 2, row 3, ...
+actual_cost:       row 1, row 2, row 3, ...</code></pre>
+<p>That is excellent when the query needs a few columns for many rows.</p>
+<p>The cargo screener does not need every column from every shipment. It needs selected columns across many shipments:</p>
+<pre><code>carrier_id
+origin_port
+destination_port
+cargo_type
+departed_at
+delivered_at
+quoted_cost
+actual_cost</code></pre>
+<p>This is where a columnar engine helps:</p>
+<pre><code>read only needed columns
+scan them in batches
+apply filters in vectors
+aggregate without repeatedly fetching whole rows</code></pre>
+<p>The solution is a columnar analytical read model.</p>
+<p>DuckDB is one executor for that model. It fits here because it is embedded, supports vectorized analytical execution, and can query files directly without a separate database server.</p>
+<p>Parquet is one storage format for that model.</p>
+<p>It fits here for two reasons.</p>
+<p>First, it stores data by column. If the screener needs only 8 columns out of 80, the engine can read those 8 columns instead of reading every full shipment row.</p>
+<p>Second, Parquet stores small summaries for groups of rows. Those summaries can help the engine skip entire row groups that cannot match the query.</p>
+<p>The <strong>query </strong>result may be the same.</p>
+<p>The <strong>physical work</strong> is <strong>not</strong>.</p>
+<p>This also adds a new failure domain: snapshot freshness, schema drift, file sizing, partition skew, object-store latency, memory pressure, manifest promotion, and fallback overload. DuckDB/Parquet is not magic compute. It is a different read path with different operational responsibilities.</p>
+<h2 id="the-duckdb-transition">The DuckDB Transition</h2>
+<p>Do not replace PostgreSQL. That is the wrong lesson. PostgreSQL should remain the source of truth:</p>
+<pre><code>canonical writes
+constraints
+transactions
+identity
+application state
+fresh operational reads</code></pre>
+<p>DuckDB should serve the derived analytical read path:</p>
+<pre><code>wide scans
+selected columns
+custom aggregations
+ranking
+interactive screener reads</code></pre>
+<p>This is CQRS: Command Query Responsibility Segregation. The write model and read model are separated because they optimize different jobs.</p>
+<p>The write model answers:</p>
+<blockquote><p><strong>What happened?</strong></p></blockquote>
+<p>The read model answers:</p>
+<blockquote><p><strong>How should we search, filter, and rank it?</strong></p></blockquote>
+<p>For the cargo screener, the read model can be Parquet files:</p>
+<pre><code>shipments.parquet
+shipment_events.parquet
+cargo_exceptions.parquet
+carrier_lane_targets.parquet</code></pre>
+<p>These files contain a snapshot copied out of PostgreSQL or produced by an export job.</p>
+<p>For example:</p>
+<pre><code>shipments.parquet:
+  shipment_id, carrier_id, origin_port, destination_port, cargo_type,
+  departed_at, delivered_at, quoted_cost, actual_cost
+shipment_events.parquet:
+  shipment_id, event_type, event_time, location_code
+cargo_exceptions.parquet:
+  shipment_id, exception_type, severity, created_at</code></pre>
+<p>The files do not replace the PostgreSQL tables. They are a read-optimized copy for analytical queries.</p>
+<p>The Parquet files should contain the facts needed to build many screener metrics, not every possible final metric.</p>
+<p>Store stable analytical inputs:</p>
+<pre><code>shipment identity and grouping keys:
+  shipment_id, carrier_id, origin_port, destination_port, cargo_type
+time fields:
+  departed_at, delivered_at, event_time
+numeric facts:
+  quoted_cost, actual_cost, weight_kg, temperature_c
+classification fields:
+  event_type, exception_type, severity</code></pre>
+<p>Then compute flexible screener metrics from those facts:</p>
+<pre><code>late_rate
+cost_volatility
+dwell_hours
+cold_chain_breach_rate
+risk_score</code></pre>
+<p>If a metric is stable and used constantly, it can also be stored as a rollup:</p>
+<pre><code>carrier_lane_daily_rollups.parquet</code></pre>
+<p>But do not try to store every possible final screener result. With 200+ metrics, custom date ranges, and changing formulas, that becomes the same state-explosion problem as materializing everything in PostgreSQL.</p>
+<p>The files also do not need to be one giant file:</p>
+<pre><code>shipments/year=2026/month=01/part-000.parquet
+shipments/year=2026/month=02/part-000.parquet
+shipment_events/year=2026/month=01/part-000.parquet
+cargo_exceptions/year=2026/month=01/part-000.parquet</code></pre>
+<p>This lets the query skip files outside the requested time range before it even starts reading row groups inside a file.</p>
+<p>DuckDB also does not need to load the whole Parquet file into memory first. If <code>shipments.parquet</code> is 50 MB, DuckDB can read the needed columns and row groups as it executes the query. Memory is used for the active scan, joins, aggregates, and sort state, not simply "the whole file must fit in RAM."</p>
+<p>It could also be a DuckDB native database file.</p>
+<p>That is a reasonable choice when the snapshot is local to one service and mostly queried by DuckDB.</p>
+<p>Parquet is the better fit when the snapshot should live as portable files in blob storage such as S3. DuckDB can read Parquet from object storage, and other tools can read the same files later. The read model is not locked to one DuckDB database file.</p>
+<p>DuckDB can run the same analytical shape against the derived snapshot:</p>
+<pre><code>WITH scoped_shipments AS (
+  SELECT
+    shipment_id,
+    carrier_id,
+    origin_port,
+    destination_port,
+    cargo_type,
+    EXTRACT(EPOCH FROM (delivered_at - departed_at)) / 3600.0 AS transit_hours,
+    (actual_cost - quoted_cost) / NULLIF(quoted_cost, 0) AS cost_delta_ratio
+  FROM read_parquet('shipments.parquet')
+  WHERE departed_at &gt;= TIMESTAMPTZ '2026-01-01'
+    AND departed_at &lt;  TIMESTAMPTZ '2026-06-01'
+    AND delivered_at IS NOT NULL
+    AND cargo_type = 'electronics'
+),
+carrier_lane_metrics AS (
+  ...
+)
+SELECT *
+FROM carrier_lane_metrics
+WHERE shipment_count &gt;= 50
+  AND cost_volatility &gt; 0.12
+ORDER BY cost_volatility DESC
+LIMIT 100;</code></pre>
+<p>The SQL looks similar, but it is not identical. PostgreSQL reads tables such as <code>shipments</code>; DuckDB reads files here through functions such as <code>read_parquet('shipments.parquet')</code>.</p>
+<p>The important change is not that the SQL text changed a little.</p>
+<p>The important change is physical shape:</p>
+<pre><code>PostgreSQL row-store path:
+  indexed access into base rows, tuple materialization, large joins, large aggregates
+DuckDB + Parquet path:
+  scan selected columns, aggregate in vectors, join derived facts</code></pre>
+<p>That is why the solution is not:</p>
+<pre><code>DuckDB is faster.</code></pre>
+<p>The solution is:</p>
+<pre><code>the read model now matches the query shape</code></pre>
+<h2 id="why-parquet-is-part-of-the-design">Why Parquet Is Part Of The Design</h2>
+<p>DuckDB can query many sources, but Parquet is a good fit for this read model.</p>
+<p>Parquet is columnar storage.</p>
+<p>That gives the engine two important opportunities:</p>
+<pre><code>projection pushdown
+filter pushdown</code></pre>
+<p>Projection pushdown means:</p>
+<pre><code>read only the columns the query needs</code></pre>
+<p>Filter pushdown means:</p>
+<pre><code>use file or row-group metadata to skip irrelevant data where possible</code></pre>
+<p>If the shipment files are partitioned or organized by departure date, a custom date range can avoid reading unrelated chunks.</p>
+<p>This is not an OLTP index. It is still access-path thinking, but the physical mechanism is different:</p>
+<pre><code>B-tree index:
+  navigate ordered keys to find rows
+Parquet columnar scan:
+  read selected columns and skip irrelevant chunks</code></pre>
+<p>Both optimize access.</p>
+<p>They optimize different access patterns.</p>
+<h2 id="why-not-a-materialized-view">Why Not A Materialized View?</h2>
+<p>A PostgreSQL materialized view can be the right answer.</p>
+<p>For fixed windows, it often is:</p>
+<pre><code>carrier_lane_risk_7d
+carrier_lane_risk_30d
+carrier_lane_risk_90d</code></pre>
+<p>If the product only needs fixed periods, precompute those metrics inside PostgreSQL or in a derived table.</p>
+<p>But custom screener windows are different.</p>
+<p>Users can choose:</p>
+<pre><code>last 17 days
+2026-01-03 to 2026-04-19
+previous quarter
+electronics cargo only
+high-severity exceptions only
+new risk-score weights</code></pre>
+<p>You cannot precompute every possible combination without exploding state.</p>
+<p>A daily rollup table can reduce raw scan volume:</p>
+<pre><code>CREATE TABLE carrier_lane_daily_rollups (
+  rollup_date date NOT NULL,
+  carrier_id bigint NOT NULL,
+  origin_port text NOT NULL,
+  destination_port text NOT NULL,
+  cargo_type text NOT NULL,
+  shipment_count integer NOT NULL,
+  late_count integer NOT NULL,
+  serious_exception_count integer NOT NULL,
+  total_dwell_hours numeric NOT NULL,
+  total_abs_cost_delta numeric NOT NULL,
+  PRIMARY KEY (rollup_date, carrier_id, origin_port, destination_port, cargo_type)
+);</code></pre>
+<p>That can be a valid design.</p>
+<p>But it still keeps analytical scan pressure inside PostgreSQL. If the screener is interactive and high-volume, the source-of-truth database becomes the blast radius for analytical reads.</p>
+<p>The DuckDB/Parquet design isolates the workload:</p>
+<pre><code>PostgreSQL:
+  source of truth
+Parquet:
+  replayable analytical snapshot
+DuckDB:
+  embedded OLAP executor over the snapshot</code></pre>
+<p>The named principle is workload isolation. Do not make the transactional database pay for every analytical exploration if a derived read model can answer it safely.</p>
+<p>The trade-off is operational complexity. A materialized view keeps the system closer to PostgreSQL and simpler to reason about. A DuckDB/Parquet read model adds export jobs, manifests, validation, snapshot promotion, and routing policy.</p>
+<p>That extra machinery is not justified for five fixed dashboard metrics.</p>
+<p>It becomes justified when the read model is large and dynamic:</p>
+<pre><code>200+ screener metrics
+millions of shipments
+10 years of history
+custom date ranges
+filters and sorts over many derived metrics</code></pre>
+<p>At that point, PostgreSQL is no longer just answering a few reports. It is being asked to rebuild a large analytical workspace on demand. Moving that workspace into a columnar read model removes meaningful load from the source of truth and makes the query shape viable.</p>
+<h2 id="the-hard-part-is-correctness-not-speed">The Hard Part Is Correctness, Not Speed</h2>
+<p>Once DuckDB enters the design, the hard question changes.</p>
+<p>It is no longer only:</p>
+<pre><code>How fast is the query?</code></pre>
+<p>It becomes:</p>
+<pre><code>Can the derived result be trusted?</code></pre>
+<p>A derived read model has failure modes:</p>
+<pre><code>stale snapshot
+partial export
+schema mismatch
+missing Parquet file
+small-file explosion
+partition skew
+object-store latency
+memory pressure during large joins or sorts
+result drift from PostgreSQL semantics
+non-atomic snapshot promotion
+fallback overload</code></pre>
+<p>That means the export pipeline needs a manifest.</p>
+<p>A manifest is a small metadata file that says:</p>
+<pre><code>snapshot_id
+schema_version
+source database watermark
+files included
+row counts
+created_at
+validation status</code></pre>
+<p>Readers should not discover Parquet files by scanning a directory and hoping the files belong together.</p>
+<p>They should read through the promoted manifest.</p>
+<p>A safe export flow looks like:</p>
+<pre><code>1. export data into a versioned staging path
+2. validate row counts, required columns, and date ranges
+3. run a semantic smoke test against PostgreSQL
+4. write a manifest for the snapshot
+5. promote the manifest pointer
+6. make readers use only the promoted manifest</code></pre>
+<p>The invariant:</p>
+<pre><code>A reader can see the old valid snapshot or the new valid snapshot,
+but never a half-written snapshot.</code></pre>
+<p>There is also a semantic invariant:</p>
+<pre><code>For the same snapshot watermark and filter set,
+the DuckDB path and PostgreSQL reference path must agree within the domain's tolerance.</code></pre>
+<p>For counts and IDs, tolerance should usually be exact. For decimal aggregates, the tolerance should be explicit and caused only by known numeric representation differences. Silent drift is poison because it makes the read model untrustworthy without making the system obviously unavailable.</p>
+<h2 id="fallback-is-not-free">Fallback Is Not Free</h2>
+<p>The natural fallback is:</p>
+<pre><code>If DuckDB cannot serve the query, run the PostgreSQL path.</code></pre>
+<p>That preserves correctness.</p>
+<p>It can also destroy the source database.</p>
+<p>If DuckDB fails and every custom screener request falls back to the old expensive PostgreSQL path, the system has converted one read-model outage into source-of-truth overload.</p>
+<p>Fallback needs back-pressure:</p>
+<pre><code>max_concurrent_duckdb_queries = N
+max_concurrent_postgres_fallback_queries = M</code></pre>
+<p>When the limits are hit, the system should queue for a bounded time, return degraded results, or reject expensive custom-range queries temporarily.</p>
+<p>The named principle is back-pressure. When a downstream executor is saturated, callers must wait, shed, or degrade. They must not amplify load.</p>
+<p>The router should also emit structured signals:</p>
+<pre><code>duckdb_query_count
+duckdb_query_duration
+fallback_count_by_reason
+snapshot_age_seconds
+snapshot_schema_version
+postgres_fallback_concurrency
+result_validation_failures</code></pre>
+<p>If the system cannot explain why it used DuckDB or PostgreSQL for a request, the routing policy is not production-grade yet.</p>
+<h2 id="how-to-decide-what-to-do">How To Decide What To Do</h2>
+<p>When indexing cannot make a query fast, do not jump directly to DuckDB.</p>
+<p>Use this sequence.</p>
+<p>First, inspect the plan:</p>
+<pre><code>EXPLAIN (ANALYZE, BUFFERS)
+SELECT ...</code></pre>
+<p>Look for:</p>
+<pre><code>sequential scans over large tables
+index scans with huge loop counts
+nested loops over large outer relations
+sorts over large derived result sets
+hash aggregates over many rows
+ordered-set aggregates over large groups
+row estimates far from actual rows
+high shared buffer reads</code></pre>
+<p>Second, ask whether the query is selective.</p>
+<p>If the query needs a tiny fraction of rows, fix the index.</p>
+<p>If the query needs a large fraction of rows, an index may not be the right access path.</p>
+<p>Third, identify which predicates are over stored values and which predicates are over derived values.</p>
+<p>Stored-value predicates can often use indexes:</p>
+<pre><code>departed_at &gt;= ?
+cargo_type = ?
+shipment_id = ?
+carrier_id = ?</code></pre>
+<p>Derived-value predicates cannot be fixed by base-table indexes alone:</p>
+<pre><code>late_rate &gt; ?
+cost_volatility &gt; ?
+serious_exception_rate &gt; ?
+risk_score &gt; ?</code></pre>
+<p>Fourth, remove accidental correlation.</p>
+<p>Rewrite:</p>
+<pre><code>for each outer row, run an aggregate</code></pre>
+<p>into:</p>
+<pre><code>aggregate once, then join</code></pre>
+<p>Fifth, precompute stable facts.</p>
+<p>Fixed windows, daily rollups, and common dashboard metrics should not be recalculated from raw facts on every request.</p>
+<p>Sixth, split the read model when the workload is truly analytical.</p>
+<p>Use a derived OLAP path when the query is:</p>
+<pre><code>wide
+scan-heavy
+column-selective
+aggregation-heavy
+high-concurrency
+not source-of-truth mutation</code></pre>
+<p>Seventh, define the consistency contract.</p>
+<p>Write down:</p>
+<pre><code>maximum allowed snapshot age
+snapshot promotion invariant
+schema versioning rule
+PostgreSQL reference-query sample
+fallback concurrency limit</code></pre>
+<p>Without those, the system has a faster query engine but not a production read path.</p>
+<h2 id="the-mental-model">The Mental Model</h2>
+<ul><li>Indexing solves selective access.</li><li>Columnar execution solves scan-heavy analytical access.</li><li>Materialization solves repeated derivation.</li><li>Workload isolation protects the system of record.</li><li>Back-pressure prevents fallback from becoming an outage amplifier.</li><li>Those are different tools.</li><li>Use the smallest one that matches the failure mode.</li><li>If the query is slow because PostgreSQL cannot find rows, design the right index.</li><li>If the query is slow because every request rebuilds analytical state, design the right read model.</li></ul>
+<p>That is the transition:</p>
+<pre><code>indexing is access-path design
+DuckDB is read-model design</code></pre>
+<p>Do not reach for DuckDB because indexing failed once.</p>
+<blockquote><p>Reach for a derived columnar read model when the workload itself has stopped being an indexed lookup and has become an analytical scan.</p></blockquote>
+{% endraw %}

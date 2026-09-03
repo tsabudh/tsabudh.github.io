@@ -90,6 +90,18 @@ barba.init({
       },
     },
     {
+      namespace: "post",
+      afterEnter() {
+        initScrollSmoother();
+      },
+    },
+    {
+      namespace: "hire",
+      afterEnter() {
+        initScrollSmoother();
+      },
+    },
+    {
       namespace: "backpressure",
       afterEnter() {
         initScrollSmoother();

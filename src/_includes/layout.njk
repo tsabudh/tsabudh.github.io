@@ -32,33 +32,62 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Person",
-        "@id": "{{ site.url }}/#sabudh-thapa",
-        "name": "Sabudh Thapa",
-        "alternateName": "tsabudh",
-        "jobTitle": "Software Engineer",
-        "description": "{{ site.description }}",
-        "url": "{{ site.url }}/",
-        "image": "{{ site.image }}",
-        "email": "mailto:{{ site.email }}",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Kathmandu",
-          "addressCountry": "NP"
-        },
-        "knowsAbout": [
-          "Software Engineering",
-          "Distributed Systems",
-          "Backend Engineering",
-          "Data Infrastructure",
-          "PostgreSQL",
-          "Kafka",
-          "Rust"
-        ],
-        "sameAs": [
-          "https://github.com/tsabudh",
-          "https://www.linkedin.com/in/tsabudh",
-          "https://medium.com/@tsabudh"
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "{{ site.url }}/#sabudh-thapa",
+            "name": "Sabudh Thapa",
+            "givenName": "Sabudh",
+            "familyName": "Thapa",
+            "alternateName": ["tsabudh", "Sabudh Bahadur Thapa"],
+            "jobTitle": ["Backend Engineer", "Distributed Systems Engineer", "Software Engineer"],
+            "description": "{{ site.description }}",
+            "url": "{{ site.url }}/",
+            "image": "{{ site.image }}",
+            "email": "mailto:{{ site.email }}",
+            "nationality": { "@type": "Country", "name": "Nepal" },
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Kathmandu",
+              "addressRegion": "Bagmati Province",
+              "addressCountry": "NP"
+            },
+            "worksFor": { "@type": "Organization", "name": "Relativity Invest" },
+            "alumniOf": {
+              "@type": "CollegeOrUniversity",
+              "name": "Advanced College of Engineering and Management, Tribhuvan University"
+            },
+            "knowsLanguage": ["English", "Nepali"],
+            "knowsAbout": [
+              "Backend Engineering",
+              "Distributed Systems",
+              "Event-Driven Architecture",
+              "Data Infrastructure",
+              "PostgreSQL",
+              "Apache Kafka",
+              "DuckDB",
+              "Rust",
+              "TypeScript",
+              "Python",
+              "Observability",
+              "Production Recovery",
+              "Software Outsourcing from Nepal"
+            ],
+            "sameAs": [
+              "https://github.com/tsabudh",
+              "https://www.linkedin.com/in/tsabudh",
+              "https://medium.com/@tsabudh"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "{{ site.url }}/#website",
+            "url": "{{ site.url }}/",
+            "name": "Sabudh Thapa",
+            "description": "{{ site.description }}",
+            "inLanguage": "en",
+            "publisher": { "@id": "{{ site.url }}/#sabudh-thapa" }
+          }
         ]
       }
     </script>
@@ -114,12 +143,12 @@
             <span> DISTRIBUTED TRACING AT SERVICE BOUNDARIES </span>
           </p>
         </div>
-        <h1
+        <p
           id="loading-screen-text"
           class="font-delight text-9xl text-white z-50"
         >
           Loading
-        </h1>
+        </p>
       </div>
     </div>
     <div id="smooth-wrapper">

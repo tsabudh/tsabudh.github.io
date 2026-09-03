@@ -1,6 +1,6 @@
 # Sabudh Thapa
 
-Sabudh Thapa (tsabudh) is a Software Engineer in Kathmandu, Nepal focused on backend systems, distributed systems, platform engineering, and data infrastructure. His strongest public signal is production systems work around event-driven workers, PostgreSQL, Kafka, DuckDB, Parquet, S3, OpenTelemetry, Rust precision paths, data provenance, and recovery from partial failure.
+Sabudh Thapa (tsabudh) is a backend and distributed systems engineer in Kathmandu, Nepal, available for remote contracts and outsourced backend work, focused on backend systems, distributed systems, platform engineering, and data infrastructure. His strongest public signal is production systems work around event-driven workers, PostgreSQL, Kafka, DuckDB, Parquet, S3, OpenTelemetry, Rust precision paths, data provenance, and recovery from partial failure.
 
 Primary pages:
 - Home: https://tsabudh.com.np/
@@ -8,7 +8,13 @@ Primary pages:
 - Resume: https://tsabudh.com.np/resume/
 - Blog: https://tsabudh.com.np/blog/
 - Contact: https://tsabudh.com.np/contact/
+- Hire / remote contracts from Nepal: https://tsabudh.com.np/hire/
 - Backpressure system note: https://tsabudh.com.np/systems/backpressure/
+
+Articles (canonical on this domain, syndicated to Medium):
+- When Indexes Stop Helping: Columnar Engines: https://tsabudh.com.np/blog/when-indexes-stop-helping-columnar-engines/
+- Indexing Is Query Design, Not Column Decoration: https://tsabudh.com.np/blog/indexing-is-query-design-not-column-decoration/
+- Why Your App Slows Down When Users Increase?: https://tsabudh.com.np/blog/why-your-app-slows-down-when-users-increase/
 
 Selected technical signal:
 - Multi-source SEC identity projection with canonical people, affiliations, roles, resumable per-company runs, and field-level provenance.

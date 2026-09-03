@@ -1,0 +1,594 @@
+---
+title: "Indexing Is Query Design, Not Column Decoration"
+description: "A PostgreSQL indexing piece that reframes indexes as physical access paths for query shapes, not generic column-level speed buttons."
+date: 2026-06-02
+category: PostgreSQL
+readTime: 15
+cardStyle: "bg-[#f7f3eb] text-slate-500"
+mediumUrl: https://medium.com/@tsabudh/indexing-is-query-design-not-column-decoration-c8f390a39a60
+keywords: PostgreSQL, indexing, B-tree, query planning, database performance, backend engineer Nepal
+---
+{% raw %}
+<p><em>A PostgreSQL indexing piece that reframes indexes as physical access paths for query shapes, not generic column-level speed buttons.</em></p>
+<p>Most indexing advice starts with the wrong instinct.</p>
+<blockquote><p><strong>This query is slow. Add an index.</strong></p></blockquote>
+<p>That is not wrong, but it is incomplete. An index is not a generic speed button. An index is a physical access path for a specific way of asking for data.</p>
+<p>The useful question is not <strong>Which column should I index?</strong></p>
+<p>The useful question is:</p>
+<blockquote><p><strong>What shape is this query?</strong></p></blockquote>
+<p>Equality lookup, ordered timeline, prefix search, substring search, JSON containment, array containment, spatial lookup, and derived aggregation are different query shapes. They need different index designs.</p>
+<p>The rule:</p>
+<blockquote><p><strong>Do not index columns. Index access patterns.</strong></p></blockquote>
+<p>This article uses one cargo logistics schema throughout. Each example introduces one query shape, explains why the first obvious index is incomplete, then shows the index that matches the query.</p>
+<h2 id="setup-cargo-logistics-data">Setup: Cargo Logistics Data</h2>
+<p>The schema is intentionally small. It is not a full logistics system. It gives us enough real tables to discuss indexing without switching domains.</p>
+<p>Run this in PostgreSQL:</p>
+<pre><code>DROP SCHEMA IF EXISTS cargo_indexing_demo CASCADE;
+CREATE SCHEMA cargo_indexing_demo;
+SET search_path = cargo_indexing_demo;</code></pre>
+<pre><code>CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE TABLE facilities (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  code text NOT NULL UNIQUE,
+  name text NOT NULL,
+  coordinates point NOT NULL
+);
+
+CREATE TABLE shipments (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  tracking_number text NOT NULL UNIQUE,
+  customer_reference text NOT NULL,
+  status text NOT NULL,
+  origin_facility_id bigint NOT NULL REFERENCES facilities(id),
+  destination_facility_id bigint NOT NULL REFERENCES facilities(id),
+  created_at timestamptz NOT NULL
+);
+
+CREATE TABLE parcels (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  shipment_id bigint NOT NULL REFERENCES shipments(id),
+  current_facility_id bigint NOT NULL REFERENCES facilities(id),
+  tracking_number text NOT NULL UNIQUE,
+  recipient_name text NOT NULL,
+  recipient_name_search text NOT NULL,
+  status text NOT NULL,
+  created_at timestamptz NOT NULL,
+  delivery_address jsonb NOT NULL
+);
+
+CREATE TABLE shipment_events (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  shipment_id bigint NOT NULL REFERENCES shipments(id),
+  facility_id bigint REFERENCES facilities(id),
+  correlation_id uuid NOT NULL,
+  event_type text NOT NULL,
+  occurred_at timestamptz NOT NULL,
+  payload jsonb NOT NULL
+);
+CREATE TABLE cargo_items (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  shipment_id bigint NOT NULL REFERENCES shipments(id),
+  description text NOT NULL,
+  hazard_classes text[] NOT NULL DEFAULT '{}',
+  weight_kg numeric(12, 2) NOT NULL
+);
+CREATE TABLE customs_documents (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  shipment_id bigint NOT NULL REFERENCES shipments(id),
+  document_type text NOT NULL,
+  created_at timestamptz NOT NULL,
+  payload jsonb NOT NULL
+);
+CREATE TABLE carrier_webhook_events (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  carrier text NOT NULL,
+  external_event_id text NOT NULL,
+  received_at timestamptz NOT NULL,
+  payload jsonb NOT NULL
+);</code></pre>
+<p>Seed rows:</p>
+<pre><code>INSERT INTO facilities (code, name, coordinates)
+VALUES
+  ('KTM-PORT', 'Kathmandu Inland Terminal', point(85.3240, 27.7172)),
+  ('BIR-HUB', 'Birgunj Cargo Hub', point(84.8580, 27.0104)),
+  ('PKR-DEPOT', 'Pokhara Delivery Depot', point(83.9856, 28.2096));</code></pre>
+<pre><code>INSERT INTO shipments (
+  tracking_number,
+  customer_reference,
+  status,
+  origin_facility_id,
+  destination_facility_id,
+  created_at
+)
+VALUES
+  ('SHP-2026-0001', 'ACME-PO-1001', 'in_transit', 1, 3, '2026-05-01 08:00:00+00'),
+  ('SHP-2026-0002', 'ACME-PO-1002', 'customs_hold', 1, 2, '2026-05-02 09:00:00+00'),
+  ('SHP-2026-0003', 'BETA-PO-9001', 'delivered', 2, 3, '2026-05-03 10:00:00+00');
+INSERT INTO parcels (
+  shipment_id,
+  current_facility_id,
+  tracking_number,
+  recipient_name,
+  recipient_name_search,
+  status,
+  created_at,
+  delivery_address
+)
+VALUES
+  (1, 1, 'PCL-0001-A', 'Sabudh Thapa', 'sabudh thapa', 'at_origin', '2026-05-01 08:05:00+00', '{"city":"Kathmandu","country":"NP"}'),
+  (1, 1, 'PCL-0001-B', 'S. Thapa', 's thapa', 'at_origin', '2026-05-01 08:06:00+00', '{"city":"Kathmandu","country":"NP"}'),
+  (2, 2, 'PCL-0002-A', 'Jose Alvarez', 'jose alvarez', 'customs_hold', '2026-05-02 09:10:00+00', '{"city":"Birgunj","country":"NP"}'),
+  (3, 3, 'PCL-0003-A', 'Maya Gurung', 'maya gurung', 'delivered', '2026-05-03 10:10:00+00', '{"city":"Pokhara","country":"NP"}');
+INSERT INTO shipment_events (
+  shipment_id,
+  facility_id,
+  correlation_id,
+  event_type,
+  occurred_at,
+  payload
+)
+VALUES
+  (1, 1, '11111111-1111-1111-1111-111111111111', 'picked_up', '2026-05-01 08:10:00+00', '{"source":"scanner"}'),
+  (1, 1, '11111111-1111-1111-1111-111111111111', 'departed_facility', '2026-05-01 11:30:00+00', '{"truck":"TRK-44"}'),
+  (1, 2, '11111111-1111-1111-1111-111111111111', 'arrived_facility', '2026-05-02 02:15:00+00', '{"dock":"D7"}'),
+  (2, 1, '22222222-2222-2222-2222-222222222222', 'picked_up', '2026-05-02 09:30:00+00', '{"source":"edi"}'),
+  (2, 2, '22222222-2222-2222-2222-222222222222', 'customs_hold', '2026-05-03 14:00:00+00', '{"reason":"missing_invoice"}'),
+  (3, 2, '33333333-3333-3333-3333-333333333333', 'picked_up', '2026-05-03 10:30:00+00', '{"source":"scanner"}'),
+  (3, 3, '33333333-3333-3333-3333-333333333333', 'delivered', '2026-05-04 16:45:00+00', '{"signed_by":"Maya Gurung"}');
+INSERT INTO cargo_items (shipment_id, description, hazard_classes, weight_kg)
+VALUES
+  (1, 'Laptop batteries', ARRAY['lithium_battery'], 18.50),
+  (2, 'Industrial solvent', ARRAY['flammable', 'liquid'], 240.00),
+  (3, 'Textile samples', ARRAY[]::text[], 35.00);
+INSERT INTO customs_documents (shipment_id, document_type, created_at, payload)
+VALUES
+  (1, 'commercial_invoice', '2026-05-01 08:20:00+00', '{"declared_value":1200,"currency":"USD","hazmat":false}'),
+  (2, 'commercial_invoice', '2026-05-02 09:20:00+00', '{"declared_value":9000,"currency":"USD","hazmat":true,"missing":["packing_list"]}'),
+  (3, 'proof_of_delivery', '2026-05-04 16:50:00+00', '{"signed_by":"Maya Gurung","photos":2}');
+INSERT INTO carrier_webhook_events (carrier, external_event_id, received_at, payload)
+VALUES
+  ('DHL', 'evt_dhl_01JX9A000001', '2026-05-01 08:12:00+00', '{"type":"pickup_confirmed"}'),
+  ('DHL', 'evt_dhl_01JX9A000002', '2026-05-02 02:16:00+00', '{"type":"arrived_facility"}'),
+  ('FEDEX', 'evt_fdx_01JX9B000001', '2026-05-04 16:46:00+00', '{"type":"delivered"}');</code></pre>
+<h2 id="1-exact-identity-lookup">1. Exact Identity Lookup</h2>
+<p>Query:</p>
+<pre><code>SELECT *
+FROM shipments
+WHERE tracking_number = 'SHP-2026-0001';</code></pre>
+<p>This asks for one shipment by its business identity.</p>
+<p>The schema already has:</p>
+<pre><code>tracking_number text NOT NULL UNIQUE</code></pre>
+<p>PostgreSQL backs that uniqueness with a B-tree index.</p>
+<p>If it did not exist, create it:</p>
+<pre><code>CREATE UNIQUE INDEX shipments_tracking_number_idx
+ON shipments(tracking_number);</code></pre>
+<p>Why this is the right shape:</p>
+<ul><li>The query compares one scalar value for equality.</li><li>The value is a business identity.</li><li>The index should both speed lookup and reject duplicates.</li></ul>
+<p>Do not use hash here. Hash can help equality, but this value must be unique. A unique B-tree encodes both performance and correctness.</p>
+<h2 id="2-prefix-search-is-still-ordered-search">2. Prefix Search Is Still Ordered Search</h2>
+<p>Now change the query:</p>
+<pre><code>SELECT *
+FROM shipments
+WHERE tracking_number LIKE 'SHP-2026%';</code></pre>
+<p>This no longer asks for one exact tracking number.</p>
+<p>It asks:</p>
+<p><strong>Find tracking numbers that begin with this prefix.</strong></p>
+<p>Prefix search can still use ordered access because all values starting with <code>SHP-2026</code> are adjacent in the right B-tree ordering.</p>
+<p>Index:</p>
+<pre><code>CREATE INDEX shipments_tracking_prefix_idx
+ON shipments(tracking_number text_pattern_ops);</code></pre>
+<p><code>text_pattern_ops</code> is a B-tree operator class.</p>
+<p>An operator class tells PostgreSQL how index values should be compared for a family of operators. Here, the operator family is pattern matching with <code>LIKE 'prefix%'</code>.</p>
+<p>Why this matters:</p>
+<ul><li>Normal text ordering follows collation rules.</li><li>Collation is human-language sorting and comparison behavior.</li><li>Tracking numbers are machine codes, not human words.</li><li>For prefix matching on codes, byte-like pattern ordering is the useful behavior.</li></ul>
+<p>This does not mean an ordinary B-tree can never help prefix search. Under the <code>C</code> locale, PostgreSQL can use the normal B-tree for left-anchored patterns like <code>LIKE 'SHP-2026%'</code>. The pattern operator class is the deliberate choice when you want reliable prefix <code>LIKE</code> behavior for machine codes under non-<code>C</code> collations.</p>
+<p>Local rule:</p>
+<blockquote><p><strong>Exact identity lookup: unique B-tree. Prefix code search: B-tree with pattern operator class.</strong></p></blockquote>
+<p>This section does not solve substring search. Substring search is a different shape and appears in the text-search section.</p>
+<h2 id="3-equality-plus-order-needs-a-composite-b-tree">3. Equality Plus Order Needs a Composite B-tree</h2>
+<p>Query:</p>
+<pre><code>SELECT *
+FROM shipment_events
+WHERE shipment_id = 1
+ORDER BY occurred_at DESC
+LIMIT 100;</code></pre>
+<p>This asks:</p>
+<p><strong>For one shipment, show the newest 100 events.</strong></p>
+<p>A single-column index on <code>shipment_id</code> helps only the first part:</p>
+<pre><code>CREATE INDEX shipment_events_shipment_idx
+ON shipment_events(shipment_id);</code></pre>
+<p>With that index, the work shape is:</p>
+<ol><li>Find events for <code>shipment_id = 1</code>.</li><li>Fetch matching rows.</li><li>Sort matching rows by <code>occurred_at DESC</code>.</li><li>Return the first 100.</li></ol>
+<p>The database avoids a full table scan, but it may still sort the matching shipment events.</p>
+<p>The query shape includes ordering and early stop. Match that shape:</p>
+<pre><code>CREATE INDEX shipment_events_shipment_occurred_desc_idx
+ON shipment_events(shipment_id, occurred_at DESC);</code></pre>
+<p>Now the work shape is:</p>
+<ol><li>Seek to <code>shipment_id = 1</code>.</li><li>Read events already newest first.</li><li>Stop after <code>LIMIT 100</code>.</li></ol>
+<p>The composite B-tree is ordered by the combined key:</p>
+<ul><li><code>shipment_id</code> first</li><li><code>occurred_at DESC</code> inside each <code>shipment_id</code></li></ul>
+<p>The index is not “shipment_id plus an extra indexed column.” It is the physical layout for one shipment’s events, newest first, stop after 100.</p>
+<h2 id="the-same-pattern-with-workflow-correlation">The Same Pattern With Workflow Correlation</h2>
+<p>Query:</p>
+<pre><code>SELECT *
+FROM shipment_events
+WHERE correlation_id = '22222222-2222-2222-2222-222222222222'
+ORDER BY occurred_at DESC
+LIMIT 100;</code></pre>
+<p>This asks the same kind of question, but with a different equality key:</p>
+<p><strong>For one workflow correlation, show the newest 100 events.</strong></p>
+<p>Index:</p>
+<pre><code>CREATE INDEX shipment_events_correlation_occurred_desc_idx
+ON shipment_events(correlation_id, occurred_at DESC);</code></pre>
+<p>Same mechanism:</p>
+<ul><li>equality key first</li><li>order inside that key</li><li>stop at <code>LIMIT</code></li></ul>
+<h2 id="the-cost-of-adding-every-useful-index">The Cost of Adding Every Useful Index</h2>
+<p>Both indexes are defensible:</p>
+<pre><code>CREATE INDEX shipment_events_shipment_occurred_desc_idx
+ON shipment_events(shipment_id, occurred_at DESC);</code></pre>
+<pre><code>CREATE INDEX shipment_events_correlation_occurred_desc_idx
+ON shipment_events(correlation_id, occurred_at DESC);</code></pre>
+<p>But every index has write cost:</p>
+<ul><li><code>insert</code>: maintain every relevant index</li><li><code>update</code>: possibly rewrite index entries</li><li><code>delete</code>: remove index entries</li><li><code>storage</code>: more disk and cache pressure</li><li><code>planner</code>: more access paths to estimate</li></ul>
+<p>The decision is not:</p>
+<p><strong>Can this query use an index?</strong></p>
+<p>The decision is:</p>
+<blockquote><p><strong>Is this query important enough, frequent enough, and expensive enough to justify another maintained access path?</strong></p></blockquote>
+<p>Use production frequency and query plans. A query plan shows how PostgreSQL actually ran the query: scan type, rows read, buffers touched, sort work, and execution time. For a deeper introduction to plans, see <a href="/@tsabudh/why-your-app-slows-down-when-users-increase-f5c163a9dda0">Why Your App Slows Down When Users Increase?</a>.</p>
+<h2 id="4-foreign-keys-are-equality-paths">4. Foreign Keys Are Equality Paths</h2>
+<p>Query:</p>
+<pre><code>SELECT *
+FROM parcels
+WHERE shipment_id = 1;</code></pre>
+<p>This asks:</p>
+<p><strong>Find parcels that reference one shipment.</strong></p>
+<p>The parent side, <code>shipments.id</code>, is indexed because it is a primary key.</p>
+<p>The child side, <code>parcels.shipment_id</code>, is not automatically indexed by PostgreSQL.</p>
+<p>Add it when this access pattern is common:</p>
+<pre><code>CREATE INDEX parcels_shipment_id_idx
+ON parcels(shipment_id);</code></pre>
+<p>Why B-tree works:</p>
+<ul><li>The predicate is equality.</li><li>B-tree supports equality lookup.</li><li>The same B-tree family can extend to equality plus ordering later.</li></ul>
+<p>The same child-side index also matters for referential actions. If a shipment is deleted or its primary key is updated, PostgreSQL must check whether child parcel rows reference it. Without an index on the child foreign-key column, that check can become expensive on a large child table.</p>
+<h2 id="why-hash-is-not-the-default-here">Why Hash Is Not the Default Here</h2>
+<p>Hash indexes can serve pure equality:</p>
+<pre><code>CREATE INDEX parcels_shipment_hash_idx
+ON parcels USING hash(shipment_id);</code></pre>
+<p>For:</p>
+<pre><code>SELECT *
+FROM parcels
+WHERE shipment_id = 1;</code></pre>
+<p>The hash index can find rows whose <code>shipment_id</code> equals <code>1</code>.</p>
+<p>It does not cause a full sequential scan. Hash is useful for the equality predicate.</p>
+<p>But this is not a strong hash-index candidate:</p>
+<ul><li>many parcels may share one <code>shipment_id</code></li><li>the query may later need ordering or pagination</li><li>foreign-key paths often become composite paths</li></ul>
+<p>If the query becomes:</p>
+<pre><code>SELECT *
+FROM parcels
+WHERE shipment_id = 1
+ORDER BY created_at DESC
+LIMIT 50;</code></pre>
+<p>the hash index can find matching rows, then PostgreSQL still has to sort them:</p>
+<ol><li>Find parcels where <code>shipment_id = 1</code>.</li><li>Fetch matching rows.</li><li>Sort matching rows by <code>created_at DESC</code>.</li><li>Return the first 50.</li></ol>
+<p>The matching B-tree:</p>
+<pre><code>CREATE INDEX parcels_shipment_created_at_idx
+ON parcels(shipment_id, created_at DESC);</code></pre>
+<p>lets PostgreSQL:</p>
+<ol><li>Seek to <code>shipment_id = 1</code>.</li><li>Read parcels newest first.</li><li>Stop after <code>LIMIT 50</code>.</li></ol>
+<p>Hash indexes still exist because pure equality exists. A cleaner candidate is a high-cardinality value queried only by equality:</p>
+<pre><code>SELECT *
+FROM carrier_webhook_events
+WHERE carrier = $1
+  AND external_event_id = $2;</code></pre>
+<p>Even here, if the carrier event ID is used for idempotency, prefer a unique B-tree:</p>
+<pre><code>CREATE UNIQUE INDEX carrier_webhook_events_carrier_external_event_id_key
+ON carrier_webhook_events(carrier, external_event_id);</code></pre>
+<p>That index encodes the real identity rule:</p>
+<p><strong>One carrier cannot deliver the same external event twice.</strong></p>
+<p>A global unique index on only <code>external_event_id</code> would be too strong if two carriers can emit the same ID format.</p>
+<p>Hash is a benchmark candidate only when all of this is true:</p>
+<ul><li>equality only</li><li>high-cardinality values</li><li>no uniqueness requirement</li><li>no <code>ORDER BY</code></li><li>no range filter</li><li>no likely composite query shape</li><li>measured win over B-tree</li></ul>
+<blockquote><p><strong>Hash can be tested for pure equality. B-tree is the default when equality may need uniqueness, order, range, or composite access.</strong></p></blockquote>
+<h2 id="5-text-search-depends-on-the-operator">5. Text Search Depends on the Operator</h2>
+<p>These four queries mention the same column but ask different questions:</p>
+<pre><code>-- exact
+SELECT *
+FROM parcels
+WHERE recipient_name = 'Sabudh Thapa';
+
+-- case-insensitive prefix
+SELECT *
+FROM parcels
+WHERE lower(recipient_name) LIKE 'sab%';
+
+-- case-insensitive substring
+SELECT *
+FROM parcels
+WHERE lower(recipient_name) LIKE '%thapa%';</code></pre>
+<p>Exact lookup can use a B-tree on the stored value.</p>
+<p>Case-insensitive lookup transforms the value, so index the expression:</p>
+<pre><code>CREATE INDEX parcels_recipient_name_lower_idx
+ON parcels(lower(recipient_name));</code></pre>
+<p>Prefix search on the transformed value needs pattern behavior:</p>
+<pre><code>CREATE INDEX parcels_recipient_name_lower_prefix_idx
+ON parcels(lower(recipient_name) text_pattern_ops);</code></pre>
+<p>Substring search is different. The match can start anywhere inside the name, so a normal B-tree ordered by the whole string cannot group all matches together.</p>
+<p>Use trigram GIN:</p>
+<pre><code>CREATE INDEX parcels_recipient_name_trgm_idx
+ON parcels USING gin (lower(recipient_name) gin_trgm_ops);</code></pre>
+<p>GIN means <em>Generalized Inverted Index.</em></p>
+<p>An inverted index maps searchable pieces to rows that contain them.</p>
+<p>For trigram search, PostgreSQL breaks text into overlapping three-character chunks. A query like:</p>
+<pre><code>WHERE lower(recipient_name) LIKE '%thapa%'</code></pre>
+<p>can use trigrams from <code>thapa</code> to find candidate rows.</p>
+<blockquote><p><strong>Exact or prefix text search: B-tree over the searched expression. Substring text search: trigram GIN over the searched expression.</strong></p></blockquote>
+<h2 id="6-name-search-is-a-product-contract-not-just-an-index">6. Name Search Is a Product Contract, Not Just an Index</h2>
+<p>I am from Nepal. My name in Nepali can be written as:</p>
+<pre><code>सबुध थापा</code></pre>
+<p>That is not a lowercase form of Sabudh Thapa. It is a different script.</p>
+<p>Before indexing multilingual names, define the search contract. The same column can support very different promises:</p>
+<p>Exact Nepali-script match</p>
+<pre><code>recipient_name = 'सबुध थापा'</code></pre>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX parcels_recipient_name_idx ON parcels(recipient_name);</code></pre>
+<p>This answers only exact stored-value lookup.</p>
+<p>Nepali-script prefix</p>
+<pre><code>recipient_name LIKE 'सबुध%'</code></pre>
+<p>Index shape, if this query is hot:</p>
+<pre><code>CREATE INDEX parcels_recipient_name_prefix_idx ON parcels(recipient_name text_pattern_ops);</code></pre>
+<p>This answers prefix lookup in the stored script.</p>
+<p>Latin case-insensitive prefix</p>
+<pre><code>lower(recipient_name) LIKE 'sabudh%'</code></pre>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX parcels_recipient_name_lower_prefix_idx 
+ON parcels(lower(recipient_name) text_pattern_ops);</code></pre>
+<p>This answers one Latin-script prefix behavior. It does not define accent handling, tokenization, ranking, or cross-script matching.</p>
+<p>Latin substring</p>
+<pre><code>lower(recipient_name) LIKE '%thapa%'</code></pre>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX parcels_recipient_name_trgm_idx 
+ON parcels USING gin (lower(recipient_name) gin_trgm_ops);</code></pre>
+<p>This answers substring search over the Latin representation.</p>
+<p>Cross-script search</p>
+<p>If searching sabudh should match सबुध, the index cannot invent that semantic. Store a maintained search representation and index that representation:</p>
+<pre><code>CREATE INDEX parcels_recipient_name_search_prefix_idx 
+ON parcels(recipient_name_search text_pattern_ops);</code></pre>
+<p>This works only if recipient_name_search is maintained with the same normalization and transliteration rules the product promises.</p>
+<p>This is not a global name-search design:</p>
+<pre><code>WHERE lower(recipient_name) LIKE 'sab%'</code></pre>
+<p>It only defines one Latin-script prefix behavior. It does not define accents, Devanagari, transliteration, tokenization, or ranking.</p>
+<h2 id="7-jsonb-and-arrays-need-inverted-lookup">7. JSONB and Arrays Need Inverted Lookup</h2>
+<p>Query:</p>
+<pre><code>SELECT *
+FROM customs_documents
+WHERE payload @&gt; '{"hazmat": true}';</code></pre>
+<p>This asks:</p>
+<p><strong>Find JSON documents containing this key/value structure.</strong></p>
+<p>A B-tree orders each <code>payload</code> value as a whole. That is not what this query needs.</p>
+<p>The query is not:</p>
+<p><strong>Is this entire JSON document equal to that entire JSON document?</strong></p>
+<p>The query is:</p>
+<p><strong>Does this document contain key </strong><code><strong>hazmat</strong></code><strong> with value </strong><code><strong>true</strong></code><strong>?</strong></p>
+<p>That is an inverted-lookup problem.</p>
+<p>Use GIN:</p>
+<pre><code>CREATE INDEX customs_documents_payload_gin_idx
+ON customs_documents USING gin (payload);</code></pre>
+<p>Why GIN works:</p>
+<ul><li>GIN indexes searchable pieces inside each value.</li><li>For JSONB, those pieces include keys, values, and key/value structures.</li><li>The index can map <code>hazmat=true</code> to rows whose payload contains it.</li></ul>
+<p>That index uses PostgreSQL’s default JSONB GIN operator class, <code>jsonb_ops</code>. It is the flexible choice: it supports containment with <code>@&gt;</code>, key-existence operators such as <code>?</code>, and JSONPath operators.</p>
+<p>If the product contract is mostly containment, a narrower candidate is <code>jsonb_path_ops</code>:</p>
+<pre><code>CREATE INDEX customs_documents_payload_path_gin_idx
+ON customs_documents USING gin (payload jsonb_path_ops);</code></pre>
+<p>The tradeoff:</p>
+<ul><li><code>jsonb_ops</code>: broader operator support</li><li><code>jsonb_path_ops</code>: usually smaller and faster for containment-heavy searches</li></ul>
+<p>So the question is not “JSONB means GIN.” The question is which JSONB operators the product actually uses.</p>
+<p>Arrays have the same shape:</p>
+<pre><code>SELECT *
+FROM cargo_items
+WHERE hazard_classes @&gt; ARRAY['flammable'];</code></pre>
+<p>This asks:</p>
+<p><strong>Which rows contain the array element </strong><code><strong>flammable</strong></code><strong>?</strong></p>
+<p>Use GIN:</p>
+<pre><code>CREATE INDEX cargo_items_hazard_classes_gin_idx
+ON cargo_items USING gin (hazard_classes);</code></pre>
+<h2 id="when-containment-meets-a-numeric-range">When Containment Meets a Numeric Range</h2>
+<pre><code>SELECT *
+FROM cargo_items
+WHERE hazard_classes @&gt; ARRAY['flammable']
+  AND weight_kg &gt; 100;</code></pre>
+<p>The GIN index helps the array-containment predicate. It does not order or range-filter <code>weight_kg</code>.</p>
+<p>If this query is hot, test a B-tree on the scalar range value:</p>
+<pre><code>CREATE INDEX cargo_items_weight_idx
+ON cargo_items(weight_kg);</code></pre>
+<p>PostgreSQL may use one index and filter the other predicate, or it may combine row locations from multiple indexes with a bitmap plan.</p>
+<p>A bitmap plan means:</p>
+<ol><li>Build candidate row-location sets from indexes.</li><li>Combine those sets.</li><li>Visit the matching table rows.</li></ol>
+<blockquote><p><strong>Containment inside a value: GIN. Range or order over a scalar: B-tree. Both together: verify the plan.</strong></p></blockquote>
+<h2 id="8-coordinates-need-spatial-indexing">8. Coordinates Need Spatial Indexing</h2>
+<p>Query:</p>
+<pre><code>SELECT *
+FROM facilities
+ORDER BY coordinates &lt;-&gt; point(85.0, 27.5)
+LIMIT 3;</code></pre>
+<p>This asks:</p>
+<p><strong>Which facilities are nearest to this point?</strong></p>
+<p>B-tree indexes one-dimensional order. Spatial distance is not a simple one-dimensional scalar order stored in the table.</p>
+<p>Use GiST:</p>
+<pre><code>CREATE INDEX facilities_coordinates_gist_idx
+ON facilities USING gist (coordinates);</code></pre>
+<p>GiST means <strong>Generalized Search Tree</strong>. PostgreSQL can use it for access patterns that do not fit ordinary scalar B-tree ordering.</p>
+<p>This example uses PostgreSQL’s built-in <code>point</code> type to keep the setup runnable. Production geospatial systems often use PostGIS, but the indexing lesson is the same:</p>
+<p><strong>Spatial query: spatial access path.</strong></p>
+<p>Do not read this demo as production earth-distance logic. PostgreSQL <code>point</code> with <code>&lt;-&gt;</code> gives distance in the coordinate plane. For real latitude/longitude routing, radius search, or distance in meters, use a geospatial model such as PostGIS <code>geometry</code> or <code>geography</code> and index that model with the operator class that matches the query.</p>
+<p>Now compare that with a simple code lookup:</p>
+<pre><code>SELECT *
+FROM facilities
+WHERE code = 'KTM-PORT';</code></pre>
+<p>That is not spatial. It is exact lookup by facility code, so the unique B-tree on <code>code</code> is the right index.</p>
+<h2 id="9-append-only-event-logs-may-want-brin">9. Append-Only Event Logs May Want BRIN</h2>
+<p>Query:</p>
+<pre><code>SELECT *
+FROM shipment_events
+WHERE occurred_at &gt;= now() - interval '1 day';</code></pre>
+<p>This asks:</p>
+<p><strong>Find recent events in a large event log.</strong></p>
+<p>A B-tree on <code>occurred_at</code> can help. But for a huge append-only table, a BRIN index can be much smaller:</p>
+<pre><code>CREATE INDEX shipment_events_occurred_at_brin_idx
+ON shipment_events USING brin(occurred_at);</code></pre>
+<p>BRIN means <strong>Block Range Index</strong>.</p>
+<p>It stores summaries for ranges of table pages, not one index entry per row.</p>
+<p>Why this works:</p>
+<ul><li>If table pages near the beginning contain old timestamps,</li><li>and pages near the end contain recent timestamps,</li><li>PostgreSQL can skip page ranges that cannot match the time predicate.</li></ul>
+<p>Limitation:</p>
+<blockquote><p><strong>BRIN depends on physical row order roughly matching the indexed value.</strong></p></blockquote>
+<p>If old events are constantly backfilled into random locations, page-range summaries become less selective.</p>
+<blockquote><p><strong>Large append-only time-window scan: consider BRIN. Random physical order: BRIN is weak.</strong></p></blockquote>
+<h2 id="10-ctes-do-not-make-derived-values-indexable">10. CTEs Do Not Make Derived Values Indexable</h2>
+<p>CTE refers to <strong>Common Table Expression</strong></p>
+<p>Query:</p>
+<pre><code>WITH shipment_lifecycle AS (
+  SELECT
+    shipment_id,
+    min(occurred_at) FILTER (WHERE event_type = 'picked_up') AS picked_up_at,
+    min(occurred_at) FILTER (WHERE event_type = 'delivered') AS delivered_at
+  FROM shipment_events
+  WHERE occurred_at &gt;= now() - interval '30 days'
+    AND event_type IN ('picked_up', 'delivered')
+  GROUP BY shipment_id
+),
+delivery_metrics AS (
+  SELECT
+    shipment_id,
+    picked_up_at,
+    delivered_at,
+    delivered_at - picked_up_at AS transit_duration
+  FROM shipment_lifecycle
+  WHERE picked_up_at IS NOT NULL
+    AND delivered_at IS NOT NULL
+)
+SELECT shipment_id, transit_duration
+FROM delivery_metrics
+WHERE transit_duration &gt; interval '72 hours';</code></pre>
+<p>This query has three stages:</p>
+<ol><li>Scan base shipment events.</li><li>Aggregate pickup and delivery timestamps per shipment.</li><li>Filter by derived transit duration.</li></ol>
+<p>First, index the base scan. One candidate is:</p>
+<pre><code>CREATE INDEX shipment_events_type_time_shipment_idx
+ON shipment_events(event_type, occurred_at, shipment_id)
+WHERE event_type IN ('picked_up', 'delivered');</code></pre>
+<p>That index helps:</p>
+<pre><code>WHERE event_type IN ('picked_up', 'delivered')
+  AND occurred_at &gt;= ...</code></pre>
+<p>It is a candidate, not a universal answer. Index column order depends on which predicate cuts the search space first:</p>
+<ul><li><code>(event_type, occurred_at, shipment_id)</code>: good when <code>event_type</code> is a strong filter and the time window is still broad</li><li><code>(occurred_at, event_type, shipment_id)</code>: good when the recent time window is highly selective</li><li><code>(shipment_id, event_type, occurred_at)</code>: good when the hot query reconstructs lifecycle for known shipments</li></ul>
+<p>The point of this section is not that one base index is canonical. The point is that all of these indexes can only help read base events.</p>
+<p>It does not directly help:</p>
+<pre><code>WHERE transit_duration &gt; interval '72 hours'</code></pre>
+<p>because <code>transit_duration</code> is not stored in <code>shipment_events</code>. It is computed after grouping:</p>
+<p><code>delivered_at - picked_up_at</code></p>
+<p>A CTE gives the value a name. It does not make that value an indexed column.</p>
+<p>If late-delivery search is a hot product query, materialize the derived metric:</p>
+<pre><code>CREATE TABLE shipment_delivery_metrics (
+  shipment_id bigint PRIMARY KEY REFERENCES shipments(id),
+  picked_up_at timestamptz NOT NULL,
+  delivered_at timestamptz NOT NULL,
+  transit_duration interval NOT NULL
+);</code></pre>
+<pre><code>CREATE INDEX shipment_delivery_metrics_duration_idx
+ON shipment_delivery_metrics(transit_duration);</code></pre>
+<p>Now this query has a stored value to index:</p>
+<pre><code>SELECT shipment_id, transit_duration
+FROM shipment_delivery_metrics
+WHERE transit_duration &gt; interval '72 hours';</code></pre>
+<blockquote><p><strong>Occasional derivation: index base facts. Hot derived metric: materialize and index the metric.</strong></p></blockquote>
+<h2 id="verification-plans-prove-indexes">Verification: Plans Prove Indexes</h2>
+<p>Use:</p>
+<pre><code>EXPLAIN (ANALYZE, BUFFERS)
+SELECT ...</code></pre>
+<p>This actually runs the query and reports how PostgreSQL executed it.</p>
+<p>Look for:</p>
+<ul><li>scan type: sequential scan, index scan, bitmap scan</li><li>actual rows read</li><li>rows removed by filters</li><li>buffers touched</li><li>sort nodes</li><li>execution time under realistic parameters</li></ul>
+<p>Also check write cost. Every index that speeds up a read path must be maintained by inserts, updates, and deletes.</p>
+<blockquote><p><strong>An index is not proven by its existence. It is proven by the workload it improves.</strong></p></blockquote>
+<h2 id="cheat-sheet">Cheat Sheet</h2>
+<p><strong>Exact identity</strong></p>
+<p>Question: find shipment by tracking number.</p>
+<p>Index shape:</p>
+<pre><code>CREATE UNIQUE INDEX shipments_tracking_number_idx
+ON shipments(tracking_number);</code></pre>
+<p><strong>Prefix code search</strong></p>
+<p>Question: find tracking numbers that start with a prefix.</p>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX shipments_tracking_prefix_idx
+ON shipments(tracking_number text_pattern_ops);</code></pre>
+<p><strong>Equality plus order plus limit</strong></p>
+<p>Question: show the latest events for one shipment.</p>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX shipment_events_shipment_occurred_desc_idx
+ON shipment_events(shipment_id, occurred_at DESC);</code></pre>
+<p>Question: show the latest events for one workflow correlation.</p>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX shipment_events_correlation_occurred_desc_idx
+ON shipment_events(correlation_id, occurred_at DESC);</code></pre>
+<p><strong>Foreign-key equality</strong></p>
+<p>Question: find parcels for one shipment.</p>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX parcels_shipment_id_idx
+ON parcels(shipment_id);</code></pre>
+<p><strong>Equality plus recent order</strong></p>
+<p>Question: find recent parcels for one shipment.</p>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX parcels_shipment_created_at_idx
+ON parcels(shipment_id, created_at DESC);</code></pre>
+<p><strong>Pure high-cardinality equality</strong></p>
+<p>Question: find a row by a high-cardinality equality value with no uniqueness, order, range, or composite requirement.</p>
+<p>Index shape: benchmark hash against B-tree. Do not assume hash wins.</p>
+<p><strong>Case-insensitive recipient lookup</strong></p>
+<p>Question: match the lowercase form of a recipient name.</p>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX parcels_recipient_name_lower_idx
+ON parcels(lower(recipient_name));</code></pre>
+<p><strong>Recipient prefix search</strong></p>
+<p>Question: match a case-insensitive recipient-name prefix.</p>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX parcels_recipient_name_lower_prefix_idx
+ON parcels(lower(recipient_name) text_pattern_ops);</code></pre>
+<p><strong>Recipient substring search</strong></p>
+<p>Question: find a recipient name containing text anywhere inside it.</p>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX parcels_recipient_name_trgm_idx
+ON parcels USING gin (lower(recipient_name) gin_trgm_ops);</code></pre>
+<p><strong>Cross-script recipient search</strong></p>
+<p>Question: search <code>sabudh</code> and match <code>सबुध</code>.</p>
+<p>Index shape: maintained <code>recipient_name_search</code> column plus an index that matches the promised search behavior.</p>
+<p><strong>JSON containment</strong></p>
+<p>Question: find JSON documents containing a key/value structure.</p>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX customs_documents_payload_gin_idx
+ON customs_documents USING gin (payload);</code></pre>
+<p>For containment-heavy workloads, also test:</p>
+<pre><code>CREATE INDEX customs_documents_payload_path_gin_idx
+ON customs_documents USING gin (payload jsonb_path_ops);</code></pre>
+<p><strong>Array containment</strong></p>
+<p>Question: find cargo items containing one hazard class.</p>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX cargo_items_hazard_classes_gin_idx
+ON cargo_items USING gin (hazard_classes);</code></pre>
+<p><strong>Spatial lookup</strong></p>
+<p>Question: find nearest facilities.</p>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX facilities_coordinates_gist_idx
+ON facilities USING gist (coordinates);</code></pre>
+<p><strong>Recent append-only events</strong></p>
+<p>Question: scan recent rows in a large append-only event log.</p>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX shipment_events_occurred_at_brin_idx
+ON shipment_events USING brin(occurred_at);</code></pre>
+<p><strong>Derived metric</strong></p>
+<p>Question: find shipments whose stored transit duration is greater than a threshold.</p>
+<p>Index shape:</p>
+<pre><code>CREATE INDEX shipment_delivery_metrics_duration_idx
+ON shipment_delivery_metrics(transit_duration);</code></pre>
+<h2 id="final-rule">Final Rule</h2>
+<p>If you cannot name the query shape, you cannot justify the index.</p>
+<blockquote><p><strong>No query shape, no index.</strong></p></blockquote>
+{% endraw %}

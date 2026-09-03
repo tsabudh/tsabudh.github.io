@@ -1,0 +1,5 @@
+{
+  "layout": "post.njk",
+  "tags": ["post"],
+  "namespace": "post"
+}

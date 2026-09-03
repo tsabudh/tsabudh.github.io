@@ -18,7 +18,6 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("CNAME");
   eleventyConfig.addPassthroughCopy("src/scripts");
   eleventyConfig.addPassthroughCopy({
-    "src/sitemap.xml": "sitemap.xml",
     "src/robots.txt": "robots.txt",
     "src/llms.txt": "llms.txt",
     "src/humans.txt": "humans.txt",
@@ -26,6 +25,15 @@ export default function (eleventyConfig) {
 
   eleventyConfig.addPlugin(dirOutputPlugin);
   eleventyConfig.addPlugin(HtmlBasePlugin);
+
+  eleventyConfig.addFilter("isoDate", (d) => new Date(d).toISOString().slice(0, 10));
+  eleventyConfig.addFilter("readableDate", (d) =>
+    new Date(d).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" })
+  );
+  // Indexable HTML pages only: directory URLs, not noindex, not stylesheets.
+  eleventyConfig.addCollection("sitemap", (api) =>
+    api.getAll().filter((p) => p.url && p.url.endsWith("/") && !p.data.noindex)
+  );
   eleventyConfig.addPlugin(pluginVite, {
     viteOptions: viteConfig,
   });
