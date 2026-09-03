@@ -210,7 +210,7 @@
           Current direction
         </p>
         <p class="mt-4 text-xl leading-relaxed text-slate-700">
-          Backend/platform roles near distributed systems, storage, data infrastructure, observability, and Rust/PostgreSQL-adjacent systems.
+          Data infrastructure and Rust/PostgreSQL-adjacent systems roles: identity resolution across conflicting sources, columnar analytical serving, Kafka event backbones, and production PostgreSQL, where correctness under failure matters.
         </p>
       </div>
 
@@ -259,10 +259,10 @@
           <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">2026</p>
           <div>
             <h2 class="font-lexend text-3xl font-bold leading-tight text-slate-950">
-              Built a multi-source identity projection layer for SEC management data.
+              Made identity resolution its own layer, not each consumer's problem.
             </h2>
             <p class="mt-3 text-lg leading-relaxed text-slate-700">
-              Fused eight filing-derived sources into canonical people, affiliations, roles, and append-only field provenance. The system runs resumably per company, keeps disputed fields traceable to source rows, and powers management views without every consumer reinventing trust ranking.
+              The same executive arrives from many sources under different identifiers with conflicting values. Canonical person records rebuild nightly across about 6,000 companies with weighted source precedence and append-only column-level provenance, so a disputed field traces to its sources and a bad source can be retracted.
             </p>
           </div>
         </article>
@@ -274,7 +274,7 @@
               Moved wide screener workloads from 8-22 seconds to under 600ms.
             </h2>
             <p class="mt-3 text-lg leading-relaxed text-slate-700">
-              Split analytical reads away from PostgreSQL row-store plans into DuckDB over S3-backed Parquet snapshots, with custom date ranges routed through the columnar path instead of the old fallback.
+              Scaled screener coverage about 10x to nearly 100 metrics, each filterable as a number, text match, or selection in free combination, so the predicate space outgrew any index. Moved analytical reads to DuckDB over S3-backed Parquet, vertically partitioned so financials and management export in parallel and load independently.
             </p>
           </div>
         </article>
@@ -283,10 +283,46 @@
           <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">2026</p>
           <div>
             <h2 class="font-lexend text-3xl font-bold leading-tight text-slate-950">
-              Hardened Kafka workers around idempotency, replay, and shutdown behavior.
+              Cut over 84 GB of production PostgreSQL from Neon to AWS RDS without stopping ingestion.
             </h2>
             <p class="mt-3 text-lg leading-relaxed text-slate-700">
-              Added Avro schemas, idempotent producer settings, manual commit semantics, deduplication keys, DLQ routing/replay, retry/backoff, health probes, consumer-lag visibility, resource limits, and ordered shutdown so redeploys and malformed events fail visibly.
+              No shared replication existed between source and target. Repointed writers first, bulk-restored, then closed the write gap with a bounded catch-up pass, trading a stale-read window on upserted rows for continuous availability.
+            </p>
+          </div>
+        </article>
+
+        <article class="grid grid-cols-[8rem_1fr] gap-6 border-t border-slate-300 pt-6 max-sm:grid-cols-1 max-sm:gap-2">
+          <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">2026</p>
+          <div>
+            <h2 class="font-lexend text-3xl font-bold leading-tight text-slate-950">
+              Put data operations, internal workflows, and notifications on one Kafka backbone.
+            </h2>
+            <p class="mt-3 text-lg leading-relaxed text-slate-700">
+              Avro schemas with a schema registry. Cron emits trigger events so scheduled and reactive work share a single path, retry, and DLQ, with idempotent producers, ordered shutdown, and correlation-ID tracing across workers.
+            </p>
+          </div>
+        </article>
+
+        <article class="grid grid-cols-[8rem_1fr] gap-6 border-t border-slate-300 pt-6 max-sm:grid-cols-1 max-sm:gap-2">
+          <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">2026</p>
+          <div>
+            <h2 class="font-lexend text-3xl font-bold leading-tight text-slate-950">
+              Built billing and entitlements as a provider-agnostic layer.
+            </h2>
+            <p class="mt-3 text-lg leading-relaxed text-slate-700">
+              Plans compose from features as data rather than code, entitlements materialize from subscriptions, trials, and referral rewards through one grant path, and every provider identifier is abstracted so a second payment processor requires no schema change.
+            </p>
+          </div>
+        </article>
+
+        <article class="grid grid-cols-[8rem_1fr] gap-6 border-t border-slate-300 pt-6 max-sm:grid-cols-1 max-sm:gap-2">
+          <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">2026</p>
+          <div>
+            <h2 class="font-lexend text-3xl font-bold leading-tight text-slate-950">
+              Made production logs queryable instead of merely bounded.
+            </h2>
+            <p class="mt-3 text-lg leading-relaxed text-slate-700">
+              Structured logging drains Redis streams to S3 as Parquet, with correlation IDs spanning API and worker processes. Built after undrained container logs filled the production host and took Redis down; off-host retention replaced ad-hoc rotation.
             </p>
           </div>
         </article>
@@ -304,13 +340,13 @@
         </article>
 
         <article class="grid grid-cols-[8rem_1fr] gap-6 border-t border-slate-300 pt-6 max-sm:grid-cols-1 max-sm:gap-2">
-          <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">2025-now</p>
+          <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">2025-2026</p>
           <div>
             <h2 class="font-lexend text-3xl font-bold leading-tight text-slate-950">
               Built finance-safe backend paths with explicit domain transitions.
             </h2>
             <p class="mt-3 text-lg leading-relaxed text-slate-700">
-              Separated transformation logic for estimates, sales orders, and invoices from persistence, added PostgreSQL audit partitioning, and used Rust Decimal types across a Python/Rust boundary to prevent rounding drift.
+              Separated transformation logic for estimates, sales orders, and invoices from persistence, added PostgreSQL audit partitioning, and used Rust Decimal types with exhaustive enums across a Python/Rust boundary to prevent rounding drift.
             </p>
           </div>
         </article>
@@ -336,45 +372,45 @@
     </p>
     <div class="mt-8 grid grid-cols-3 gap-8 max-lg:grid-cols-1">
       <article class="border-t border-slate-300 pt-5">
-        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Mar 2026 - Present</p>
+        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Feb 2026 - Present</p>
         <h2 class="mt-3 font-lexend text-2xl font-bold text-slate-950">Relativity Invest</h2>
         <p class="mt-3 leading-relaxed text-slate-700">
-          Backend/platform/data infrastructure across Fastify APIs, Python Kafka workers, PostgreSQL on RDS/Neon, Redis, DuckDB, S3/Parquet, Docker/EC2, and OpenTelemetry. Shipped management/provenance APIs, notification settings, screener alerts, and production observability surfaces.
+          Backend and distributed systems engineer, remote. Financial-data infrastructure: identity resolution, DuckDB/Parquet analytical serving, a Kafka event backbone with Avro, production PostgreSQL on AWS RDS, billing and entitlements, and structured logging with correlation IDs across API and worker processes.
         </p>
       </article>
       <article class="border-t border-slate-300 pt-5">
-        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Dec 2025 - Apr 2026</p>
+        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Dec 2025 - Jan 2026</p>
         <h2 class="mt-3 font-lexend text-2xl font-bold text-slate-950">Niru Studio</h2>
         <p class="mt-3 leading-relaxed text-slate-700">
-          Contract backend work for financial transformation flows, precision arithmetic, and partitioned audit logging.
+          Software engineer, contract, remote. Rust precision-arithmetic pipeline using Decimal types and exhaustive enums to prevent financial rounding drift across a Python/Rust microservice boundary.
         </p>
       </article>
       <article class="border-t border-slate-300 pt-5">
-        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Sep 2025 - Feb 2026</p>
+        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Sep 2025 - Jan 2026</p>
         <h2 class="mt-3 font-lexend text-2xl font-bold text-slate-950">Global Diary</h2>
         <p class="mt-3 leading-relaxed text-slate-700">
-          Backend-heavy full-stack work across authentication, news content, subscriptions, payment flows, reporting, feedback, and tenant-aware access controls for a multi-tenant platform.
+          Full-stack developer, contract, hybrid in Kathmandu. Owned backend/frontend integration for news, events, subscriptions, authentication, and reporting on a multi-tenant platform, implemented cross-domain authentication and business reporting, and restored production stability for a platform serving thousands of users.
         </p>
       </article>
       <article class="border-t border-slate-300 pt-5">
-        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Apr 2025 - Feb 2026</p>
+        <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Apr 2025 - Nov 2025</p>
         <h2 class="mt-3 font-lexend text-2xl font-bold text-slate-950">Wissenschaft Inc. - Software Engineer</h2>
         <p class="mt-3 leading-relaxed text-slate-700">
-          Backend services in TypeScript, Express, gRPC, Kafka, PostgreSQL, authentication, authorization, query optimization, and service-boundary documentation.
+          Promoted from Associate in April 2025. Backend services in TypeScript, Express, gRPC, Kafka, and PostgreSQL for high-throughput request and worker flows, JWT/RBAC and external identity-provider integrations, and system-design and onboarding documentation.
         </p>
       </article>
       <article class="border-t border-slate-300 pt-5">
         <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">Mar 2024 - Apr 2025</p>
         <h2 class="mt-3 font-lexend text-2xl font-bold text-slate-950">Wissenschaft Inc. - Associate Software Engineer</h2>
         <p class="mt-3 leading-relaxed text-slate-700">
-          Modular TypeScript/Sequelize services, JWT/RBAC flows, query optimization with indexing/caching/batching/constraints, shared utilities, API design, and teammate mentoring.
+          Modular TypeScript services, secure authentication flows, query optimization with indexing, caching, batching, and constraints, shared utilities, API design, and teammate mentoring.
         </p>
       </article>
       <article class="border-t border-slate-300 pt-5">
         <p class="font-lexend text-sm font-semibold uppercase tracking-wide text-slate-500">2022 - 2024</p>
         <h2 class="mt-3 font-lexend text-2xl font-bold text-slate-950">Earlier engineering work</h2>
         <p class="mt-3 leading-relaxed text-slate-700">
-          Delivered a commercial bank information-management system as a freelancer, built backend scheduling/message-queue email flows at Brandbuilder Nepal, and worked across React, PostgreSQL, TypeScript, and build tooling at Pagevamp Nepal.
+          Freelance delivery of a commercial bank information-management system with React, Node.js, and PostgreSQL (Sep 2023 - Jan 2024), backend scheduling and message-queue email flows at Brandbuilder Nepal (Nov - Dec 2023), and React, TypeScript, PostgreSQL, and build tooling at Pagevamp Nepal (Dec 2022 - Mar 2023).
         </p>
       </article>
     </div>
