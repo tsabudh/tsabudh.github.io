@@ -1,19 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://tsabudh.com.np/</loc>
+    <loc>https://tsabudh.com.np/blog/indexing-is-query-design-not-column-decoration/</loc>
+    <lastmod>2026-06-02</lastmod>
+  </url>
+  <url>
+    <loc>https://tsabudh.com.np/blog/when-indexes-stop-helping-columnar-engines/</loc>
+    <lastmod>2026-06-02</lastmod>
+  </url>
+  <url>
+    <loc>https://tsabudh.com.np/blog/why-your-app-slows-down-when-users-increase/</loc>
+    <lastmod>2025-10-28</lastmod>
   </url>
   <url>
     <loc>https://tsabudh.com.np/about/</loc>
-  </url>
-  <url>
-    <loc>https://tsabudh.com.np/resume/</loc>
   </url>
   <url>
     <loc>https://tsabudh.com.np/blog/</loc>
   </url>
   <url>
     <loc>https://tsabudh.com.np/contact/</loc>
+  </url>
+  <url>
+    <loc>https://tsabudh.com.np/hire/</loc>
+  </url>
+  <url>
+    <loc>https://tsabudh.com.np/</loc>
+  </url>
+  <url>
+    <loc>https://tsabudh.com.np/resume/</loc>
   </url>
   <url>
     <loc>https://tsabudh.com.np/systems/backpressure/</loc>

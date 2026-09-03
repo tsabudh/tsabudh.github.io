@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+    
+    
+    
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Why Your App Slows Down When Users Increase?</title>
+    <meta name="description" content="A practical backend scaling note on database bottlenecks, connection pooling, caching, and measuring before optimizing." />
+    <meta name="author" content="Sabudh Thapa" />
+    <link rel="canonical" href="https://tsabudh.com.np/blog/why-your-app-slows-down-when-users-increase/" />
+    
+    <meta name="robots" content="index, follow" />
+    
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Sabudh Thapa" />
+    <meta property="og:title" content="Why Your App Slows Down When Users Increase?" />
+    <meta property="og:description" content="A practical backend scaling note on database bottlenecks, connection pooling, caching, and measuring before optimizing." />
+    <meta property="og:url" content="https://tsabudh.com.np/blog/why-your-app-slows-down-when-users-increase/" />
+    <meta property="og:image" content="https://tsabudh.com.np/assets/images/blog/app-slowdown-under-load.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Why Your App Slows Down When Users Increase?" />
+    <meta name="twitter:description" content="A practical backend scaling note on database bottlenecks, connection pooling, caching, and measuring before optimizing." />
+    <meta name="twitter:image" content="https://tsabudh.com.np/assets/images/blog/app-slowdown-under-load.webp" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://tsabudh.com.np/#sabudh-thapa",
+            "name": "Sabudh Thapa",
+            "givenName": "Sabudh",
+            "familyName": "Thapa",
+            "alternateName": ["tsabudh", "Sabudh Bahadur Thapa"],
+            "jobTitle": ["Backend Engineer", "Distributed Systems Engineer", "Software Engineer"],
+            "description": "Sabudh Thapa (tsabudh) is a backend and distributed systems engineer in Kathmandu, Nepal, building event-driven workers, PostgreSQL data infrastructure, and reliable production platforms. Available for remote contracts.",
+            "url": "https://tsabudh.com.np/",
+            "image": "https://tsabudh.com.np/assets/images/sabudh.png",
+            "email": "mailto:tsabudh@gmail.com",
+            "nationality": { "@type": "Country", "name": "Nepal" },
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Kathmandu",
+              "addressRegion": "Bagmati Province",
+              "addressCountry": "NP"
+            },
+            "worksFor": { "@type": "Organization", "name": "Relativity Invest" },
+            "alumniOf": {
+              "@type": "CollegeOrUniversity",
+              "name": "Advanced College of Engineering and Management, Tribhuvan University"
+            },
+            "knowsLanguage": ["English", "Nepali"],
+            "knowsAbout": [
+              "Backend Engineering",
+              "Distributed Systems",
+              "Event-Driven Architecture",
+              "Data Infrastructure",
+              "PostgreSQL",
+              "Apache Kafka",
+              "DuckDB",
+              "Rust",
+              "TypeScript",
+              "Python",
+              "Observability",
+              "Production Recovery",
+              "Software Outsourcing from Nepal"
+            ],
+            "sameAs": [
+              "https://github.com/tsabudh",
+              "https://www.linkedin.com/in/tsabudh",
+              "https://medium.com/@tsabudh"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://tsabudh.com.np/#website",
+            "url": "https://tsabudh.com.np/",
+            "name": "Sabudh Thapa",
+            "description": "Sabudh Thapa (tsabudh) is a backend and distributed systems engineer in Kathmandu, Nepal, building event-driven workers, PostgreSQL data infrastructure, and reliable production platforms. Available for remote contracts.",
+            "inLanguage": "en",
+            "publisher": { "@id": "https://tsabudh.com.np/#sabudh-thapa" }
+          }
+        ]
+      }
+    </script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y0XSCM2LK7"></script>
+    <script>
+      window.__PORTFOLIO_GA_MEASUREMENT_ID__ = "G-Y0XSCM2LK7";
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "G-Y0XSCM2LK7", { send_page_view: false });
+    </script>
+    
+    <script type="module" crossorigin src="/assets/barba-5t_l4g8Z.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/barba-BbZBR9pQ.css">
+  </head>
+  <body class="text-slate-950">
+    <div class="barba-load-container bg-slate-700">
+      <div
+        class="loading-screen relative h-full w-full flex items-center justify-center overflow-hidden"
+      >
+        <div
+          class="barba-load-container_bg-texts absolute inset-0 text-slate-600 text-9xl opacity-45 rotate-12 scale-150 whitespace-nowrap space-y-9 font-lexend font-bold"
+        >
+          <p>
+            <span> SYSTEMS THAT KEEP WORK MOVING </span>
+            <span> SYSTEMS THAT KEEP WORK MOVING </span>
+          </p>
+          <p>
+            <span> DATA THAT STAYS CORRECT UNDER FAILURE </span>
+            <span> DATA THAT STAYS CORRECT UNDER FAILURE </span>
+          </p>
+          <p>
+            <span> IDEMPOTENT JOBS THAT RETRY SAFELY </span>
+            <span> IDEMPOTENT JOBS THAT RETRY SAFELY </span>
+          </p>
+          <p>
+            <span> QUERIES SHAPED FOR THE DATA THEY READ </span>
+            <span> QUERIES SHAPED FOR THE DATA THEY READ </span>
+          </p>
+          <p>
+            <span> POINT-IN-TIME RECOVERY BEFORE INCIDENTS </span>
+            <span> POINT-IN-TIME RECOVERY BEFORE INCIDENTS </span>
+          </p>
+          <p>
+            <span> DISTRIBUTED TRACING AT SERVICE BOUNDARIES </span>
+            <span> DISTRIBUTED TRACING AT SERVICE BOUNDARIES </span>
+          </p>
+        </div>
+        <p
+          id="loading-screen-text"
+          class="font-delight text-9xl text-white z-50"
+        >
+          Loading
+        </p>
+      </div>
+    </div>
+    <div id="smooth-wrapper">
+      <div id="smooth-content" class="">
+        <div data-barba="wrapper">
+          <div data-barba="container" data-barba-namespace="post">
+            <header class="fixed top-0 w-full px-4 pt-1 flex gap-4 justify-between bg-transparent z-[9000]">
+  <div class="z-1000 w-fit">
+    <a href="/" class="uppercase font-lexend font-semibold text-slate-900">
+      t.sabudh
+    </a>
+  </div>
+  <nav class="font-semibold self-start max-md:text-right" aria-label="Primary navigation">
+    <a href="/about/" class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">About</a>,
+    <a href="/blog/" class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">Blog</a>,
+    <a href="/hire/" class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">Hire</a>,
+    <a href="/contact/" class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">Contact</a>
+  </nav>
+</header>
+
+<main class="px-5">
+  <article class="mx-auto max-w-3xl pt-28 pb-16">
+    <p class="uppercase font-lexend text-sm font-semibold tracking-wide text-amber-600">
+      Scaling · 6 min read · <time datetime="2025-10-28">Oct 28, 2025</time>
+    </p>
+    <h1 class="mt-6 font-lexend font-bold text-slate-950 text-[clamp(40px,6vw,72px)] leading-[0.95]">
+      Why Your App Slows Down When Users Increase?
+    </h1>
+    <p class="mt-6 text-2xl leading-relaxed text-slate-600 max-md:text-xl">
+      A practical backend scaling note on database bottlenecks, connection pooling, caching, and measuring before optimizing.
+    </p>
+    <p class="mt-6 text-sm text-slate-500">
+      By <a href="/about/" class="font-semibold text-slate-700 underline decoration-amber-400 decoration-2 underline-offset-4">Sabudh Thapa</a>, backend and distributed systems engineer in Kathmandu, Nepal.
+    </p>
+
+    <div class="post-body mt-14 border-t border-slate-300 pt-10">
+      
+<p><em>A practical backend scaling note on database bottlenecks, connection pooling, caching, and measuring before optimizing.</em></p>
+<figure><img src="/assets/app-slowdown-under-load-CNavbxv0.webp" width="1024" height="1024" alt="Diagram: request latency climbing as concurrent users increase" loading="lazy"></figure>
+<p>Every backend developer eventually faces the same moment, the app works fine locally, but as soon as traffic increases, everything slows down. Requests take longer, CPU spikes, and database queries take longer.</p>
+<p>Several issues can contribute to this slowdown. <strong>Database bottlenecks</strong> are the most common culprit, the application spends time waiting for queries to execute, and slow queries, unindexed columns, or too many concurrent connections can quickly pile up under load. <strong>Inefficient code</strong>, such as nested loops or synchronous tasks, can block the server from processing other requests.</p>
+<p>While <strong>network latency</strong>, <strong>resource exhaustion</strong> such as maxed-out CPU, memory, or file descriptors can prevent the server from handling concurrent users efficiently. Finally, <strong>external dependencies</strong>, like third-party APIs or payment gateways, may introduce unpredictable delays.</p>
+<p>Among all these factors, the most immediate and impactful area to address is the database: optimizing queries, indexes, and connections typically delivers the largest performance improvements before tackling other bottlenecks.</p>
+<h2 id="1-the-root-cause-the-database-is-often-the-bottleneck">1. The Root Cause: The Database Is Often the Bottleneck</h2>
+<p>Most web apps are I/O-bound — they spend time waiting for the database. When user count rises, even simple operations like</p>
+<p><code>SELECT * FROM users WHERE email = ?</code> can start piling up.</p>
+<p>Why this happens?</p>
+<ul><li><strong>Unindexed columns</strong> → full table scans.</li><li><strong>Too many open connections</strong> → Database( eg: PostgreSQL) connection pool exhaustion.</li><li><strong>Chatty applications</strong> → multiple small queries per request instead of one efficient one.</li><li><strong>Lack of caching</strong> → repeated reads for the same data.</li></ul>
+<h2 id="2-the-myth-of-scaling-up">2. The Myth Of Scaling Up</h2>
+<p>The first instinct is often to increase CPU or memory on your database. This helps briefly, but vertical scaling has limits and cost penalties. The real fix is to <strong>optimize access patterns</strong>.</p>
+<ul><li>Use <strong>indexes</strong> on frequently filtered</li><li><strong>Batch queries</strong> or use <code>JOIN</code>s instead of looping</li><li>Introduce <strong>connection pooling</strong></li><li>Implement <strong>caching</strong></li></ul>
+<h2 id="3-query-optimization-101-indexing">3. Query Optimization 101 : Indexing</h2>
+<p>Before adding Redis or Kafka, understand how to analyze your SQL. Almost every junior backend developer knows ‘indexing makes faster’ but do you know the actual performance difference it creates? Lets find out!</p>
+<p>Example (PostgreSQL):</p>
+<p>I have created a simple table <em>big_users </em>to display the difference in query performance before and after indexing.</p>
+<pre><code>INSERT INTO big_users (email, full_name, created_at, last_login, bio)
+SELECT
+  'user' || gs::text || '@example.com',
+  'User ' || gs::text,
+  now() - (gs % 365) * interval '1 day',
+  now() - (gs % 30)  * interval '1 day',
+  repeat('lorem ', (gs % 10))
+FROM generate_series(1, 1000000) AS gs;</code></pre>
+<p>You can use <code>EXPLAIN</code> query to check the performance.</p>
+<pre><code>EXPLAIN ANALYZE
+SELECT * FROM big_users WHERE email = 'User850000@example.com';</code></pre>
+<p>The results will be somewhat crude but you will see something along the lines that says ‘seq scan’ in the results which indicates no index was used to read the table.</p>
+<pre><code>Gather
+  cost=0.00..20582.33, rows=1, width=84
+  Workers Planned: 2
+  Workers Planned: 2
+
+Parallel Seq Scan on big_users  
+  (cost=0.00..20582.33 rows=1 width=84) 
+  (actual time=33.422..33.422 rows=0 loops=3)
+  Filter: email = 'user850000@example.com'
+  Rows removed by filter: 333,333 (per worker slice; total table scanned)
+
+Planning Time: 0.099 ms
+Execution Time: 183.282 ms</code></pre>
+<p><strong>What it means?</strong></p>
+<ul><li>The table was scanned <strong>sequentially</strong>, but <strong>in parallel </strong>with multiple nodes. The table is split into page ranges; each worker scans its chunk.</li><li>The planner expected ~1 matching row, with about <strong>84 bytes</strong> per row output from this node.</li><li>(loop = 3) The node was executed <strong>3 times</strong> — that’s the <strong>leader + 2 parallel workers</strong>. “Workers Planned/Launched: 2”, so 2 workers plus the leader process = 3 executions.</li><li>Total execution time took around 183ms.</li></ul>
+<p>TLDR: No index on <code>email</code>, so Postgres scanned the table in parallel with multiple nodes; the full table pass took ~<strong>183 ms</strong>.</p>
+<p>It shows <code>Seq Scan</code>, you need an index.</p>
+<pre><code>CREATE INDEX idx_big_users_email ON big_users (email);</code></pre>
+<p>If you are sure that emails are unique like it is for our case you can also create unique index like:</p>
+<pre><code>CREATE UNIQUE INDEX idx_big_users_email_unique ON big_users (email);</code></pre>
+<p>For now I have just created non-unique index but remember. Creating index might take couple of seconds.</p>
+<p>If you again execute the same query:</p>
+<pre><code>EXPLAIN ANALYZE
+SELECT * FROM big_users WHERE email = 'User850000@example.com';</code></pre>
+<p>You will see something like this:</p>
+<pre><code>Index Scan using idx_big_users_email on big_users  
+(cost=0.42..8.44 rows=1 width=84) 
+(actual time=0.079..0.080 rows=1 loops=1)
+
+Planning Time: 0.360 ms
+Execution Time: 0.104 ms</code></pre>
+<p>You can see that it scanned using index that we created earlier and the execution time took only <strong>0.104ms</strong>! That is around 1700 times faster.</p>
+<p>The difference between a sequential scan and an indexed lookup can be <em>thousands</em> of times faster.</p>
+<h2 id="4-connection-pooling">4. Connection Pooling</h2>
+<p>Before you think about horizontal scaling or adding replicas, understand how your application talks to your database.</p>
+<p>Every request that needs data opens a connection and PostgreSQL doesn’t like thousands of idle or concurrent client connections. For example: A single Node.js process can open too many concurrent DB connections under load. PostgreSQL doesn’t handle thousands of idle clients well.</p>
+<p>Lets explore “<em>Pooling” </em>and understand<strong> </strong>why unpooled connections can crash your database.</p>
+<h3 id="single-client">Single Client</h3>
+<p>In many simple applications, each server instance maintains a single client connection to the database. This works fine in low-traffic situations. For example, if you deploy 50 server instances, each with one client, the total number of connections to PostgreSQL is 50, usually below PostgreSQL’s default <code>max_connections</code> limit.</p>
+<p>However, there’s a subtle but important limitation: <em>a single client can only handle one query at a time.</em> If multiple requests hit the same server instance simultaneously, they must wait for the single client to become available. This creates an artificial bottleneck at the application level, increasing latency even when the database itself is capable of handling more work.</p>
+<h3 id="why-pooling-helps">Why Pooling Helps</h3>
+<p>A <strong>connection pool</strong> maintains a small set of reusable database connections for each server instance. For example, a pool of 10 connections allows up to 10 queries to run concurrently on a single instance. Once a query finishes, the client returns to the pool and becomes available for the next request.</p>
+<ul><li>With <strong>50 server instances × 10 connections per pool</strong>, you now have 500 concurrent connections which is far more efficient than creating a new client per request.</li><li>Requests can now execute concurrently without waiting for a single client to finish, reducing latency and improving throughput.</li><li>The database remains stable under load, avoiding the crash risks associated with too many idle or blocked connections.</li></ul>
+<p>Even on high-end machines, a single client can become a bottleneck under concurrent load. Connection pools enable concurrency within each server instance, allowing a single powerful machine to fully utilize its capacity.</p>
+<h3 id="when-multiple-clients-are-needed">When Multiple Clients Are Needed</h3>
+<p>While a single client per instance can suffice in some cases, there are scenarios where multiple clients or multiple pools are required:</p>
+<ul><li>High concurrency per instance — If your server handles many simultaneous requests that each make independent queries, one client cannot process them in parallel. A pool ensures each query gets its own connection.</li><li>Multiple databases or privileges — Sometimes, an application needs to connect to different databases or use different credentials. In such cases, multiple clients or pools are necessary.</li><li>Long-running queries — A single client executing a long-running transaction blocks all other queries. With a pool, other requests can borrow free connections and continue without waiting.</li></ul>
+<p>Here is a simple pool using pg.Pool;</p>
+<pre><code>import { Pool } from "pg";
+
+const pool = new Pool({
+  host: "localhost",
+  user: "postgres",
+  password: "postgres", // do not hardcode
+  database: "testdb",
+  max: 10, // only 10 physical connections
+});
+
+const getUser = async (id: number) =&gt; {
+  const result = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+  return result.rows[0];
+};</code></pre>
+<p>Even if your app handles 10,000 concurrent requests, only 10 actual connections are active to PostgreSQL . The rest wait in the queue.<br> This drastically improves database stability.</p>
+<h2 id="5-caching-your-best-friend">5. Caching: Your Best Friend</h2>
+<p>Not every query needs to hit the database.</p>
+<ul><li><strong>In-memory cache:</strong> Fastest, but lost when instance restarts.</li><li><strong>Distributed cache:</strong> Redis or Memcached, for sharing across instances.</li><li><strong>Query-level cache:</strong> Cache the result of slow queries (e.g., popular products, user profile).</li></ul>
+<pre><code>const key = `user:${userId}`;
+let user = await redis.get(key);
+if (!user) {
+  user = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
+  await redis.setex(key, 60, JSON.stringify(user)); // cache for 60s
+}
+return JSON.parse(user);</code></pre>
+<h2 id="6-observability-measure-before-you-optimize">6. Observability: Measure Before You Optimize</h2>
+<p>You can’t fix what you don’t measure. Use metrics, tracing, and logging to find bottlenecks.</p>
+<p>Tools to start with:</p>
+<ul><li><strong>pg_stat_statements</strong> (PostgreSQL query stats)</li><li><strong>Prometheus + Grafana</strong> (metrics dashboards)</li><li><strong>OpenTelemetry</strong> (distributed tracing)</li><li><strong>k6</strong> (load testing)</li></ul>
+<h2 id="7-final-thoughts">7. Final Thoughts</h2>
+<p>Scaling isn’t magic, it’s <em>discipline</em>.</p>
+<p>Before adding Kafka, Redis, or microservices, understand your database. Once you fix slow queries, pool connections, and cache effectively, you’ll be surprised how far a single well-tuned PostgreSQL instance can scale.</p>
+<blockquote><p><strong><em>Takeaway:</em></strong><em> Scaling isn’t about complexity, it’s about efficiency.</em></p></blockquote>
+
+
+    </div>
+
+    <footer class="mt-16 border-t border-slate-300 pt-8 text-slate-600">
+      <p>
+        Originally published on
+        <a href="https://medium.com/@tsabudh/why-your-app-slows-down-when-users-increase-f5c163a9dda0" target="_blank" rel="noopener" class="font-semibold text-slate-800 underline decoration-amber-400 decoration-2 underline-offset-4">Medium</a>.
+        This page is the canonical version.
+      </p>
+      <p class="mt-4">
+        Working on a system with the same failure shapes? I take remote backend contracts from Nepal.
+        <a href="/hire/" class="font-semibold text-amber-700 underline decoration-amber-400 decoration-2 underline-offset-4">How I work with teams</a>
+        ·
+        <a href="/blog/" class="font-semibold text-slate-800 underline decoration-amber-400 decoration-2 underline-offset-4">More notes</a>
+      </p>
+    </footer>
+  </article>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "@id": "https://tsabudh.com.np/blog/why-your-app-slows-down-when-users-increase/#article",
+      "mainEntityOfPage": "https://tsabudh.com.np/blog/why-your-app-slows-down-when-users-increase/",
+      "url": "https://tsabudh.com.np/blog/why-your-app-slows-down-when-users-increase/",
+      "headline": "Why Your App Slows Down When Users Increase?",
+      "description": "A practical backend scaling note on database bottlenecks, connection pooling, caching, and measuring before optimizing.",
+      "datePublished": "2025-10-28",
+      "dateModified": "2025-10-28",
+      "inLanguage": "en",
+      "keywords": "backend scaling, database bottleneck, connection pooling, caching, observability, backend engineer Nepal",
+      "image": "https://tsabudh.com.np/assets/images/blog/app-slowdown-under-load.webp",
+      "sameAs": "https://medium.com/@tsabudh/why-your-app-slows-down-when-users-increase-f5c163a9dda0",
+      "author": { "@id": "https://tsabudh.com.np/#sabudh-thapa" },
+      "publisher": { "@id": "https://tsabudh.com.np/#sabudh-thapa" },
+      "isPartOf": { "@id": "https://tsabudh.com.np/#website" }
+    }
+  </script>
+
+  <main class="px-5">
+    <section class="py-6 flex flex-col gap-10">
+
+        <div class="h-[1px] bg-slate-600 mb-1"></div>
+        <div class="flex justify-between items-center flex-wrap gap-4 max-md:justify-center font-semibold">
+            <div class="flex items-center gap-4">
+
+                <div class="_wrapper">
+
+                    <a href="/"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        Home
+                    </a>
+                </div>
+                <div class="_wrapper">
+
+                    <a href="/about/"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        About
+                    </a>
+                </div>
+                <div class="_wrapper">
+
+                    <a href="/blog/"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        Blog
+                    </a>
+                </div>
+                <div class="_wrapper">
+                    <a href="/resume/"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        Resume
+                    </a>
+                </div>
+                <div class="_wrapper">
+                    <a href="/hire/"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        Hire
+                    </a>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="_wrapper">
+                    <a href="mailto:tsabudh@gmail.com"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        <span>tsabudh</span>&#64;<span>gmail.com</span>
+                    </a>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="_wrapper">
+                    <a href="https://github.com/tsabudh" target="_blank" rel="noopener"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        Github
+                    </a>
+                </div>
+                <div class="_wrapper">
+                    <a href="https://www.linkedin.com/in/tsabudh" target="_blank" rel="noopener"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        Linkedin
+                    </a>
+                </div>
+                <div class="_wrapper">
+                    <a href="https://medium.com/@tsabudh" target="_blank" rel="noopener"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        Medium
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+</main>
+
+</main>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
