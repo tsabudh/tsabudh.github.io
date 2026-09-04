@@ -1,5 +1,7 @@
 ---
 title: "When Indexes Stop Helping: Columnar Engines"
+seoTitle: "When Indexes Stop Helping: DuckDB over Parquet for Analytical Reads"
+standfirst: "Row store vs columnar engine, OLAP vs OLTP, and when to move analytical reads to DuckDB over S3-backed Parquet."
 description: "A systems-level look at why row-store indexes stop paying off for wide analytical scans, and where columnar execution changes the access pattern."
 date: 2026-06-02
 category: Columnar
@@ -535,7 +537,7 @@ aggregate without repeatedly fetching whole rows</code></pre>
 <p>The <strong>query </strong>result may be the same.</p>
 <p>The <strong>physical work</strong> is <strong>not</strong>.</p>
 <p>This also adds a new failure domain: snapshot freshness, schema drift, file sizing, partition skew, object-store latency, memory pressure, manifest promotion, and fallback overload. DuckDB/Parquet is not magic compute. It is a different read path with different operational responsibilities.</p>
-<h2 id="the-duckdb-transition">The DuckDB Transition</h2>
+<h2 id="the-duckdb-transition">Moving analytical reads to DuckDB over Parquet</h2>
 <p>Do not replace PostgreSQL. That is the wrong lesson. PostgreSQL should remain the source of truth:</p>
 <pre><code>canonical writes
 constraints
@@ -634,7 +636,7 @@ DuckDB + Parquet path:
 <pre><code>DuckDB is faster.</code></pre>
 <p>The solution is:</p>
 <pre><code>the read model now matches the query shape</code></pre>
-<h2 id="why-parquet-is-part-of-the-design">Why Parquet Is Part Of The Design</h2>
+<h2 id="why-parquet-is-part-of-the-design">Why DuckDB reads Parquet on S3, not Postgres tables</h2>
 <p>DuckDB can query many sources, but Parquet is a good fit for this read model.</p>
 <p>Parquet is columnar storage.</p>
 <p>That gives the engine two important opportunities:</p>

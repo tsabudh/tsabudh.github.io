@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    {% set pageTitle = title or site.title %}
+    {% set pageTitle = seoTitle or title or site.title %}
     {% set pageDescription = description or site.description %}
     {% set pageCanonical = canonicalUrl or (site.url ~ page.url) %}
     {% set pageImage = image or site.image %}

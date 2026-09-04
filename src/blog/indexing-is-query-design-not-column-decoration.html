@@ -1,5 +1,6 @@
 ---
 title: "Indexing Is Query Design, Not Column Decoration"
+seoTitle: "Why Postgres Is Not Using Your Index: Indexing Is Query Design"
 description: "A PostgreSQL indexing piece that reframes indexes as physical access paths for query shapes, not generic column-level speed buttons."
 date: 2026-06-02
 category: PostgreSQL
@@ -13,6 +14,7 @@ keywords: PostgreSQL, indexing, B-tree, query planning, database performance, ba
 <p>Most indexing advice starts with the wrong instinct.</p>
 <blockquote><p><strong>This query is slow. Add an index.</strong></p></blockquote>
 <p>That is not wrong, but it is incomplete. An index is not a generic speed button. An index is a physical access path for a specific way of asking for data.</p>
+<p>If you have ever asked why your Postgres index is not used, the answer is almost always that the shape of the query and the shape of the index do not match. EXPLAIN ANALYZE shows exactly where they part ways, and the rest of this piece is about reading that mismatch before you create the next index.</p>
 <p>The useful question is not <strong>Which column should I index?</strong></p>
 <p>The useful question is:</p>
 <blockquote><p><strong>What shape is this query?</strong></p></blockquote>
@@ -500,6 +502,10 @@ ON shipment_delivery_metrics(transit_duration);</code></pre>
 FROM shipment_delivery_metrics
 WHERE transit_duration &gt; interval '72 hours';</code></pre>
 <blockquote><p><strong>Occasional derivation: index base facts. Hot derived metric: materialize and index the metric.</strong></p></blockquote>
+<h2 id="why-postgres-is-not-using-your-index">Why Postgres is not using your index</h2>
+<p>Every case above ends the same way when it fails: the index exists and the planner ignores it. The reasons repeat.</p>
+<ul><li><strong>Selectivity.</strong> If the predicate matches a large share of the table, a sequential scan is cheaper than following an index and then fetching heap pages one by one. The planner is right to skip it.</li><li><strong>Column order.</strong> A composite B-tree on <code>(shipment_id, occurred_at DESC)</code> serves equality on the first column plus order on the second. Filter on <code>occurred_at</code> alone and the leading column is unconstrained, so the index cannot be walked.</li><li><strong>Operator and expression mismatch.</strong> An index on <code>recipient_name</code> does nothing for <code>lower(recipient_name)</code>, a plain B-tree does nothing for <code>LIKE '%text%'</code>, and a GIN index built for <code>@&gt;</code> does nothing for a range comparison. The index has to match the operator the query uses.</li><li><strong>Derived values.</strong> Anything computed inside a CTE or subquery is not indexable unless it is stored, so filtering on it is always a scan of the intermediate result.</li><li><strong>Stale statistics or small tables.</strong> After a bulk load, run <code>ANALYZE</code>. On a tiny table the planner will read the whole thing regardless, which is correct and not a bug.</li></ul>
+<p>Before adding another index, name which of these applies. The fix is usually a different index shape, a rewritten predicate, or accepting the scan, and the plan tells you which.</p>
 <h2 id="verification-plans-prove-indexes">Verification: Plans Prove Indexes</h2>
 <p>Use:</p>
 <pre><code>EXPLAIN (ANALYZE, BUFFERS)
@@ -588,6 +594,9 @@ ON shipment_events USING brin(occurred_at);</code></pre>
 <p>Index shape:</p>
 <pre><code>CREATE INDEX shipment_delivery_metrics_duration_idx
 ON shipment_delivery_metrics(transit_duration);</code></pre>
+<h2 id="postgresql-indexing-best-practices-as-query-shapes">PostgreSQL indexing best practices</h2>
+<p>The rules this piece arrives at, stated once.</p>
+<ul><li>Start from the query, not the column. Write the predicate, the order, and the limit first, then choose the index that serves that shape.</li><li>Equality plus order needs a composite B-tree with the equality column leading and the order column matching direction.</li><li>Prefix search is ordered search. Use <code>text_pattern_ops</code> when the collation is not C.</li><li>Expression queries need expression indexes. <code>lower(col)</code> in the query means <code>lower(col)</code> in the index.</li><li>Containment and substring need inverted indexes: GIN for JSONB, arrays, and trigrams; GiST for spatial.</li><li>Append-only time series can use BRIN when rows arrive in order and the table is large.</li><li>Every index is a write cost. Keep the ones a measured workload uses and drop the rest.</li><li>Prove each index with <code>EXPLAIN (ANALYZE, BUFFERS)</code> under realistic parameters, never by its existence.</li></ul>
 <h2 id="final-rule">Final Rule</h2>
 <p>If you cannot name the query shape, you cannot justify the index.</p>
 <blockquote><p><strong>No query shape, no index.</strong></p></blockquote>
