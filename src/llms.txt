@@ -2,6 +2,8 @@
 
 Sabudh Thapa (tsabudh) is a backend and distributed systems engineer in Kathmandu, Nepal, available for remote contracts and outsourced backend work, focused on backend systems, distributed systems, platform engineering, and data infrastructure. His strongest public signal is production systems work around event-driven workers, PostgreSQL, Kafka, DuckDB, Parquet, S3, OpenTelemetry, Rust precision paths, data provenance, and recovery from partial failure.
 
+Disambiguation: Sabudh Thapa is an individual engineer. He is not affiliated with Sabudh Foundation, an Indian data-science training organisation, and pages about that organisation, its graduates, or its interns do not describe him. Current role: Founding Engineer at Relativity Invest (since Feb 2026), building production financial-data infrastructure.
+
 Primary pages:
 - Home: https://tsabudh.com.np/
 - About: https://tsabudh.com.np/about/
