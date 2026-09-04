@@ -7,7 +7,7 @@
     
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>When Indexes Stop Helping: Columnar Engines</title>
+    <title>When Indexes Stop Helping: DuckDB over Parquet for Analytical Reads</title>
     <meta name="description" content="A systems-level look at why row-store indexes stop paying off for wide analytical scans, and where columnar execution changes the access pattern." />
     <meta name="author" content="Sabudh Thapa" />
     <link rel="canonical" href="https://tsabudh.com.np/blog/when-indexes-stop-helping-columnar-engines/" />
@@ -17,12 +17,12 @@
     
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Sabudh Thapa" />
-    <meta property="og:title" content="When Indexes Stop Helping: Columnar Engines" />
+    <meta property="og:title" content="When Indexes Stop Helping: DuckDB over Parquet for Analytical Reads" />
     <meta property="og:description" content="A systems-level look at why row-store indexes stop paying off for wide analytical scans, and where columnar execution changes the access pattern." />
     <meta property="og:url" content="https://tsabudh.com.np/blog/when-indexes-stop-helping-columnar-engines/" />
     <meta property="og:image" content="https://tsabudh.com.np/assets/images/sabudh.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="When Indexes Stop Helping: Columnar Engines" />
+    <meta name="twitter:title" content="When Indexes Stop Helping: DuckDB over Parquet for Analytical Reads" />
     <meta name="twitter:description" content="A systems-level look at why row-store indexes stop paying off for wide analytical scans, and where columnar execution changes the access pattern." />
     <meta name="twitter:image" content="https://tsabudh.com.np/assets/images/sabudh.png" />
     <script type="application/ld+json">
@@ -168,7 +168,7 @@
       When Indexes Stop Helping: Columnar Engines
     </h1>
     <p class="mt-6 text-2xl leading-relaxed text-slate-600 max-md:text-xl">
-      A systems-level look at why row-store indexes stop paying off for wide analytical scans, and where columnar execution changes the access pattern.
+      Row store vs columnar engine, OLAP vs OLTP, and when to move analytical reads to DuckDB over S3-backed Parquet.
     </p>
     <p class="mt-6 text-sm text-slate-500">
       By <a href="/about/" class="font-semibold text-slate-700 underline decoration-amber-400 decoration-2 underline-offset-4">Sabudh Thapa</a>, backend and distributed systems engineer in Kathmandu, Nepal.
@@ -702,7 +702,7 @@ aggregate without repeatedly fetching whole rows</code></pre>
 <p>The <strong>query </strong>result may be the same.</p>
 <p>The <strong>physical work</strong> is <strong>not</strong>.</p>
 <p>This also adds a new failure domain: snapshot freshness, schema drift, file sizing, partition skew, object-store latency, memory pressure, manifest promotion, and fallback overload. DuckDB/Parquet is not magic compute. It is a different read path with different operational responsibilities.</p>
-<h2 id="the-duckdb-transition">The DuckDB Transition</h2>
+<h2 id="the-duckdb-transition">Moving analytical reads to DuckDB over Parquet</h2>
 <p>Do not replace PostgreSQL. That is the wrong lesson. PostgreSQL should remain the source of truth:</p>
 <pre><code>canonical writes
 constraints
@@ -801,7 +801,7 @@ DuckDB + Parquet path:
 <pre><code>DuckDB is faster.</code></pre>
 <p>The solution is:</p>
 <pre><code>the read model now matches the query shape</code></pre>
-<h2 id="why-parquet-is-part-of-the-design">Why Parquet Is Part Of The Design</h2>
+<h2 id="why-parquet-is-part-of-the-design">Why DuckDB reads Parquet on S3, not Postgres tables</h2>
 <p>DuckDB can query many sources, but Parquet is a good fit for this read model.</p>
 <p>Parquet is columnar storage.</p>
 <p>That gives the engine two important opportunities:</p>

@@ -7,7 +7,7 @@
     
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Why Your App Slows Down When Users Increase?</title>
+    <title>Why Your App Slows Down Under Load: Database Bottlenecks and Connection Pooling</title>
     <meta name="description" content="A practical backend scaling note on database bottlenecks, connection pooling, caching, and measuring before optimizing." />
     <meta name="author" content="Sabudh Thapa" />
     <link rel="canonical" href="https://tsabudh.com.np/blog/why-your-app-slows-down-when-users-increase/" />
@@ -17,12 +17,12 @@
     
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Sabudh Thapa" />
-    <meta property="og:title" content="Why Your App Slows Down When Users Increase?" />
+    <meta property="og:title" content="Why Your App Slows Down Under Load: Database Bottlenecks and Connection Pooling" />
     <meta property="og:description" content="A practical backend scaling note on database bottlenecks, connection pooling, caching, and measuring before optimizing." />
     <meta property="og:url" content="https://tsabudh.com.np/blog/why-your-app-slows-down-when-users-increase/" />
     <meta property="og:image" content="https://tsabudh.com.np/assets/images/blog/app-slowdown-under-load.webp" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Why Your App Slows Down When Users Increase?" />
+    <meta name="twitter:title" content="Why Your App Slows Down Under Load: Database Bottlenecks and Connection Pooling" />
     <meta name="twitter:description" content="A practical backend scaling note on database bottlenecks, connection pooling, caching, and measuring before optimizing." />
     <meta name="twitter:image" content="https://tsabudh.com.np/assets/images/blog/app-slowdown-under-load.webp" />
     <script type="application/ld+json">
@@ -165,7 +165,7 @@
       Scaling · 6 min read · <time datetime="2025-10-28">Oct 28, 2025</time>
     </p>
     <h1 class="mt-6 font-lexend font-bold text-slate-950 text-[clamp(40px,6vw,72px)] leading-[0.95]">
-      Why Your App Slows Down When Users Increase?
+      Why Your App Slows Down When Users Increase
     </h1>
     <p class="mt-6 text-2xl leading-relaxed text-slate-600 max-md:text-xl">
       A practical backend scaling note on database bottlenecks, connection pooling, caching, and measuring before optimizing.
@@ -269,6 +269,7 @@ const getUser = async (id: number) =&gt; {
   return result.rows[0];
 };</code></pre>
 <p>Even if your app handles 10,000 concurrent requests, only 10 actual connections are active to PostgreSQL . The rest wait in the queue.<br> This drastically improves database stability.</p>
+<p>What is PgBouncer? It is a small connection pooler that sits between your application and PostgreSQL, holding a fixed number of real database connections and handing them out to clients per transaction or per session. Use it when you run many app instances, each with its own pool, and the sum of those pools still exceeds what PostgreSQL can hold; PgBouncer collapses them into one bounded set on the database side.</p>
 <h2 id="5-caching-your-best-friend">5. Caching: Your Best Friend</h2>
 <p>Not every query needs to hit the database.</p>
 <ul><li><strong>In-memory cache:</strong> Fastest, but lost when instance restarts.</li><li><strong>Distributed cache:</strong> Redis or Memcached, for sharing across instances.</li><li><strong>Query-level cache:</strong> Cache the result of slow queries (e.g., popular products, user profile).</li></ul>
@@ -313,7 +314,7 @@ return JSON.parse(user);</code></pre>
       "@id": "https://tsabudh.com.np/blog/why-your-app-slows-down-when-users-increase/#article",
       "mainEntityOfPage": "https://tsabudh.com.np/blog/why-your-app-slows-down-when-users-increase/",
       "url": "https://tsabudh.com.np/blog/why-your-app-slows-down-when-users-increase/",
-      "headline": "Why Your App Slows Down When Users Increase?",
+      "headline": "Why Your App Slows Down When Users Increase",
       "description": "A practical backend scaling note on database bottlenecks, connection pooling, caching, and measuring before optimizing.",
       "datePublished": "2025-10-28",
       "dateModified": "2025-10-28",
