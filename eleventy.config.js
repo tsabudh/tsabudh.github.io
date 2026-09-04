@@ -21,6 +21,7 @@ export default function (eleventyConfig) {
     "src/robots.txt": "robots.txt",
     "src/llms.txt": "llms.txt",
     "src/humans.txt": "humans.txt",
+    "src/1c7bc17a6cb02985155780b335647c70.txt": "1c7bc17a6cb02985155780b335647c70.txt",
   });
 
   eleventyConfig.addPlugin(dirOutputPlugin);
