@@ -17,6 +17,7 @@ export default defineConfig({
         { src: "robots.txt", dest: "." },
         { src: "llms.txt", dest: "." },
         { src: "humans.txt", dest: "." },
+        { src: "1c7bc17a6cb02985155780b335647c70.txt", dest: "." },
       ],
     }),
   ],
