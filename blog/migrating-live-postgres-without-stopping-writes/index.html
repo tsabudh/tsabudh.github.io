@@ -7,8 +7,8 @@
     
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Postgres Migration Without Downtime: Logical Replication vs pg_dump, Measured</title>
-    <meta name="description" content="A measured PostgreSQL migration: pg_dump and pg_restore against logical replication at 399 MB and 79 GB, with the cutover procedure and the failure modes found along the way." />
+    <title>Postgres Migration With Zero Failed Requests: pg_dump vs Logical Replication vs pgbouncer</title>
+    <meta name="description" content="A measured PostgreSQL migration at 79 GB: pg_dump and pg_restore, logical replication, and logical replication behind pgbouncer, with the cutover steps and every failure mode found along the way." />
     <meta name="author" content="Sabudh Thapa" />
     <link rel="canonical" href="https://tsabudh.com.np/blog/migrating-live-postgres-without-stopping-writes/" />
     
@@ -17,13 +17,13 @@
     
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Sabudh Thapa" />
-    <meta property="og:title" content="Postgres Migration Without Downtime: Logical Replication vs pg_dump, Measured" />
-    <meta property="og:description" content="A measured PostgreSQL migration: pg_dump and pg_restore against logical replication at 399 MB and 79 GB, with the cutover procedure and the failure modes found along the way." />
+    <meta property="og:title" content="Postgres Migration With Zero Failed Requests: pg_dump vs Logical Replication vs pgbouncer" />
+    <meta property="og:description" content="A measured PostgreSQL migration at 79 GB: pg_dump and pg_restore, logical replication, and logical replication behind pgbouncer, with the cutover steps and every failure mode found along the way." />
     <meta property="og:url" content="https://tsabudh.com.np/blog/migrating-live-postgres-without-stopping-writes/" />
     <meta property="og:image" content="https://tsabudh.com.np/assets/images/sabudh.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Postgres Migration Without Downtime: Logical Replication vs pg_dump, Measured" />
-    <meta name="twitter:description" content="A measured PostgreSQL migration: pg_dump and pg_restore against logical replication at 399 MB and 79 GB, with the cutover procedure and the failure modes found along the way." />
+    <meta name="twitter:title" content="Postgres Migration With Zero Failed Requests: pg_dump vs Logical Replication vs pgbouncer" />
+    <meta name="twitter:description" content="A measured PostgreSQL migration at 79 GB: pg_dump and pg_restore, logical replication, and logical replication behind pgbouncer, with the cutover steps and every failure mode found along the way." />
     <meta name="twitter:image" content="https://tsabudh.com.np/assets/images/sabudh.png" />
     <script type="application/ld+json">
       {
@@ -98,8 +98,8 @@
       gtag("config", "G-Y0XSCM2LK7", { send_page_view: false });
     </script>
     
-    <script type="module" crossorigin src="/assets/barba-CQKm3kdY.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/barba-UCk_cUNm.css">
+    <script type="module" crossorigin src="/assets/barba-DxSQAZUe.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/barba-SmxnVhYZ.css">
   </head>
   <body class="text-slate-950">
     <div class="barba-load-container bg-slate-700">
@@ -163,13 +163,13 @@
 <main class="px-5">
   <article class="mx-auto max-w-3xl pt-28 pb-16">
     <p class="uppercase font-lexend text-sm font-semibold tracking-wide text-amber-600">
-      PostgreSQL · 14 min read · <time datetime="2026-09-24">Sep 24, 2026</time>
+      PostgreSQL · 18 min read · <time datetime="2026-09-24">Sep 24, 2026</time>
     </p>
     <h1 class="mt-6 font-lexend font-bold text-slate-950 text-[clamp(40px,6vw,72px)] leading-[0.95]">
       Migrating a Live Postgres Database Without Stopping Writes
     </h1>
     <p class="mt-6 text-2xl leading-relaxed text-slate-600 max-md:text-xl">
-      Dump and restore froze writes for 62 minutes on 79 GB. Logical replication froze them for 23 seconds. The procedure, the numbers, and the five things that broke.
+      Moving 79 GB of Postgres three ways. Dump and restore blocked writes for 62 minutes. Logical replication cut that to 23 seconds. Putting pgbouncer in front turned the rest into a 342 ms pause and zero failed requests.
     </p>
     <p class="mt-6 text-sm text-slate-500">
       By <a href="/about/" class="font-semibold text-slate-700 underline decoration-amber-400 decoration-2 underline-offset-4">Sabudh Thapa</a>, backend and distributed systems engineer in Kathmandu, Nepal.
@@ -177,203 +177,353 @@
 
     <div class="post-body mt-14 border-t border-slate-300 pt-10">
       
-<p><em>A measured PostgreSQL migration: pg_dump and pg_restore against logical replication at 399 MB and 79 GB, with the cutover procedure and the failure modes found along the way.</em></p>
-<p>The obvious way to move a database is to dump it, restore it, and point the application at the new one. I did that first and measured it. On a 399 MB database, writes were refused for at least 175 seconds. On 79 GB, they were refused for <strong>62 minutes</strong>.</p>
-<p>The problem is not that <code>pg_dump</code> is slow. It is that the copy happens inside the window where writes are refused. Logical replication moves the copy outside that window. The target is kept current while the source stays live, so at cutover the data is already there.</p>
-<p>Same databases, same hardware, second method: <strong>12.4 seconds</strong> at 399 MB, <strong>23.2 seconds</strong> at 79 GB. Most of that was the application process restarting and me typing.</p>
+<p><em>A measured PostgreSQL migration at 79 GB: pg_dump and pg_restore, logical replication, and logical replication behind pgbouncer, with the cutover steps and every failure mode found along the way.</em></p>
+<p>I moved the same 79 GB Postgres database from one server to another three different ways, with an application sending reads and writes to it the whole time. Here is what the application saw:</p>
 <table>
   <thead>
-    <tr><th></th><th>399 MB</th><th>79 GB</th><th>growth</th></tr>
+    <tr><th>method</th><th>writes blocked for</th><th>failed requests</th></tr>
   </thead>
   <tbody>
-    <tr><td>dump + restore, write downtime</td><td>&ge;175 s</td><td>3,740 s</td><td>21&times;</td></tr>
-    <tr><td>logical replication, write downtime</td><td>12.4 s</td><td>23.2 s</td><td>1.9&times;</td></tr>
+    <tr><td>1. dump and restore</td><td>62 minutes</td><td>36,721</td></tr>
+    <tr><td>2. logical replication, restart the app</td><td>23.2 seconds</td><td>230</td></tr>
+    <tr><td>3. logical replication behind pgbouncer</td><td>342 ms pause</td><td><strong>0</strong></td></tr>
   </tbody>
 </table>
-<p>Data grew 200&times;. The dump-and-restore window grew with it. The replication window barely moved, and what growth it had came from things that are not a function of data size.</p>
-<p>Here is the procedure, with the things that broke.</p>
+<p>Each method fixes the biggest cost left by the one before it:</p>
+<ol>
+  <li><strong>Dump and restore</strong> copies the data <em>while writes are blocked</em>. The bigger the database, the longer the outage.</li>
+  <li><strong>Logical replication</strong> copies the data <em>before</em> you block writes. What is left is restarting the application and typing commands.</li>
+  <li><strong>pgbouncer</strong> removes the restart. The application never finds out the database moved. Requests wait a moment instead of failing.</li>
+</ol>
+<p>The rest of this post covers each method in turn: what I ran, what I measured, and what broke.</p>
 
-<h2 id="the-setup">The setup</h2>
-<p>Two Postgres 18 clusters on one machine: the source on port 5442 with <code>wal_level = logical</code>, the target on 5443. An Express app with node-postgres in front, pool of 10.</p>
-<p>A load generator ran a read loop and a write loop against the app, each about ten requests a second with a 2-second timeout, logging every attempt. <strong>Downtime is the gap between the last successful request and the next one</strong>, measured from the client side. Timeouts count as failures.</p>
-<p>Before trusting that number I calibrated it: stop the database for a known 20 seconds, no migration involved. It read <strong>20,372 ms</strong>. The extra 372 ms is the first successful poll landing after the restart.</p>
-<p>The large dataset was a ballast table of 260 million rows of <code>repeat(md5(random()::text), 8)</code>, 79 GB on disk, loaded in 26 batches of 10 million, each its own transaction.</p>
-
-<h2 id="method-1-dump-and-restore">Method 1: dump and restore</h2>
-<p>Freeze writes, <code>pg_dump -Fc --no-acl</code>, recreate the target, <code>pg_restore</code>, repoint the app, restart it, unfreeze.</p>
-<pre><code>pg_dump      9m47.504s   (user 9m29.533s, sys 0m17.689s)
-pg_restore  20m16.564s   (user 1m59.208s, sys 0m12.186s)
-dump file    6.0 GB</code></pre>
-<p>The two halves are bound by different things.</p>
+<h2 id="how-i-measured">How I measured</h2>
+<p>Setup:</p>
 <ul>
-  <li><strong>The dump was CPU-bound.</strong> User time was 97% of wall clock. That is compression, not disk. <code>-Z0</code> would trade file size for time.</li>
-  <li><strong>The restore was server-bound.</strong> User time was 10% of wall clock: <code>pg_restore</code> sat idle while the server loaded rows and rebuilt indexes. <code>-j N</code> parallelises this half. I did not use it, so this is the plain-restore number.</li>
+  <li>Two Postgres 18 servers on one machine. The <strong>source</strong> (the old server) on port 5442, the <strong>target</strong> (the new one) on 5443.</li>
+  <li>A small Express app using node-postgres, sitting in front of the database.</li>
+  <li>A load generator hitting the app with about 10 reads and 10 writes a second, logging every request and whether it worked. That write rate is the main limit on how far these numbers transfer to a busier system.</li>
 </ul>
-<p>That is 30 minutes of copying. The other 30 of the 62 were human: two cancelled restore attempts, password prompts, checking file sizes between steps. Which is honest, because that is what a manual cutover looks like at 2 a.m. Every minute of it is a minute of refused writes.</p>
-<pre><code>WRITE   attempts 37348   succeeded 598   failed 36750
-        longest gap 3,740,060 ms
-        failure modes: 36721 &times; permission denied, 29 &times; fetch failed</code></pre>
-<p>Reads stayed up for all but 3 seconds, which is the point: dump and restore is not an outage for readers, it is an outage for writers, and it scales with the size of the data.</p>
+<p><strong>Downtime means the longest gap between two successful requests</strong>, measured from the client's side. A request that times out counts as a failure.</p>
+<p>Before trusting that number, I tested it on a fault of known size: I stopped the database for exactly 20 seconds, with no migration involved. It measured <strong>20,372 ms</strong>. Close enough to trust.</p>
+<p>The test database was 79 GB: a table of 260 million rows of filler text, plus a small <code>events</code> table the load generator wrote to. I also ran methods 1 and 2 on a 399 MB copy to see how each one scales.</p>
 
-<h2 id="method-2-logical-replication">Method 2: logical replication</h2>
+<h2 id="method-1-dump-and-restore">Method 1: Dump and restore</h2>
+<p>The obvious approach:</p>
+<ol>
+  <li>Block writes on the source.</li>
+  <li><code>pg_dump</code> the database to a file.</li>
+  <li><code>pg_restore</code> that file into the target.</li>
+  <li>Point the app at the target and restart it.</li>
+</ol>
+<p>At 79 GB:</p>
+<pre><code>pg_dump      9m47s
+pg_restore  20m17s
+dump file    6.0 GB</code></pre>
+<p>That is 30 minutes of copying. Writes were blocked for <strong>62 minutes</strong>. The other 30 were me: two restore attempts I had to cancel, password prompts, checking file sizes between steps. That is what a manual migration really looks like, and every one of those minutes is a minute of refused writes.</p>
+<pre><code>WRITE   attempts 37,348   succeeded 598   failed 36,750
+        longest gap 62 minutes</code></pre>
+<p>Reads were fine the whole time (one 3-second blip). Dump and restore is not an outage for readers. It is an outage for writers.</p>
+<p>The problem is how it scales. At 399 MB, writes were blocked for at least 175 seconds. At 79 GB, 3,740 seconds. The copy happens inside the outage, so the outage grows with the data.</p>
+<p>Two side notes if you are stuck with this method:</p>
+<ul>
+  <li>The dump was limited by <strong>CPU</strong>, spent compressing. <code>pg_dump -Z0</code> skips compression and trades file size for speed.</li>
+  <li>The restore was limited by <strong>the server</strong> loading rows and rebuilding indexes, while <code>pg_restore</code> itself sat idle. <code>pg_restore -j 4</code> runs it in parallel. I did not use it, so 20 minutes is the slow case.</li>
+</ul>
+<p>Neither changes the basic problem: the app cannot write until the copy is finished.</p>
 
-<h3 id="what-you-need-first">What you need first</h3>
-<p>The source needs <code>wal_level = logical</code> in <code>postgresql.conf</code>. This requires a restart, so do it before you need it.</p>
+<h2 id="method-2-logical-replication">Method 2: Logical replication</h2>
+<p><strong>The idea:</strong> copy the data while the source keeps working normally, keep the target in sync, and only block writes for the last few seconds.</p>
+<p>Three terms first, because the rest of this section uses them:</p>
+<ul>
+  <li><strong>WAL</strong> (write-ahead log): Postgres's running record of every change. Changes are written here before they reach the tables.</li>
+  <li><strong>Logical replication</strong>: the source reads its own WAL and sends every row change to the target as it happens.</li>
+  <li><strong>Replication slot</strong>: a bookmark on the source that says "the target has received everything up to here, keep the rest until it does." Positions in the WAL are called <strong>LSNs</strong>.</li>
+</ul>
+
+<h3 id="before-you-start">Before you start</h3>
+<p><strong>The source needs <code>wal_level = logical</code></strong> in <code>postgresql.conf</code>. Changing it needs a restart, so do it well before migration day.</p>
 <pre><code>SHOW wal_level;   -- must say 'logical', not 'replica'</code></pre>
-<p>If it still says <code>replica</code> after you edited the config, run <code>SHOW config_file</code>. You edited a different file than the one the server is reading.</p>
-<p>The target needs the schema already in place. Logical replication copies rows, not table definitions. Run your DDL there first.</p>
-<p>Both need a role that can connect over TCP. Test the connection string on its own before putting it anywhere else:</p>
+<p>If it still says <code>replica</code> after you edited the config, run <code>SHOW config_file</code>. You edited a different file from the one the server is reading.</p>
+<p><strong>The target needs the schema already in place.</strong> Logical replication copies rows, not table definitions. Create the tables on the target first.</p>
+<p><strong>The target must be empty.</strong> I skipped this once when re-running a test. The copy landed on top of the old rows, the target grew to 125 GB from a 79 GB source, and replication then crashed on duplicate keys:</p>
+<pre><code>ERROR:  conflict detected on relation "public.events": conflict=insert_exists
+DETAIL:  Key already exists in unique index "events_pkey"</code></pre>
+<p>Check the target is empty before <em>every</em> attempt, not just the first. Do not use <code>count(*)</code> for this: on a big table it is a full scan and takes minutes. This returns straight away:</p>
+<pre><code>SELECT EXISTS (SELECT 1 FROM mytable);   -- must be false</code></pre>
+<p><strong>Test the connection string on its own.</strong> The subscription will connect with it, so make sure it works first:</p>
 <pre><code>psql "host=SOURCE port=5442 dbname=mydb user=migrator password=..." -c "select 1"</code></pre>
-<p>That string is what the subscription will use. Debugging it standalone takes a minute. Debugging it wrapped in <code>CREATE SUBSCRIPTION</code> takes an hour.</p>
+<p>Debugging it alone takes a minute. Debugging it inside <code>CREATE SUBSCRIPTION</code> takes an hour.</p>
+<p><strong>Check the replication role has no <code>statement_timeout</code>.</strong> This one cost me an hour. I had set <code>statement_timeout = '30s'</code> on the role as a safety default. The initial copy connects as that role, and copying 79 GB takes a lot longer than 30 seconds:</p>
+<pre><code>ERROR:  could not receive data from WAL stream: ERROR:  canceling statement
+        due to statement timeout
+CONTEXT:  COPY ballast, line 4355224</code></pre>
+<p>The copy was cancelled, restarted from zero, and cancelled again, forever. Nothing in the error says "your role has a timeout." Remove it from the role the subscription connects as. If your app needs a timeout, give the app its own role and set it there.</p>
 
 <h3 id="step-1-publish-on-the-source">Step 1: Publish on the source</h3>
 <pre><code>CREATE PUBLICATION mypub FOR ALL TABLES;</code></pre>
-<p><code>FOR ALL TABLES</code> requires superuser. A named-table publication does not, if you own the tables.</p>
-<p><strong>Check every table has a primary key before you do this.</strong> A table without one will replicate inserts and then refuse updates:</p>
+<p><code>FOR ALL TABLES</code> needs superuser. A publication that names its tables does not, as long as you own them.</p>
+<p><strong>Every table needs a primary key first.</strong> A table without one replicates inserts fine, then refuses updates:</p>
 <pre><code>ERROR:  cannot update table "no_pk" because it does not have a replica
         identity and publishes updates</code></pre>
-<p>Logical replication does not ship SQL. It ships row messages, and an UPDATE carries an "old tuple" so the target knows which row to change. Replica identity is the rule for what goes in it, and it defaults to the primary key. No primary key, nothing to send, operation refused.</p>
-<p>The refusal happens on the source, at statement time, before any WAL is written. Postgres will not emit WAL it knows cannot be applied.</p>
-<p>Two ways out:</p>
-<pre><code>ALTER TABLE t REPLICA IDENTITY FULL;              -- whole row as identifier
-ALTER TABLE t REPLICA IDENTITY USING INDEX idx;   -- a unique NOT NULL index</code></pre>
-<p><code>FULL</code> always works and is expensive: every column written twice on every update, and the target matches by scanning. Prefer the index.</p>
-<p>The trap is that inserts need no identity, so the table looks healthy until someone runs their first update. Find these before the publication, not after.</p>
+<p>Why: replication sends row changes, not SQL. To apply an UPDATE, the target has to know <em>which</em> row changed, and by default it uses the primary key to find it. No primary key, no way to find the row, so Postgres refuses the update on the source before it happens.</p>
+<p>The trap is that inserts need no key, so the table looks healthy until someone runs the first update, possibly weeks later. Two ways out:</p>
+<pre><code>ALTER TABLE t REPLICA IDENTITY USING INDEX idx;   -- a unique, NOT NULL index (preferred)
+ALTER TABLE t REPLICA IDENTITY FULL;              -- whole row as the key (slow)</code></pre>
+<p><code>FULL</code> always works but is expensive: every update writes every column twice, and the target has to scan to find the row.</p>
 
 <h3 id="step-2-subscribe-on-the-target">Step 2: Subscribe on the target</h3>
 <pre><code>CREATE SUBSCRIPTION mysub
   CONNECTION 'host=SOURCE port=5442 dbname=mydb user=migrator password=...'
   PUBLICATION mypub;</code></pre>
-<p>This needs <code>pg_create_subscription</code> plus CREATE on the database:</p>
+<p>If it fails on permissions:</p>
 <pre><code>GRANT pg_create_subscription TO migrator;</code></pre>
-<p>The statement runs on the target but creates a replication slot on the <strong>source</strong>. Remember that. It is the source's disk that pays for it.</p>
-<p>The initial copy starts immediately and runs in the background. Watch it:</p>
+<p>You run this on the target, but it creates the replication slot on the <strong>source</strong>. Keep that in mind: it is the source's disk that holds on to WAL for it.</p>
+<p>The initial copy starts straight away in the background. At 79 GB, with the source serving writes the whole time:</p>
+<pre><code>09:03  subscription created
+09:05  target at  9.9 GB
+09:10  target at 45 GB
+09:17  target at 80 GB, copy done</code></pre>
+<p><strong>About 14 minutes, with zero downtime.</strong> Dump and restore took 30 minutes on the same data, all of it downtime. Replication has no compression step and no dump file to write and read back. I did not measure how much of the difference that accounts for.</p>
+<p>To watch progress:</p>
 <pre><code>-- on the target
-SELECT * FROM pg_stat_subscription;
-SELECT count(*) FROM mytable;</code></pre>
-<p>A non-null <code>pid</code> means a worker is alive. Null means it died, and the target's log says why.</p>
-<p>At 79 GB, with the source serving writes the whole time:</p>
-<pre><code>09:03:26  subscription created, slot created on publisher
-09:05     target ballast   9.9 GB
-09:10:13  target ballast  45 GB
-09:17:24  target ballast  80 GB, tablesync slot gone</code></pre>
-<p><strong>About 14 minutes</strong>, against 30 for dump and restore on identical data, and zero downtime during it. It is faster because nothing is compressed to a file and read back. Rows go straight from one server's heap to the other's.</p>
-<p>During the copy you will see a second slot on the source named <code>pg_&lt;subid&gt;_sync_&lt;relid&gt;_&lt;n&gt;</code>, showing <code>active = f</code> between worker cycles. It looks like an orphan. It is not. It is the per-table sync slot, and it disappears when its table finishes.</p>
-<p>I expected the main slot to hold back WAL for the whole 14 minutes. It did not. It stayed flat between 25 and 48 kB. The tablesync slot carried the cost, and it peaked at about 2 MB. <strong>Retained WAL scales with write rate, not data volume.</strong> At ten writes a second it is negligible. At production write rates, it is the number to watch.</p>
-<p>If you add a table after this point, the target will not pick it up on its own. <code>FOR ALL TABLES</code> is dynamic on the publisher and static on the subscriber:</p>
+SELECT * FROM pg_stat_subscription;   -- non-null pid = worker alive
+SELECT pg_size_pretty(pg_total_relation_size('mytable'));</code></pre>
+<p>During the copy you will see a second slot on the source named something like <code>pg_16398_sync_16385_...</code>, showing <code>active = f</code>. It looks abandoned. <strong>Do not drop it.</strong> It is a temporary per-table copy slot, and it disappears once its table finishes.</p>
+<p>I expected the main slot to pile up WAL for the whole 14 minutes. It stayed flat at 25–48 kB. The temporary slot peaked at about 2 MB. <strong>The WAL a slot holds grows with how fast you write, not how big the database is.</strong></p>
+<p>If you add a table after subscribing, the target will not pick it up on its own:</p>
 <pre><code>ALTER SUBSCRIPTION mysub REFRESH PUBLICATION;</code></pre>
 
 <h3 id="step-3-confirm-it-is-streaming">Step 3: Confirm it is streaming</h3>
-<p>The initial copy finishing is not the same as replication working. Test a change made after the copy:</p>
-<pre><code>-- source
+<p>The copy finishing does not prove new changes are flowing. Test one:</p>
+<pre><code>-- on the source
 INSERT INTO mytable (col) VALUES ('probe');
--- target, within a second
+-- on the target, a second later
 SELECT * FROM mytable WHERE col = 'probe';</code></pre>
 <p>Then look at the slot on the source:</p>
-<pre><code>SELECT slot_name, plugin, active, restart_lsn, confirmed_flush_lsn
+<pre><code>SELECT slot_name, active, restart_lsn, confirmed_flush_lsn
 FROM pg_replication_slots;</code></pre>
-<pre><code> slot_name |  plugin  | active | restart_lsn | confirmed_flush_lsn
------------+----------+--------+-------------+---------------------
- mysub     | pgoutput | t      | 0/43D71C38  | 0/43D71C70</code></pre>
-<p>Two numbers to understand, because you will use both:</p>
+<p>Two columns matter:</p>
 <ul>
-  <li><code>confirmed_flush_lsn</code> is how far the target has acknowledged. This is what you wait on at cutover.</li>
-  <li><code>restart_lsn</code> is the oldest WAL the source must keep. This is what fills your disk.</li>
+  <li><code>confirmed_flush_lsn</code>: how far the target has caught up. You wait on this at cutover.</li>
+  <li><code>restart_lsn</code>: the oldest WAL the source must keep. This is what fills your disk.</li>
 </ul>
 
-<h2 id="while-you-wait-two-things-that-will-bite">While you wait: two things that will bite</h2>
-<p>Replication may run for hours or days before you cut over. Two failure modes live in that window.</p>
-
-<h3 id="do-not-run-ddl-on-the-source">Do not run DDL on the source</h3>
-<p>Add a column on the source and the target's apply worker dies:</p>
+<h3 id="while-you-wait">While you wait: two things that will bite</h3>
+<p>You might leave replication running for hours or days before cutting over. Two things can go wrong in that time.</p>
+<p><strong>1. Do not change the schema on the source.</strong> I added one column on the source, and the target's replication worker crashed:</p>
 <pre><code>ERROR:  logical replication target relation "public.events" is missing
-        replicated column: "note"
-CONTEXT:  ... in transaction 670078, finished at 0/43E54D90
-background worker "logical replication apply worker" exited with exit code 1</code></pre>
-<p>It restarts every five seconds, hits the same transaction, dies again. Indefinitely. It never advances <code>confirmed_flush_lsn</code>, so WAL piles up on the source at whatever rate you write. I measured about 150 kB/min on a nearly idle system.</p>
-<p><code>active</code> flaps between true and false as the worker cycles, so it is useless as an alarm. Only retained WAL tells the truth.</p>
-<p><strong>Reverting the DDL on the source does not fix this.</strong> I tried. WAL is immutable, including its record of the table's shape, so replaying that transaction replays the schema as it was when written. The source no longer had the column and the target was still stuck on it.</p>
-<p>The fix has to be on the subscriber:</p>
+        replicated column: "note"</code></pre>
+<p>It restarted every 5 seconds, hit the same change, and crashed again, forever. Meanwhile the source kept holding WAL for it, about 150 kB a minute on a nearly idle system.</p>
+<p><strong>Undoing the change on the source does not help.</strong> I tried. The WAL already recorded rows with that column, and WAL cannot be edited. The fix has to go on the target:</p>
 <pre><code>-- on the TARGET
 ALTER TABLE events ADD COLUMN note text;</code></pre>
-<p>One cycle later the worker gets past it and drains.</p>
-<p>Which gives the ordering rule: <strong>add columns on the subscriber first, drop them there last.</strong> Once publisher-side DDL is in the WAL with rows behind it, the publisher can no longer help you.</p>
-
-<h3 id="watch-the-slot">Watch the slot</h3>
+<p>Within one 5-second cycle it caught up. The rule: <strong>add columns on the target first, and drop them there last.</strong></p>
+<p><strong>2. Watch how much WAL the slot is holding.</strong></p>
 <pre><code>SELECT slot_name, active,
-       pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn))
-       AS retained
+       pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn)) AS retained
 FROM pg_replication_slots;</code></pre>
-<p>A slot overrides normal WAL recycling unconditionally. With the subscriber disabled, retained WAL went from 56 bytes to 187 kB with no application load at all, just autovacuum, checkpoints and catalog writes. Checkpoints run, data is safely on disk, and the source keeps the WAL anyway because a consumer promised to come back. There is no expiry and nothing cleans it up.</p>
-<p>That is the correct behaviour. The alternative is a subscriber that reconnects and finds the WAL it needed deleted, with no way to know what it missed.</p>
-<p>But it means a stalled or forgotten subscriber fills the source's disk, and when <code>pg_wal</code> is full Postgres cannot commit anything. You also cannot delete the files, because the slot still requires them.</p>
-<p>Set <code>max_slot_wal_keep_size</code> if you would rather lose the subscriber than the primary. Alert on <code>retained</code>, not on <code>active</code>.</p>
+<p>A slot tells the source to keep WAL until the target has read it. There is no expiry. With the target switched off and the app completely idle, retained WAL still grew from 56 bytes to 187 kB, just from Postgres's own background work.</p>
+<p>That is correct behaviour: otherwise a reconnecting target could not know what it missed. But a stuck or forgotten target will slowly fill the source's disk, and when the WAL disk is full, <strong>the source cannot commit anything</strong>.</p>
+<ul>
+  <li>Set <code>max_slot_wal_keep_size</code> if you would rather lose the replica than the main database.</li>
+  <li>Alert on <code>retained</code>, not on <code>active</code>. During the crash loop above, <code>active</code> flipped between true and false every few seconds and told me nothing.</li>
+</ul>
 
-<h2 id="step-4-cut-over">Step 4: Cut over</h2>
-<p>Lag should be near zero before you start. Run the whole sequence without pausing.</p>
-<p><strong>Freeze writes on the source.</strong> Revoking INSERT is one option and applies immediately to open connections:</p>
+<h3 id="step-4-cut-over">Step 4: Cut over</h3>
+<p>Wait until the target has nearly caught up, then do all of this in one go:</p>
+<p><strong>1. Block writes on the source.</strong></p>
 <pre><code>REVOKE INSERT ON mytable FROM appuser;</code></pre>
-<p><strong>Wait for the tail to drain.</strong> This is a comparison, not a sleep:</p>
-<pre><code>SELECT pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), confirmed_flush_lsn))
-FROM pg_replication_slots;
--- 0 bytes</code></pre>
-<p>It will not always reach exactly zero on a busy system, since autovacuum and checkpoints keep writing. Wait for small and stable, not equal.</p>
-<p><strong>Fix the sequences.</strong> This step is not optional and it is the one people miss.</p>
-<p>Sequences do not replicate. The target has every row. Its sequences are untouched:</p>
+<p><strong>2. Wait for the last changes to arrive.</strong> Check the gap, don't just sleep:</p>
+<pre><code>SELECT pg_wal_lsn_diff(pg_current_wal_lsn(), confirmed_flush_lsn) AS lag_bytes
+FROM pg_replication_slots;</code></pre>
+<p>It may not reach exactly 0, because Postgres keeps writing a little WAL in the background. Wait for small and steady.</p>
+<p><strong>3. Fix the sequences.</strong> This is the step people forget.</p>
+<p>Sequences (the counters behind auto-increment ids) are not replicated. The target has every row, but its counters are still at the start:</p>
 <pre><code>source: last_value = 3480
 target: last_value = 1
 target: max(id)    = 3515</code></pre>
-<p>The first insert after cutover collides on the primary key, and so do the next 3,515. Every check you would think to run passes first: row counts match, data is identical, lag is zero.</p>
-<p>Note the source's <code>last_value</code> is <em>below</em> the real max, because sequences allocate in cached blocks. Copying the source's value across still collides. Read the target's own data:</p>
+<p>The first insert after cutover gets an id that already exists, and so does every insert after it until the counter passes 3,515. And every check you would think to run passes first: row counts match, data matches, lag is zero.</p>
+<p>Notice the source's counter (3480) is <em>lower</em> than the real highest id (3515), because Postgres hands out ids in cached blocks. So copying the source's value across still collides. Use the target's own data:</p>
 <pre><code>-- on the TARGET
 SELECT setval('mytable_id_seq', (SELECT max(id) FROM mytable));</code></pre>
-<p>Default <code>is_called</code> is true, so the next value is <code>max(id) + 1</code>. Too high wastes ids and costs nothing. Too low breaks inserts.</p>
-<p><strong>Repoint the application.</strong> Then verify against the server rather than your config:</p>
-<pre><code>SELECT inet_server_port();</code></pre>
-<p>Grants do not replicate either, so the freeze you applied to the source never reached the target. Writes resume without intervention. (<code>pg_dump</code> does carry grants, which is why the dump method needed <code>--no-acl</code>.)</p>
-<p>The 79 GB cutover:</p>
-<pre><code>lag at freeze    0 bytes
-setval           12792
+<p>Setting it too high wastes a few ids and costs nothing. Too low breaks every insert.</p>
+<p><strong>4. Point the app at the target and restart it.</strong> Then ask the server, not your config file, which one you are on:</p>
+<pre><code>SELECT inet_server_port();   -- should be 5443</code></pre>
+<p>You do not need to undo the <code>REVOKE</code>: permissions are not replicated either, so the target never had it.</p>
 
-WRITE   attempts 12806   succeeded 12576   failed 230
-        longest gap 23,200 ms
-        failure modes: 175 &times; permission denied, 55 &times; fetch failed</code></pre>
-<p>Verified on the target afterwards: zero duplicates, zero stale reads, zero sequence drift, and every write the load generator logged as succeeded was present.</p>
-
-<h2 id="what-the-23-seconds-actually-was">What the 23 seconds actually was</h2>
-<p>Not the copy. The copy left the window entirely. What remained was the application process restarting, plus the time it took me to run four commands by hand. That is why the window went from 12.4 to 23.2 seconds while the data grew 200&times;: I was slower at the keyboard, not the database slower at the cutover.</p>
+<h3 id="method-2-results">Method 2 results</h3>
+<pre><code>WRITE   attempts 12,806   succeeded 12,576   failed 230
+        longest gap 23.2 seconds</code></pre>
+<p>Afterwards, on the target: no duplicate rows, no missing writes, sequence correct.</p>
+<p>At 399 MB the same process took 12.4 seconds. Data grew 200&times;; the outage did not even double:</p>
 <table>
   <thead>
     <tr><th></th><th>399 MB</th><th>79 GB</th><th>growth</th></tr>
   </thead>
   <tbody>
-    <tr><td>dump time</td><td>7.8 s</td><td>587 s</td><td>75&times;</td></tr>
-    <tr><td>restore time</td><td>11.9 s</td><td>1,216 s</td><td>102&times;</td></tr>
-    <tr><td>replication initial copy (live)</td><td>seconds</td><td>840 s</td><td>-</td></tr>
-    <tr><td><strong>dump + restore, write downtime</strong></td><td>&ge;175 s</td><td>3,740 s</td><td>21&times;</td></tr>
-    <tr><td><strong>replication, write downtime</strong></td><td>12.4 s</td><td>23.2 s</td><td>1.9&times;</td></tr>
+    <tr><td>dump and restore, writes blocked</td><td>&ge;175 s</td><td>3,740 s</td><td>21&times;</td></tr>
+    <tr><td>logical replication, writes blocked</td><td>12.4 s</td><td>23.2 s</td><td>1.9&times;</td></tr>
   </tbody>
 </table>
-<p>Neither restart time nor typing speed is a database problem, which means the next improvement is not a database change. Put pgbouncer between the application and Postgres and the cutover becomes <code>PAUSE</code>, repoint, <code>RESUME</code>. One switch point, the application never restarts, and connected clients queue instead of failing. The pause stops being an error and becomes latency.</p>
-<p>The first row of that table is copy time, and copy time scales with data. The second row does not, which is the entire point.</p>
+<p>So where did the 23 seconds go? <strong>Not the copy.</strong> That happened earlier, with no downtime. What was left:</p>
+<ul>
+  <li>the app process restarting, and</li>
+  <li>me typing four commands by hand.</li>
+</ul>
+<p>Neither is a database problem, so the next fix is not a database change.</p>
+
+<h2 id="method-3-logical-replication-behind-pgbouncer">Method 3: Logical replication behind pgbouncer</h2>
+<p><strong>pgbouncer</strong> is a connection pooler: a small proxy that sits between the app and Postgres. The app connects to pgbouncer as if it were Postgres, and pgbouncer passes queries on to the real server.</p>
+<pre><code>before:  app ──────────────► Postgres (source)
+
+after:   app ──► pgbouncer ──► Postgres (source)
+                           └─► Postgres (target, after the switch)</code></pre>
+<p>The app only knows pgbouncer's address. So to move databases, you change where pgbouncer points, and the app never restarts.</p>
+<p>pgbouncer also has two admin commands that make this work:</p>
+<ul>
+  <li><code>PAUSE</code>: stop sending queries to Postgres. Apps stay connected, and their queries wait in a queue.</li>
+  <li><code>RESUME</code>: send the queued queries on.</li>
+</ul>
+<p>This is the key difference from method 2. <code>REVOKE</code> made writes <strong>fail</strong>. <code>PAUSE</code> makes them <strong>wait</strong>.</p>
+
+<h3 id="the-setup">The setup</h3>
+<p>pgbouncer config, pointing at the source:</p>
+<pre><code>[pgbouncer]
+pool_mode = transaction
+max_client_conn = 500
+
+[databases]
+mydb = host=127.0.0.1 port=5442 dbname=mydb</code></pre>
+<p>Two setup notes:</p>
+<ul>
+  <li>Use <code>127.0.0.1</code>, not <code>localhost</code>. <code>localhost</code> can resolve to the IPv6 address <code>::1</code>, and if Postgres only listens on IPv4, connections hang for 60 seconds instead of failing straight away.</li>
+  <li>In transaction mode, pgbouncer rejects most settings sent when the app connects, such as <code>statement_timeout</code>. Move them onto the database role instead, which is how I ended up with the role timeout that broke the initial copy (see <a href="#before-you-start">Before you start</a>).</li>
+</ul>
+<p>Put pgbouncer in place as its own change, <strong>before</strong> migration day, and check it passes traffic through cleanly: <code>SELECT inet_server_port()</code> through pgbouncer should return 5442.</p>
+<p>Replication is set up exactly as in method 2. Only the cutover changes.</p>
+
+<h3 id="the-cutover">The cutover</h3>
+<p>This time I ran it from a script instead of typing it. Here is the timeline:</p>
+<pre><code>16:10:02.990  PAUSE                                  (queries start queueing)
+16:10:03.119  target caught up, lag 336 bytes         129 ms
+16:10:03.199  sequence set on target                  80 ms
+16:10:03.274  pgbouncer repointed to the target       75 ms
+16:10:03.332  RESUME                                  58 ms</code></pre>
+<p><strong>342 ms</strong> from <code>PAUSE</code> to <code>RESUME</code>. I expected reloading pgbouncer's config to be the slow part. It took 75 ms.</p>
+<p>The steps are the same as method 2. Only the first and last change:</p>
+<ol>
+  <li><code>PAUSE</code> in pgbouncer's admin console, instead of <code>REVOKE</code>.</li>
+  <li>Wait for the target to catch up.</li>
+  <li><code>setval</code> the sequences on the target.</li>
+  <li>Change the port in pgbouncer's config to the target, and reload.</li>
+  <li><code>RESUME</code>, instead of restarting the app.</li>
+</ol>
+
+<h3 id="method-3-results">Method 3 results</h3>
+<pre><code>READ    attempts 18,342   succeeded 18,342   failed 0   longest gap 613 ms
+WRITE   attempts 18,342   succeeded 18,342   failed 0   longest gap 611 ms</code></pre>
+<p><strong>Zero failed requests, reads or writes.</strong> On the target afterwards: no duplicates, no missing writes, sequence correct.</p>
+<p>But I would not call this "zero downtime". The outage still happened. It just showed up as <strong>slow requests</strong> instead of errors. The slowest ones:</p>
+<pre><code>1630 ms, 1529 ms, 1432 ms, 1430 ms, 1399 ms</code></pre>
+<p>These are in the order they arrived, and each one is a bit faster than the last. That is the queue emptying: requests that arrived during the pause were all released together at <code>RESUME</code>, and the earliest ones had waited longest.</p>
+<p>The slowest request (1.6 s) took longer than the pause (0.34 s). The extra time is a cold cache on the target. It had never served this app before, so the first queries after the switch had to read from disk. That is not downtime, but users would notice it.</p>
+<p>The honest summary: <strong>zero failed requests, a 342 ms pause, and a peak latency of 1.6 seconds.</strong></p>
+
+<h3 id="the-catch-every-layer-has-to-wait">The catch: every layer has to wait</h3>
+<p>A pause only turns into a slow request if <strong>everything between the user and the database waits longer than the pause</strong>. If any one layer gives up first, the request fails anyway. The shortest timeout decides the result.</p>
+<p>I found this out by failing three times. For testing I held the pause for 5 seconds, to make problems obvious:</p>
+<table>
+  <thead>
+    <tr><th>pause</th><th>failed</th><th>what gave up first</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>5 s</td><td>81</td><td>the client's 2-second request timeout</td></tr>
+    <tr><td>5 s</td><td>77</td><td>the app's connection pool (20 connections) ran out, then timed out waiting</td></tr>
+    <tr><td>5 s</td><td>121</td><td>pgbouncer's own limit of 100 client connections</td></tr>
+    <tr><td>1 s</td><td><strong>0</strong></td><td>nothing (slowest request 910 ms)</td></tr>
+  </tbody>
+</table>
+<p>In none of these was pgbouncer's queue the problem. Each time, something in front of it gave up before the query reached it.</p>
+<p>The settings that gave zero failures:</p>
+<table>
+  <thead>
+    <tr><th>layer</th><th>setting</th><th>value</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>HTTP client</td><td>request timeout</td><td>15 s</td></tr>
+    <tr><td>app connection pool</td><td><code>max</code></td><td>200</td></tr>
+    <tr><td>app connection pool</td><td><code>connectionTimeoutMillis</code></td><td>30 s</td></tr>
+    <tr><td>app queries</td><td><code>query_timeout</code></td><td>30 s</td></tr>
+    <tr><td>pgbouncer</td><td><code>max_client_conn</code></td><td>500</td></tr>
+    <tr><td>pgbouncer</td><td><code>query_wait_timeout</code></td><td>120 s (default)</td></tr>
+  </tbody>
+</table>
+<p>Connections to pgbouncer are cheap, so a large app pool is fine. pgbouncer keeps its own small pool of real connections to Postgres.</p>
+<p>A real cutover pause is well under a second, so you may not need numbers this high. But you do need to check every layer, because the one you forget is the one that fails.</p>
+
+<h3 id="two-more-reasons-to-use-a-pooler">Two more reasons to use a pooler</h3>
+<p><strong>Several app servers switch at the same moment.</strong> Without a pooler, each app server has to be repointed and restarted, and they switch at slightly different times. For a few seconds some are writing to the old database and some to the new one, and there is no clean way to merge the two afterwards. With pgbouncer, no app server holds a database address, so this cannot happen.</p>
+<p><strong>Rolling back is one line, and it loses every write that landed on the target.</strong> The line is: point pgbouncer back at the source and reload. Replication only runs one way, so nothing written to the target after the switch ever reached the source. If you need a safe rollback, set up replication in the other direction before cutting over. I did not test that.</p>
+<p>One more thing to know: a forgotten <code>PAUSE</code> looks exactly like a hung database. If everything is stuck, run <code>RESUME</code> first.</p>
+
+<h2 id="all-three-at-79-gb">All three at 79 GB</h2>
+<table>
+  <thead>
+    <tr><th>method</th><th>writes blocked</th><th>failed requests</th><th>what the outage was</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>dump and restore</td><td>62 min</td><td>36,721</td><td>copying the data</td></tr>
+    <tr><td>replication + app restart</td><td>23.2 s</td><td>230</td><td>app restart, typing</td></tr>
+    <tr><td>replication + pgbouncer, scripted</td><td>342 ms pause</td><td>0</td><td>slow requests, peak 1.6 s</td></tr>
+  </tbody>
+</table>
+<p>The first row grows with your data. The other two don't.</p>
+
+<h2 id="checklist">Checklist</h2>
+<p>Before you start:</p>
+<ul>
+  <li>Every table has a primary key, or a replica identity index.</li>
+  <li>The replication role has no <code>statement_timeout</code>.</li>
+  <li>The target has the schema and <strong>no rows</strong>.</li>
+  <li>pgbouncer is already in front of the app, and every timeout between the user and it is longer than your pause.</li>
+  <li><code>max_slot_wal_keep_size</code> is set, and you alert on retained WAL.</li>
+  <li>Nobody changes the schema until you are done.</li>
+</ul>
+<p>At cutover:</p>
+<ol>
+  <li><code>PAUSE</code> pgbouncer.</li>
+  <li>Wait until the lag is small and steady.</li>
+  <li><code>setval</code> every sequence from the target's <code>max(id)</code>.</li>
+  <li>Point pgbouncer at the target and reload.</li>
+  <li><code>RESUME</code>.</li>
+  <li>Check <code>inet_server_port()</code> and that writes are landing on the target.</li>
+</ol>
+<p>Script it. The script should give up and <code>RESUME</code> on the source if the target does not catch up within a time limit. Nothing interactive belongs inside the pause: no password prompts, no <code>sudo</code> asking for a password.</p>
 
 <h2 id="two-runs-that-measured-nothing">Two runs that measured nothing</h2>
-<p>Before the method was right, two runs produced numbers that looked fine and meant nothing.</p>
+<p>Before I got the measurement right, two runs gave numbers that looked fine and meant nothing:</p>
 <ul>
-  <li><strong>No start bracket.</strong> Writes were frozen before the load generator started. Zero of 8,135 writes succeeded, so there was no success to measure a gap from. It reported <code>0 ms</code>.</li>
-  <li><strong>No stop bracket.</strong> 1,171 writes succeeded, then 713 were denied, but I stopped the generator before the flip completed. It reported <code>103 ms</code>, which was the largest gap during the healthy period.</li>
+  <li>Writes were already blocked when the load generator started. No write ever succeeded, so there was no gap to measure. It reported <strong>0 ms</strong>.</li>
+  <li>I stopped the load generator before the switch finished. It reported <strong>103 ms</strong>, which was just the slowest request before the outage started.</li>
 </ul>
-<p>"Gap between consecutive successes" silently returns nonsense when either end is missing. Every valid run needs three phases: working, broken, working. The same is true of the <code>≥175 s</code> in the small dump run: the log ended before the flip completed, so that number is a floor, not a measurement.</p>
+<p>"Longest gap between successes" only means something if the log shows three phases: <strong>working, broken, working again.</strong> For the same reason, the 175 seconds for dump and restore at 399 MB is a minimum. That log ended before the switch completed.</p>
+
+<h2 id="what-i-did-not-test">What I did not test</h2>
+<p><strong>The target catching up is not guaranteed.</strong> My load was about 10 writes a second. At that rate the target always caught up, so there was always a moment when lag was near zero and I could cut over. At production write rates, the target may apply changes more slowly than the source produces them. Lag then grows without limit and that moment never comes. This method does not work until the write rate drops or the target gets faster. This is the failure that kills large migrations, and my setup could not produce it. At scale, watch whether lag is trending down, not just whether it is small right now.</p>
+<p><strong>At real scale, migration stops being an event.</strong> A sharded system does not have one cutover. It has thousands of small ones, each pausing writes for the users on one shard for a fraction of a second, running all the time in the background for rebalancing and hardware refresh. Something that happens a thousand times a day gets engineered until it is fast and boring. Something done once every three years gets a runbook, a 2 a.m. window, and an apology email. The 342 ms above is the second kind, done carefully.</p>
 
 <h2 id="caveats">Caveats</h2>
 <ul>
-  <li>Single machine, both clusters on the same NVMe device, competing for IO.</li>
-  <li>Write load around ten a second. WAL retention would look different under production traffic.</li>
-  <li><code>pg_restore</code> ran without <code>-j</code>. Parallel restore would shrink the 20-minute figure, not the shape of the comparison.</li>
-  <li>Both cutovers include manual steps at a keyboard. Scripted, both would be shorter.</li>
-  <li>The ballast is md5 hex, which compresses about 13:1. Real data will not, so a real dump file will be larger and the dump will spend less time compressing and more time writing.</li>
+  <li>Both servers ran on one machine and shared one disk.</li>
+  <li>About 10 writes a second. WAL retention grows with write rate, so production numbers will be bigger.</li>
+  <li>One app instance.</li>
+  <li><code>pg_restore</code> ran without <code>-j</code>, so dump and restore could be faster, though the shape of the comparison would not change.</li>
+  <li>Methods 1 and 2 were typed by hand. Method 3 was scripted.</li>
+  <li>The filler data compresses far better than real data (13:1), so a real dump file would be bigger.</li>
+  <li>Rolling back with reverse replication was not tested.</li>
 </ul>
-<p><em>Postgres 18.6, two local clusters, Express with node-postgres. Downtime measured client-side from a JSONL log of every request, calibrated against a known 20-second stop.</em></p>
+<p><em>Postgres 18.6, two local clusters, pgbouncer in transaction mode, Express with node-postgres. Downtime measured from the client side using a log of every request, and checked against a known 20-second stop.</em></p>
 
 
     </div>
@@ -396,11 +546,11 @@ WRITE   attempts 12806   succeeded 12576   failed 230
       "mainEntityOfPage": "https://tsabudh.com.np/blog/migrating-live-postgres-without-stopping-writes/",
       "url": "https://tsabudh.com.np/blog/migrating-live-postgres-without-stopping-writes/",
       "headline": "Migrating a Live Postgres Database Without Stopping Writes",
-      "description": "A measured PostgreSQL migration: pg_dump and pg_restore against logical replication at 399 MB and 79 GB, with the cutover procedure and the failure modes found along the way.",
+      "description": "A measured PostgreSQL migration at 79 GB: pg_dump and pg_restore, logical replication, and logical replication behind pgbouncer, with the cutover steps and every failure mode found along the way.",
       "datePublished": "2026-09-24",
       "dateModified": "2026-09-24",
       "inLanguage": "en",
-      "keywords": "PostgreSQL, logical replication, database migration, zero downtime, pg_dump, pg_restore, replication slot, WAL, backend engineer Nepal",
+      "keywords": "PostgreSQL, logical replication, pgbouncer, database migration, zero downtime, pg_dump, pg_restore, replication slot, WAL, connection pooling, backend engineer Nepal",
       "image": "https://tsabudh.com.np/assets/images/sabudh.png",
       "author": { "@id": "https://tsabudh.com.np/#sabudh-thapa" },
       "publisher": { "@id": "https://tsabudh.com.np/#sabudh-thapa" },
