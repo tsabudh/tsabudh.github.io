@@ -48,8 +48,10 @@ namespace: blog
             {{ post.data.description }}
           </p>
           <p class="mt-5 text-slate-500">
-            {{ post.data.readTime }} min read · <time datetime="{{ post.date | isoDate }}">{{ post.date | readableDate }}</time> ·
+            {{ post.data.readTime }} min read · <time datetime="{{ post.date | isoDate }}">{{ post.date | readableDate }}</time>
+            {%- if post.data.mediumUrl %} ·
             <a href="{{ post.data.mediumUrl }}" target="_blank" rel="noopener" class="underline decoration-amber-400 decoration-2 underline-offset-4">also on Medium</a>
+            {%- endif %}
           </p>
         </div>
       </article>

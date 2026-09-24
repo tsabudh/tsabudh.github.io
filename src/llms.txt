@@ -13,7 +13,8 @@ Primary pages:
 - Hire / remote contracts from Nepal: https://tsabudh.com.np/hire/
 - Backpressure system note: https://tsabudh.com.np/systems/backpressure/
 
-Articles (canonical on this domain, syndicated to Medium):
+Articles (canonical on this domain, most syndicated to Medium):
+- Migrating a Live Postgres Database Without Stopping Writes: https://tsabudh.com.np/blog/migrating-live-postgres-without-stopping-writes/
 - When Indexes Stop Helping: Columnar Engines: https://tsabudh.com.np/blog/when-indexes-stop-helping-columnar-engines/
 - Indexing Is Query Design, Not Column Decoration: https://tsabudh.com.np/blog/indexing-is-query-design-not-column-decoration/
 - Why Your App Slows Down When Users Increase?: https://tsabudh.com.np/blog/why-your-app-slows-down-when-users-increase/

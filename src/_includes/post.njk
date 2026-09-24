@@ -35,12 +35,14 @@ layout: layout.njk
     </div>
 
     <footer class="mt-16 border-t border-slate-300 pt-8 text-slate-600">
-      <p>
+      {%- if mediumUrl %}
+      <p class="mb-4">
         Originally published on
         <a href="{{ mediumUrl }}" target="_blank" rel="noopener" class="font-semibold text-slate-800 underline decoration-amber-400 decoration-2 underline-offset-4">Medium</a>.
         This page is the canonical version.
       </p>
-      <p class="mt-4">
+      {%- endif %}
+      <p>
         Working on a system with the same failure shapes? I take remote backend contracts from Nepal.
         <a href="/hire/" class="font-semibold text-amber-700 underline decoration-amber-400 decoration-2 underline-offset-4">How I work with teams</a>
         ·
@@ -63,7 +65,9 @@ layout: layout.njk
       "inLanguage": "en",
       "keywords": {{ keywords | dump | safe }},
       "image": "{{ image or site.image }}",
+      {%- if mediumUrl %}
       "sameAs": "{{ mediumUrl }}",
+      {%- endif %}
       "author": { "@id": "{{ site.url }}/#sabudh-thapa" },
       "publisher": { "@id": "{{ site.url }}/#sabudh-thapa" },
       "isPartOf": { "@id": "{{ site.url }}/#website" }
