@@ -237,7 +237,7 @@ dump file    6.0 GB</code></pre>
 <p>Three terms first, because the rest of this section uses them:</p>
 <ul>
   <li><strong>WAL</strong> (write-ahead log): Postgres's running record of every change. Changes are written here before they reach the tables.</li>
-  <li><strong>Logical replication</strong>: the source reads its own WAL and sends every row change to the target as it happens.</li>
+  <li><strong><a href="https://www.postgresql.org/docs/current/logical-replication.html">Logical replication</a></strong>: the source reads its own WAL and sends every row change to the target as it happens.</li>
   <li><strong>Replication slot</strong>: a bookmark on the source that says "the target has received everything up to here, keep the rest until it does." Positions in the WAL are called <strong>LSNs</strong>.</li>
 </ul>
 
@@ -245,7 +245,7 @@ dump file    6.0 GB</code></pre>
 <p><strong>The source needs <code>wal_level = logical</code></strong> in <code>postgresql.conf</code>. Changing it needs a restart, so do it well before migration day.</p>
 <pre><code>SHOW wal_level;   -- must say 'logical', not 'replica'</code></pre>
 <p>If it still says <code>replica</code> after you edited the config, run <code>SHOW config_file</code>. You edited a different file from the one the server is reading.</p>
-<p><strong>The target needs the schema already in place.</strong> Logical replication copies rows, not table definitions. Create the tables on the target first.</p>
+<p><strong>The target needs the schema already in place.</strong> <a href="https://www.postgresql.org/docs/current/logical-replication-restrictions.html">Logical replication copies rows, not table definitions.</a> Create the tables on the target first.</p>
 <p><strong>The target must be empty.</strong> I skipped this once when re-running a test. The copy landed on top of the old rows, the target grew to 125 GB from a 79 GB source, and replication then crashed on duplicate keys:</p>
 <pre><code>ERROR:  conflict detected on relation "public.events": conflict=insert_exists
 DETAIL:  Key already exists in unique index "events_pkey"</code></pre>
@@ -267,7 +267,7 @@ CONTEXT:  COPY ballast, line 4355224</code></pre>
 <pre><code>ERROR:  cannot update table "no_pk" because it does not have a replica
         identity and publishes updates</code></pre>
 <p>Why: replication sends row changes, not SQL. To apply an UPDATE, the target has to know <em>which</em> row changed, and by default it uses the primary key to find it. No primary key, no way to find the row, so Postgres refuses the update on the source before it happens.</p>
-<p>The trap is that inserts need no key, so the table looks healthy until someone runs the first update, possibly weeks later. Two ways out:</p>
+<p>The trap is that inserts need no key, so the table looks healthy until someone runs the first update, possibly weeks later. Two ways out, both forms of <a href="https://www.postgresql.org/docs/current/sql-altertable.html#SQL-ALTERTABLE-REPLICA-IDENTITY"><code>REPLICA IDENTITY</code></a>:</p>
 <pre><code>ALTER TABLE t REPLICA IDENTITY USING INDEX idx;   -- a unique, NOT NULL index (preferred)
 ALTER TABLE t REPLICA IDENTITY FULL;              -- whole row as the key (slow)</code></pre>
 <p><code>FULL</code> always works but is expensive: every update writes every column twice, and the target has to scan to find the row.</p>
@@ -326,7 +326,7 @@ FROM pg_replication_slots;</code></pre>
 <p>A slot tells the source to keep WAL until the target has read it. There is no expiry. With the target switched off and the app completely idle, retained WAL still grew from 56 bytes to 187 kB, just from Postgres's own background work.</p>
 <p>That is correct behaviour: otherwise a reconnecting target could not know what it missed. But a stuck or forgotten target will slowly fill the source's disk, and when the WAL disk is full, <strong>the source cannot commit anything</strong>.</p>
 <ul>
-  <li>Set <code>max_slot_wal_keep_size</code> if you would rather lose the replica than the main database.</li>
+  <li>Set <a href="https://www.postgresql.org/docs/current/runtime-config-replication.html#GUC-MAX-SLOT-WAL-KEEP-SIZE"><code>max_slot_wal_keep_size</code></a> if you would rather lose the replica than the main database.</li>
   <li>Alert on <code>retained</code>, not on <code>active</code>. During the crash loop above, <code>active</code> flipped between true and false every few seconds and told me nothing.</li>
 </ul>
 
@@ -339,7 +339,7 @@ FROM pg_replication_slots;</code></pre>
 FROM pg_replication_slots;</code></pre>
 <p>It may not reach exactly 0, because Postgres keeps writing a little WAL in the background. Wait for small and steady.</p>
 <p><strong>3. Fix the sequences.</strong> This is the step people forget.</p>
-<p>Sequences (the counters behind auto-increment ids) are not replicated. The target has every row, but its counters are still at the start:</p>
+<p>Sequences (the counters behind auto-increment ids) <a href="https://www.postgresql.org/docs/current/logical-replication-restrictions.html">are not replicated</a>. The target has every row, but its counters are still at the start:</p>
 <pre><code>source: last_value = 3480
 target: last_value = 1
 target: max(id)    = 3515</code></pre>
@@ -374,7 +374,7 @@ SELECT setval('mytable_id_seq', (SELECT max(id) FROM mytable));</code></pre>
 <p>Neither is a database problem, so the next fix is not a database change.</p>
 
 <h2 id="method-3-logical-replication-behind-pgbouncer">Method 3: Logical replication behind pgbouncer</h2>
-<p><strong>pgbouncer</strong> is a connection pooler: a small proxy that sits between the app and Postgres. The app connects to pgbouncer as if it were Postgres, and pgbouncer passes queries on to the real server.</p>
+<p><strong><a href="https://www.pgbouncer.org/">pgbouncer</a></strong> is a connection pooler: a small proxy that sits between the app and Postgres. The app connects to pgbouncer as if it were Postgres, and pgbouncer passes queries on to the real server.</p>
 <pre><code>before:  app ──────────────► Postgres (source)
 
 after:   app ──► pgbouncer ──► Postgres (source)
@@ -382,8 +382,8 @@ after:   app ──► pgbouncer ──► Postgres (source)
 <p>The app only knows pgbouncer's address. So to move databases, you change where pgbouncer points, and the app never restarts.</p>
 <p>pgbouncer also has two admin commands that make this work:</p>
 <ul>
-  <li><code>PAUSE</code>: stop sending queries to Postgres. Apps stay connected, and their queries wait in a queue.</li>
-  <li><code>RESUME</code>: send the queued queries on.</li>
+  <li><a href="https://www.pgbouncer.org/usage.html#pause-db"><code>PAUSE</code></a>: stop sending queries to Postgres. Apps stay connected, and their queries wait in a queue.</li>
+  <li><a href="https://www.pgbouncer.org/usage.html#resume-db"><code>RESUME</code></a>: send the queued queries on.</li>
 </ul>
 <p>This is the key difference from method 2. <code>REVOKE</code> made writes <strong>fail</strong>. <code>PAUSE</code> makes them <strong>wait</strong>.</p>
 
@@ -455,8 +455,8 @@ WRITE   attempts 18,342   succeeded 18,342   failed 0   longest gap 611 ms</code
     <tr><td>app connection pool</td><td><code>max</code></td><td>200</td></tr>
     <tr><td>app connection pool</td><td><code>connectionTimeoutMillis</code></td><td>30 s</td></tr>
     <tr><td>app queries</td><td><code>query_timeout</code></td><td>30 s</td></tr>
-    <tr><td>pgbouncer</td><td><code>max_client_conn</code></td><td>500</td></tr>
-    <tr><td>pgbouncer</td><td><code>query_wait_timeout</code></td><td>120 s (default)</td></tr>
+    <tr><td>pgbouncer</td><td><a href="https://www.pgbouncer.org/config.html#max_client_conn"><code>max_client_conn</code></a></td><td>500</td></tr>
+    <tr><td>pgbouncer</td><td><a href="https://www.pgbouncer.org/config.html#query_wait_timeout"><code>query_wait_timeout</code></a></td><td>120 s (default)</td></tr>
   </tbody>
 </table>
 <p>Connections to pgbouncer are cheap, so a large app pool is fine. pgbouncer keeps its own small pool of real connections to Postgres.</p>
