@@ -14,6 +14,7 @@ Primary pages:
 - Backpressure system note: https://tsabudh.com.np/systems/backpressure/
 
 Articles (canonical on this domain, most syndicated to Medium):
+- Your Postgres Lock Has a Hidden Expiry Date: https://tsabudh.com.np/blog/your-postgres-advisory-lock-is-gone/
 - Migrating a Live Postgres Database Without Stopping Writes: https://tsabudh.com.np/blog/migrating-live-postgres-without-stopping-writes/
 - When Indexes Stop Helping: Columnar Engines: https://tsabudh.com.np/blog/when-indexes-stop-helping-columnar-engines/
 - Indexing Is Query Design, Not Column Decoration: https://tsabudh.com.np/blog/indexing-is-query-design-not-column-decoration/

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+    
+    
+    
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Postgres Advisory Lock Silently Lost: idle_in_transaction_session_timeout</title>
+    <meta name="description" content="A Postgres advisory lock vanished mid-job and the log said it was released cleanly. Why, and four ways to hold it, each reproducible." />
+    <meta name="author" content="Sabudh Thapa" />
+    <link rel="canonical" href="https://tsabudh.com.np/blog/your-postgres-advisory-lock-is-gone/" />
+    
+    <meta name="robots" content="index, follow" />
+    
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Sabudh Thapa" />
+    <meta property="og:title" content="Postgres Advisory Lock Silently Lost: idle_in_transaction_session_timeout" />
+    <meta property="og:description" content="A Postgres advisory lock vanished mid-job and the log said it was released cleanly. Why, and four ways to hold it, each reproducible." />
+    <meta property="og:url" content="https://tsabudh.com.np/blog/your-postgres-advisory-lock-is-gone/" />
+    <meta property="og:image" content="https://tsabudh.com.np/assets/images/sabudh.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Postgres Advisory Lock Silently Lost: idle_in_transaction_session_timeout" />
+    <meta name="twitter:description" content="A Postgres advisory lock vanished mid-job and the log said it was released cleanly. Why, and four ways to hold it, each reproducible." />
+    <meta name="twitter:image" content="https://tsabudh.com.np/assets/images/sabudh.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://tsabudh.com.np/#sabudh-thapa",
+            "name": "Sabudh Thapa",
+            "givenName": "Sabudh",
+            "familyName": "Thapa",
+            "alternateName": ["tsabudh", "Sabudh Bahadur Thapa"],
+            "jobTitle": ["Backend Engineer", "Distributed Systems Engineer", "Software Engineer"],
+            "description": "Sabudh Thapa (tsabudh) is a software engineer in Kathmandu, Nepal, working on backend and distributed systems: event-driven workers, PostgreSQL data infrastructure, and reliable production platforms. Available for remote contracts.",
+            "disambiguatingDescription": "An individual software engineer in Kathmandu, Nepal. Not affiliated with Sabudh Foundation, the data-science training organisation in India.",
+            "url": "https://tsabudh.com.np/",
+            "image": "https://tsabudh.com.np/assets/images/sabudh.png",
+            "email": "mailto:tsabudh@gmail.com",
+            "nationality": { "@type": "Country", "name": "Nepal" },
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Kathmandu",
+              "addressRegion": "Bagmati Province",
+              "addressCountry": "NP"
+            },
+            "worksFor": { "@type": "Organization", "name": "Relativity Invest" },
+            "alumniOf": {
+              "@type": "CollegeOrUniversity",
+              "name": "Advanced College of Engineering and Management, Tribhuvan University"
+            },
+            "knowsLanguage": ["English", "Nepali"],
+            "knowsAbout": [
+              "Backend Engineering",
+              "Distributed Systems",
+              "Event-Driven Architecture",
+              "Data Infrastructure",
+              "PostgreSQL",
+              "Apache Kafka",
+              "DuckDB",
+              "Rust",
+              "TypeScript",
+              "Python",
+              "Observability",
+              "Production Recovery",
+              "Software Outsourcing from Nepal"
+            ],
+            "sameAs": [
+              "https://github.com/tsabudh",
+              "https://www.linkedin.com/in/tsabudh",
+              "https://medium.com/@tsabudh"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://tsabudh.com.np/#website",
+            "url": "https://tsabudh.com.np/",
+            "name": "Sabudh Thapa",
+            "description": "Sabudh Thapa (tsabudh) is a software engineer in Kathmandu, Nepal, working on backend and distributed systems: event-driven workers, PostgreSQL data infrastructure, and reliable production platforms. Available for remote contracts.",
+            "inLanguage": "en",
+            "publisher": { "@id": "https://tsabudh.com.np/#sabudh-thapa" }
+          }
+        ]
+      }
+    </script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y0XSCM2LK7"></script>
+    <script>
+      window.__PORTFOLIO_GA_MEASUREMENT_ID__ = "G-Y0XSCM2LK7";
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "G-Y0XSCM2LK7", { send_page_view: false });
+    </script>
+    
+    <script type="module" crossorigin src="/assets/barba-BVVxnc5S.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/barba-DvL8nLT-.css">
+  </head>
+  <body class="text-slate-950">
+    <div class="barba-load-container bg-slate-700">
+      <div
+        class="loading-screen relative h-full w-full flex items-center justify-center overflow-hidden"
+      >
+        <div
+          class="barba-load-container_bg-texts absolute inset-0 text-slate-600 text-9xl opacity-45 rotate-12 scale-150 whitespace-nowrap space-y-9 font-lexend font-bold"
+        >
+          <p>
+            <span> SYSTEMS THAT KEEP WORK MOVING </span>
+            <span> SYSTEMS THAT KEEP WORK MOVING </span>
+          </p>
+          <p>
+            <span> DATA THAT STAYS CORRECT UNDER FAILURE </span>
+            <span> DATA THAT STAYS CORRECT UNDER FAILURE </span>
+          </p>
+          <p>
+            <span> IDEMPOTENT JOBS THAT RETRY SAFELY </span>
+            <span> IDEMPOTENT JOBS THAT RETRY SAFELY </span>
+          </p>
+          <p>
+            <span> QUERIES SHAPED FOR THE DATA THEY READ </span>
+            <span> QUERIES SHAPED FOR THE DATA THEY READ </span>
+          </p>
+          <p>
+            <span> POINT-IN-TIME RECOVERY BEFORE INCIDENTS </span>
+            <span> POINT-IN-TIME RECOVERY BEFORE INCIDENTS </span>
+          </p>
+          <p>
+            <span> DISTRIBUTED TRACING AT SERVICE BOUNDARIES </span>
+            <span> DISTRIBUTED TRACING AT SERVICE BOUNDARIES </span>
+          </p>
+        </div>
+        <p
+          id="loading-screen-text"
+          class="font-delight text-9xl text-white z-50"
+        >
+          Loading
+        </p>
+      </div>
+    </div>
+    <div id="smooth-wrapper">
+      <div id="smooth-content" class="">
+        <div data-barba="wrapper">
+          <div data-barba="container" data-barba-namespace="post">
+            <header class="fixed top-0 w-full px-4 pt-1 flex gap-4 justify-between bg-transparent z-[9000]">
+  <div class="z-1000 w-fit">
+    <a href="/" class="uppercase font-lexend font-semibold text-slate-900">
+      t.sabudh
+    </a>
+  </div>
+  <nav class="font-semibold self-start max-md:text-right" aria-label="Primary navigation">
+    <a href="/about/" class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">About</a>,
+    <a href="/blog/" class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">Blog</a>,
+    <a href="/hire/" class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">Hire</a>,
+    <a href="/contact/" class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">Contact</a>
+  </nav>
+</header>
+
+<main class="px-5">
+  <article class="mx-auto max-w-3xl pt-28 pb-16">
+    <p class="uppercase font-lexend text-sm font-semibold tracking-wide text-amber-600">
+      PostgreSQL · 16 min read · <time datetime="2026-11-07">Nov 7, 2026</time>
+    </p>
+    <h1 class="mt-6 font-lexend font-bold text-slate-950 text-[clamp(40px,6vw,72px)] leading-[0.95]">
+      Your Postgres Lock Has a Hidden Expiry Date
+    </h1>
+    <p class="mt-6 text-2xl leading-relaxed text-slate-600 max-md:text-xl">
+      A lock that keeps two jobs apart can vanish mid-run, and a release step that swallows errors will still log that it was released cleanly.
+    </p>
+    <p class="mt-6 text-sm text-slate-500">
+      By <a href="/about/" class="font-semibold text-slate-700 underline decoration-amber-400 decoration-2 underline-offset-4">Sabudh Thapa</a>, backend and distributed systems engineer in Kathmandu, Nepal.
+    </p>
+
+    <div class="post-body mt-14 border-t border-slate-300 pt-10">
+      
+<p>A job rebuilds per-company tables. It takes a Postgres advisory lock so that two rebuilds never overlap. Then, about ten minutes into a long run, the lock disappears and another run takes it. <code>pg_locks</code> shows no advisory lock while the first run is still writing, and a release step that swallows errors logs that the lock was released, cleanly.</p>
+<p>The lock can be gone for hours.</p>
+<p>Nothing raises an error. If anything sets <code>idle_in_transaction_session_timeout</code> on your database (a DBA, a migration, a role setting, a provider default), a session advisory lock taken on a default connection from psycopg2 or SQLAlchemy expires with it, and your application never finds out.</p>
+<p>Check yours in 30 seconds:</p>
+<pre><code>select name, setting, source
+from pg_settings
+where name in (
+  'idle_in_transaction_session_timeout',
+  'idle_session_timeout')
+order by name;</code></pre>
+<p>A value above 0 in the first row means a session lock on a default connection can expire. The <a href="#checklist">checklist</a> says what to do about it.</p>
+<p>I reproduced the failure on a local Postgres (<a href="#run-it-yourself">scripts and expected output at the end</a>) and held the same lock four ways, with a second process trying to take it the whole time. Here is what the second process saw:</p>
+<table>
+  <thead>
+    <tr><th>method</th><th>what the second process saw (local, scaled runs)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1. session lock, default connection (idle in transaction)</td><td>Lost in 40 of 40 timing trials (20 cron, 20 event)</td></tr>
+    <tr><td>2. commit right after taking it (idle until the next query)</td><td>Held, then lost after one more query</td></tr>
+    <tr><td>3. session lock, AUTOCOMMIT, the immediate fix (idle)</td><td><strong>Held in 40 of 40 trials</strong> (20 cron, 20 event). Lost if the session ends another way</td></tr>
+    <tr><td>4a. lock inside the transaction, the robust fix: kill test</td><td>A killed run <strong>rolls back with its lock</strong></td></tr>
+    <tr><td>4b. the same lock: overlap test, two rebuilds of one company at once</td><td><strong>250 rows</strong> with the lock, 500 without</td></tr>
+  </tbody>
+</table>
+<p>Each method fixes the biggest cost left by the one before it:</p>
+<ol>
+  <li><strong>Default connection.</strong> The driver opens a transaction you never asked for. The database ends the idle transaction at the timeout, and the lock goes with the session.</li>
+  <li><strong>Commit after acquiring.</strong> Closing the transaction saves the lock, until the next query quietly opens another one.</li>
+  <li><strong>AUTOCOMMIT.</strong> No transaction stays open between statements, so that timeout never applies. The lock still dies with its session for any other reason, and the run keeps writing.</li>
+  <li><strong>Lock inside the transaction.</strong> The lock and the writes fail together, so a run that loses its lock cannot keep writing.</li>
+</ol>
+<p>The rest of this post covers each method in turn: what I ran, what I measured, and what broke. If you hold a session advisory lock today, the <a href="#checklist">checklist</a> is near the end, and every result can be <a href="#run-it-yourself">reproduced</a>.</p>
+
+<h2 id="three-terms">Three terms first</h2>
+<ul>
+  <li><strong>Session advisory lock:</strong> a lock your application defines, taken with <code>pg_advisory_lock</code> or <code>pg_try_advisory_lock</code>, that belongs to one database session. Postgres keeps it until the session ends or you unlock it. It does not need an open transaction.</li>
+  <li><strong>Idle in transaction:</strong> a session state, visible in <code>pg_stat_activity</code>, where a transaction is open and the session is doing nothing.</li>
+  <li><strong><code>idle_in_transaction_session_timeout</code>:</strong> a database setting that ends any session that stays idle in a transaction longer than the limit. It exists to clean up forgotten transactions. Ending a session releases every lock the session holds.</li>
+</ul>
+
+<h2 id="how-i-measured">How I measured</h2>
+<p>Every number below comes from a script you can run. Setup:</p>
+<ul>
+  <li>One throwaway local Postgres, version 18.6.</li>
+  <li>Python 3.13, SQLAlchemy 2.0.51, psycopg2 2.9.13.</li>
+  <li>The holder sets <code>idle_in_transaction_session_timeout</code> on its own session: 3 seconds in the step-by-step cases, 10 seconds in the timing runs. One real minute becomes one second. The timeout is a plain timer, so multiplying every interval by 60 keeps every ratio.</li>
+  <li>A second session tries for the same lock. <strong>Lost means the second session got the lock while the holder still believed it held it.</strong></li>
+</ul>
+<p>Before trusting that detector, I tested it on a fault of known size. I held the lock on an AUTOCOMMIT connection, so the timeout played no part, killed the holder's session with <code>pg_terminate_backend</code> at 2.00 seconds, and polled for the lock every 50 ms from a second session:</p>
+<pre><code>run 0: killed at 2.00s, second session got the lock at 2.008s
+run 1: killed at 2.00s, second session got the lock at 2.052s
+run 2: killed at 2.00s, second session got the lock at 2.006s
+run 3: killed at 2.00s, second session got the lock at 2.053s
+run 4: killed at 2.00s, second session got the lock at 2.004s</code></pre>
+<p>The detector sees a loss within one poll.</p>
+
+<h2 id="why-the-job-takes-a-lock">Why the job takes a lock</h2>
+<p>A full run rebuilds every company and takes hours. An incremental run rebuilds a handful, soon after new data lands. Each company's delete and insert already runs in one transaction, so no reader sees a half-deleted company. That does not stop two runs rebuilding the same company at once: both commit, and the company ends up with both runs' rows. So every run starts with one shared lock:</p>
+<pre><code>conn = engine.connect()
+got = conn.execute(text("select pg_try_advisory_lock(hashtextextended('rebuild:run', 0))")).scalar()
+if not got:
+    sys.exit(0)  # another run holds it; leave quietly</code></pre>
+<p>Three choices are packed into those lines.</p>
+<ul>
+  <li><strong>A session lock, on its own connection.</strong> A run is hours of work in many short transactions, and every lock except a session advisory lock ends with its transaction. The connection comes from the pool, and the run holds it until the end.</li>
+  <li><strong>One lock for the whole run.</strong> It is the simplest rule for "one run at a time".</li>
+  <li><strong>Try and exit, not wait.</strong> An incremental run that waited behind a full run would sit idle for hours, then redo work. Exiting is safe only if the refused work is retried: keep the queue entry, or commit no Kafka offset until the company is done.</li>
+</ul>
+
+<h2 id="method-1">Method 1: A session lock on a default connection</h2>
+<p><strong>The idea:</strong> take the lock once at the start of the run, on its own connection, and hold it until the end. This is the code in the previous section: one <code>pg_try_advisory_lock</code> on a connection of its own, with no commit.</p>
+<h3 id="method-1-results">Method 1 result: lost every time</h3>
+<p>With a 3-second timeout, one run of case A from <code>reproduce_cases.py</code> (<a href="#run-it-yourself">how to run it</a>):</p>
+<pre><code>A. default (autobegin)
+  acquired: True, holder state: idle in transaction
+  t=1s other process gets lock: False
+  t=5s other process gets lock: True
+  holder's next query fails: OperationalError</code></pre>
+<p>In the timing runs, a long run holds the lock under a 10-second timeout, and short runs try for it on a 5-second cron grid or on random events about once a second. 20 trials per row:</p>
+<figure>
+<svg viewBox="0 0 440 245" role="img" aria-labelledby="chart-title chart-desc" style="width:100%;height:auto" font-family="inherit">
+  <title id="chart-title">First short run to get the lock, in seconds after the long run took it</title>
+  <desc id="chart-desc">With a default connection, every cron trial got the lock between 10.19 and 14.98 seconds and every event trial between 10.06 and 12.67 seconds. With AUTOCOMMIT, no trial got the lock.</desc>
+  <g stroke="currentColor" stroke-opacity="0.2"><line x1="230" y1="24" x2="230" y2="190"/><line x1="390" y1="24" x2="390" y2="190"/></g>
+  <g fill="none" stroke="currentColor" stroke-opacity="0.45"><line x1="150" y1="190" x2="420" y2="190"/><line x1="150" y1="190" x2="150" y2="24"/></g>
+  <line x1="310" y1="24" x2="310" y2="190" stroke="#d97706" stroke-width="2" stroke-dasharray="5 4"/>
+  <text x="315" y="18" font-size="12" fill="#d97706">timeout, 10 s</text>
+  <g fill="currentColor" font-size="12" text-anchor="end"><text x="142" y="54">cron, default</text><text x="142" y="96">event, default</text><text x="142" y="138">cron, AUTOCOMMIT</text><text x="142" y="180">event, AUTOCOMMIT</text></g>
+  <rect x="313.0" y="42" width="76.6" height="16" rx="3" fill="#d97706"/><text x="313.0" y="38" font-size="11" fill="currentColor">10.19 to 14.98 s</text>
+  <rect x="311.0" y="84" width="41.8" height="16" rx="3" fill="#d97706"/><text x="311.0" y="80" font-size="11" fill="currentColor">10.06 to 12.67 s</text>
+  <text x="157" y="138" font-size="11" fill="currentColor" fill-opacity="0.85">no overlap, 20 of 20 trials</text>
+  <text x="157" y="180" font-size="11" fill="currentColor" fill-opacity="0.85">no overlap, 20 of 20 trials</text>
+  <g fill="currentColor" font-size="12" text-anchor="middle"><text x="150" y="208">0 s</text><text x="230" y="208">5 s</text><text x="310" y="208">10 s</text><text x="390" y="208">15 s</text><text x="285" y="232" font-size="11" fill-opacity="0.75">seconds after the long run took the lock</text></g>
+</svg>
+<figcaption>Each bar spans the earliest to the latest trial in which a short run got the lock, 20 trials per row. Nothing gets in before 10 s, and nothing gets in on AUTOCOMMIT.</figcaption>
+</figure>
+<pre><code>cron/default:      20/20 trials overlapped; min 10.19s, max 14.98s; 4 within 1s of the timeout
+cron/autocommit:   0/20 trials overlapped
+event/default:     20/20 trials overlapped; min 10.06s, max 12.67s; 11 within 1s of the timeout
+event/autocommit:  0/20 trials overlapped</code></pre>
+<p>Cron trials got in across the next 5-second tick, because each short run waits for the tick after the lock dies. Events bunched just after the timeout. None got in before 10 seconds. The loss is deterministic because the timeout is a plain clock, so 20 of 20 is the expected result, not a failure rate. Trials differ only in when the second process happens to poll.</p>
+<h3 id="the-cause">Why the lock vanished: three harmless facts</h3>
+<figure>
+<svg viewBox="0 0 440 285" role="img" aria-labelledby="diagram-title diagram-desc" style="width:100%;height:auto" font-family="inherit">
+  <title id="diagram-title">The lock lives on one session and the writes live on others</title>
+  <desc id="diagram-desc">A timeline from minute 0 to minute 15. The lock session is idle in transaction and is ended by the database at minute 10, marked with an X. The run's writes on other sessions continue past minute 10. A second run takes the lock just after minute 10 and rebuilds the same companies.</desc>
+  <g fill="currentColor" font-size="12" text-anchor="end"><text x="96" y="66">lock session</text><text x="96" y="124">run's writes</text><text x="96" y="146">other sessions</text><text x="96" y="216">second run</text></g>
+  <g stroke="currentColor" stroke-opacity="0.2"><line x1="104" y1="48" x2="104" y2="250"/><line x1="204" y1="48" x2="204" y2="250"/><line x1="404" y1="48" x2="404" y2="250"/></g>
+  <line x1="304" y1="48" x2="304" y2="250" stroke="#d97706" stroke-width="2" stroke-dasharray="5 4"/>
+  <text x="304" y="38" font-size="12" text-anchor="middle" fill="#d97706">minute 10: idle timeout</text>
+  <rect x="104" y="52" width="200" height="18" rx="3" fill="#0f766e"/>
+  <text x="112" y="65" font-size="11" fill="#ffffff">lock held, idle in transaction</text>
+  <g stroke="#dc2626" stroke-width="4" stroke-linecap="round"><line x1="296" y1="53" x2="312" y2="69"/><line x1="312" y1="53" x2="296" y2="69"/></g>
+  <text x="298" y="90" font-size="11" text-anchor="end" fill="currentColor" fill-opacity="0.85">session ended, lock gone</text>
+  <rect x="104" y="108" width="300" height="16" rx="3" fill="#0f766e" fill-opacity="0.55"/>
+  <rect x="104" y="130" width="300" height="16" rx="3" fill="#0f766e" fill-opacity="0.55"/>
+  <text x="112" y="120" font-size="11" fill="currentColor">rebuilding companies</text>
+  <text x="400" y="164" font-size="11" text-anchor="end" fill="currentColor" fill-opacity="0.85">writes carry on past minute 10</text>
+  <rect x="314" y="204" width="90" height="16" rx="3" fill="#d97706"/>
+  <text x="308" y="216" font-size="11" text-anchor="end" fill="currentColor">takes the lock, rebuilds</text>
+  <g fill="currentColor" font-size="12" text-anchor="middle"><text x="104" y="268">0</text><text x="204" y="268">5</text><text x="304" y="268">10</text><text x="404" y="268">15 min</text></g>
+</svg>
+<figcaption>The lock and the writes live on different sessions, so ending one does not end the other.</figcaption>
+</figure>
+<ol>
+  <li><strong>Drivers open transactions for you.</strong> psycopg2 and psycopg 3 begin a transaction before the first statement, even a plain SELECT, unless autocommit is on. SQLAlchemy 2.0 calls this autobegin. The lock code ran one SELECT and never committed, so the connection sat <code>idle in transaction</code> for the whole run.</li>
+  <li><strong>The database had a 10-minute <code>idle_in_transaction_session_timeout</code>.</strong> Set with <code>ALTER DATABASE</code>, it never appears in application config. Ask the database: <code>select setting, source from pg_settings where name = 'idle_in_transaction_session_timeout'</code>.</li>
+  <li><strong>Ending a session releases its session locks.</strong> That is the documented contract.</li>
+</ol>
+<p>About 10 minutes after the run took the lock, Postgres ended its session and the lock went with it. The run did its real work on other pooled connections, so it kept writing. The next incremental run got <code>true</code> from <code>pg_try_advisory_lock</code> and started. The timeout exists to end forgotten transactions, and it did what it was built to do.</p>
+<p>Two things say something, and neither helps. At the end of the run, the release step calls <code>pg_advisory_unlock</code> on a session the server ended long ago. That raises an error (case A above: the holder's next query fails). Code that catches it with <code>except Exception: pass</code> and then logs that the lock was released reports a clean release for a lock that was lost. Postgres writes this to the server log:</p>
+<pre><code>FATAL:  terminating connection due to idle-in-transaction timeout</code></pre>
+<p>One message sits in a log nobody watches. The other is false.</p>
+<h3 id="the-clue-was-in-the-timing">How to tell it from a lookalike</h3>
+<p>The timing runs above give the signature. No overlap begins before the timeout, and the first begins at the next trigger after it, so on a 5-minute cron grid the overlaps cluster between minute 10 and minute 15. A race in the lock code would land at any minute. A timer does not. Ten minutes could be another timer, so each lookalike has to be ruled out:</p>
+<table>
+  <thead>
+    <tr><th>lookalike</th><th>what rules it out</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>SQLAlchemy <code>pool_recycle</code></td><td>It acts only at checkout, and the lock connection stays checked out.</td></tr>
+    <tr><td><code>idle_session_timeout</code></td><td>It ends only sessions outside a transaction, and a default connection is inside one. Check with <code>show idle_session_timeout</code>.</td></tr>
+    <tr><td>NAT or firewall dropping idle connections</td><td>The server notices only when keepalive probes fail: over two hours with Linux defaults, so no hard floor at 10 minutes. Check <code>tcp_keepalives_*</code>.</td></tr>
+    <tr><td>Load balancer or proxy</td><td>It would also end the AUTOCOMMIT connection, which idles just as long. The reproduction has none.</td></tr>
+    <tr><td>A pooler timeout (pgbouncer <code>idle_transaction_timeout</code>)</td><td>Check where the timeout lives: the database logs the FATAL line below, a pooler logs its own. The reproduction has no pooler.</td></tr>
+  </tbody>
+</table>
+<p>A lock that works for 10 minutes beats no lock, but it does harm: everyone believes runs are serialised, so nobody adds another guard or looks for overlaps.</p>
+
+<h2 id="method-2">Method 2: Commit right after taking the lock</h2>
+<p><strong>The idea:</strong> the lock was lost because a transaction stayed open, so close it. A session lock survives a commit.</p>
+<pre><code>got = conn.execute(text("select pg_try_advisory_lock(hashtextextended('rebuild:run', 0))")).scalar()
+conn.commit()</code></pre>
+<h3 id="method-2-results">Method 2 result: held, then lost after one more query</h3>
+<p>Case C commits right after acquiring. Case D adds one <code>select 1</code> on the lock connection after the commit:</p>
+<pre><code>C. commit right after acquire
+  acquired: True, holder state: idle
+  t=1s other process gets lock: False
+  t=5s other process gets lock: False
+  holder: alive
+D. commit, then one more query
+  acquired: True, holder state: idle in transaction
+  t=1s other process gets lock: False
+  t=5s other process gets lock: True
+  holder's next query fails: OperationalError</code></pre>
+<p>Case C holds. Case D loses the lock again.</p>
+<p><strong>Why:</strong> a commit closes one transaction, and the connection opens a new one on its next statement. The likeliest next query is a mid-run "is my lock still held?" check, which brings the failure back.</p>
+
+<h2 id="method-3">Method 3: AUTOCOMMIT, the immediate fix</h2>
+<p><strong>The idea:</strong> make the lock connection unable to leave a transaction open.</p>
+<pre><code>- conn = engine.connect()
++ conn = engine.connect().execution_options(isolation_level="AUTOCOMMIT")</code></pre>
+<p>Each statement commits on its own, so the connection is plain <code>idle</code> between statements. The option is set on the connection, so no query added later can leave a transaction open.</p>
+<h3 id="method-3-results">Method 3 result: held</h3>
+<pre><code>B. AUTOCOMMIT
+  acquired: True, holder state: idle
+  t=1s other process gets lock: False
+  t=5s other process gets lock: False
+  holder: alive</code></pre>
+<p>In the timing runs, 0 of 40 trials (20 cron, 20 event) let a second run in during 30 seconds, three times the timeout. Method 3 removes the cause the timing pointed at.</p>
+<h3 id="method-3-what-broke">What it does not cover</h3>
+<p>Remember the calibration: a lock on an AUTOCOMMIT connection was gone within about 50 ms of its session ending. The first gap is a second guard. <code>idle_session_timeout</code> ends sessions that are idle <em>outside</em> a transaction, which is exactly where AUTOCOMMIT leaves the lock connection. Case E sets it to 3 seconds on an AUTOCOMMIT holder:</p>
+<pre><code>E. AUTOCOMMIT, with idle_session_timeout
+  acquired: True, holder state: idle
+  t=1s other process gets lock: False
+  t=5s other process gets lock: True
+  holder's next query fails: OperationalError</code></pre>
+<p>That is one way a session lock ends while the run keeps writing. The others, and what to do about each:</p>
+<table>
+  <thead>
+    <tr><th>what ends or traps the lock</th><th>what happens</th><th>what to do</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Failover, restart, a terminated connection, a middlebox dropping an idle one</td><td>The lock is released and the run reconnects on pooled connections and carries on (the calibration above). A check before each company only detects it afterwards. Read <code>pg_locks</code> for your own pid: calling <code>pg_try_advisory_lock</code> after a loss takes the lock afresh on a new session and returns true, which looks like success.</td><td>See Method 4.</td></tr>
+    <tr><td>The run's host loses its network</td><td>The server keeps the session until its keepalive probes (server-side settings) give up: about 2 hours 11 minutes with Linux defaults (7,200 s, then 9 probes 75 s apart). Every new run is refused.</td><td>Set keepalives. 60 s, 10 s and 3 probes notice in 90 seconds but lose the lock on a longer blip. Not tested on a real network drop.</td></tr>
+    <tr><td>A hung run with a healthy lock connection</td><td>The lock is held until someone notices. Method 1's timeout would have freed it (reasoned, not measured).</td><td>Alert on how long the lock has been held.</td></tr>
+    <tr><td><code>close()</code> on a pooled connection</td><td>The connection goes back to the pool with its session and locks alive. The pool's reset is a rollback, which leaves session locks alone.</td><td>Unlock in <code>finally</code> and raise on failure, or call <code>conn.invalidate()</code>.</td></tr>
+    <tr><td>pgbouncer in transaction mode</td><td>Session advisory locks are unsupported, by its documentation. I did not run it.</td><td>Use transaction-level locks.</td></tr>
+  </tbody>
+</table>
+<p><strong>Why it is not enough:</strong> the lock and the writes live on different sessions, so ending one does not end the other. No setting on the lock connection changes that.</p>
+
+<h2 id="method-4">Method 4: The lock inside the transaction, the robust fix</h2>
+<p><strong>The idea:</strong> rebuild each company in its own short transaction, and take a transaction-level lock for that company at the start of it:</p>
+<pre><code>begin;
+select pg_advisory_xact_lock(hashtextextended('rebuild:company:' || :company_id, 0));
+delete from company_rows where company_id = :company_id;
+insert into company_rows ...;
+commit;</code></pre>
+<p>Two properties come from two places. <strong>No half-written company</strong> comes from transaction atomicity. <strong>One writer per company</strong> comes from the lock, which lives in the same transaction as the writes. If the session dies, the transaction rolls back and the lock is released at the same moment, so a writer that lost its lock cannot get its writes accepted. Martin Kleppmann gets that guarantee from fencing tokens (numbers the storage checks, to reject a writer whose lock has lapsed) in <a href="https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html">How to do distributed locking</a>. His lock service and storage are separate systems. Here they are one transaction.</p>
+<h3 id="method-4-results">Method 4 result: 250 rows, and a killed run leaves nothing behind</h3>
+<p><strong>The transaction alone is not enough.</strong> Under READ COMMITTED, the second rebuild's delete waits for the first, then finds its old rows already gone and skips them, so it never sees the new rows (<a href="https://www.postgresql.org/docs/current/transaction-iso.html#XACT-READ-COMMITTED">the manual describes the skip</a>). <code>company_design.py</code> rebuilds a 250-row company twice at once:</p>
+<pre><code>no lock, READ COMMITTED:
+  run1: committed, waited 0.0s, deleted 250
+  run2: committed, waited 0.0s, deleted 0
+  rows afterwards: 500
+xact lock, READ COMMITTED:
+  run1: committed, waited 0.0s, deleted 250
+  run2: committed, waited 0.7s, deleted 250
+  rows afterwards: 250</code></pre>
+<p>Without the lock, 500 rows. With it, 250.</p>
+<p><strong>The test AUTOCOMMIT failed.</strong> A run takes a company's lock, deletes its 250 rows and keeps working. A second run for the same company waits. I end the first run's session after its delete and before its commit:</p>
+<pre><code>  holder: OperationalError
+  waiter: committed, waited 0.6s, deleted 250
+  row counts the observer ever saw: [250]; final rows: 250</code></pre>
+<p>The waiter got the lock only when the holder's transaction rolled back, then rebuilt the company once. The dead run's work vanished together with its lock. I tested one kill point.</p>
+<p><strong>What it costs.</strong> <code>company_perf.py</code> rebuilds 6,000 synthetic companies (1.32 million rows, indexed):</p>
+<pre><code>A. 6000 companies, 1,320,000 rows: delete + insert each company
+   one transaction for all companies, no lock                  14.0s
+   one transaction per company, no lock                        21.6s
+   one transaction per company + xact lock                     21.8s
+   50 companies per transaction + xact locks, sorted           15.8s
+   one transaction per company + xact lock, 4 workers           6.1s
+   one transaction per company + xact lock, 8 workers           3.5s</code></pre>
+<p>The lock adds no measurable cost in this run: 21.8 s with it against 21.6 s without (a single run, so compare the saved output). The cost is one commit per company, and 50 companies per transaction, locked in sorted order, brings the total back to the cost of one giant transaction. Runs on different companies do not wait for each other, unless their keys collide. A full run just takes each company's lock in turn, and a run-level lock is needed only to save duplicated work.</p>
+<h3 id="method-4-rules">Rules it depends on</h3>
+<ol>
+  <li><strong>READ COMMITTED, with the lock in its own statement,</strong> so the delete runs on a fresh snapshot after the wait. With the lock, REPEATABLE READ fails the delete after the wait with <code>could not serialize access due to concurrent delete</code>.</li>
+  <li><strong>Take the lock first, then read what you rebuild from.</strong></li>
+  <li><strong>Set <code>lock_timeout</code>.</strong> A waiter is active, not idle, so no idle guard ends it. Only <code>lock_timeout</code> or <code>statement_timeout</code> does. Retry the company when it fires. A run that sits idle inside the transaction is ended by the idle timeout and now rolls back with its lock, so the failure is loud and the rows are safe.</li>
+  <li><strong>Lock several companies in sorted order,</strong> so two runs cannot deadlock, and keep batches near 50.</li>
+  <li><strong>Every writer takes the lock.</strong> An advisory lock only excludes code that takes it. For text keys use <code>hashtextextended</code>: <code>hashtext</code> is 32-bit and can collide.</li>
+</ol>
+
+<h2 id="all-four">All four under the same faults</h2>
+<table>
+  <thead>
+    <tr><th>fault</th><th>1. default</th><th>2. commit after acquiring</th><th>3. AUTOCOMMIT</th><th>4. lock inside the transaction</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Lock connection idle past the idle-in-transaction timeout</td><td>Lost</td><td>Held</td><td>Held</td><td>Run fails and rolls back, rows intact</td></tr>
+    <tr><td>One more query, then idle past that timeout</td><td>Lost (follows)</td><td>Lost</td><td>Held (follows)</td><td>No session lock, and the transaction rolls back with its lock</td></tr>
+    <tr><td>Lock connection idle past <code>idle_session_timeout</code></td><td>Not affected: it is in a transaction (follows)</td><td>Lost (follows: it is plain idle)</td><td>Lost</td><td>No session lock, and the transaction rolls back with its lock</td></tr>
+    <tr><td>Holder's session killed</td><td>Lost within one poll (follows)</td><td>Lost within one poll (follows)</td><td>Lost within one poll</td><td>Lock and writes roll back together</td></tr>
+    <tr><td>Writes stop when the lock is lost</td><td>No</td><td>No</td><td>No</td><td>Yes</td></tr>
+  </tbody>
+</table>
+<p>Cells marked "follows" come from the state the connection is in, not from a script here. The rest are measured by the scripts above. The last row follows from where the writes run: only a lock in the same transaction as the writes can stop them.</p>
+
+<h2 id="checklist">Checklist</h2>
+<p>If you hold a session advisory lock:</p>
+<ol>
+  <li><strong>Check the lock connection's state:</strong> <code>select state from pg_stat_activity where pid = &lt;holder pid&gt;</code>. <code>idle in transaction</code> means you have this bug.</li>
+  <li><strong>Check both idle guards in <code>pg_settings</code>, with <code>source</code>:</strong> <code>idle_in_transaction_session_timeout</code> and <code>idle_session_timeout</code>. Database and role settings never show up in application config.</li>
+  <li><strong>Put the lock on its own AUTOCOMMIT connection.</strong> That removes this bug, not the others (item 8).</li>
+  <li><strong>Release in <code>finally</code>, and make the release tell the truth.</strong> Swallowed errors plus a success log make a lost lock look released.</li>
+  <li><strong>Test against a real Postgres with a shrunken timeout.</strong> A mocked engine cannot fail this way.</li>
+  <li><strong>Behind pgbouncer in transaction mode, use transaction-level locks only.</strong></li>
+  <li><strong>Set keepalives for what a dropped connection should do.</strong> Defaults can hold a lock for two hours. Tight ones lose it on a short blip.</li>
+  <li><strong>Tie the lock's lifetime to the writes it protects.</strong> On different sessions, no fix to the lock alone makes them safe.</li>
+</ol>
+
+<h2 id="why-not-just">Why not just...?</h2>
+<table>
+  <thead>
+    <tr><th>alternative</th><th>why not</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>SET idle_in_transaction_session_timeout = 0</code>, on the session or a role</td><td>It works, but it exempts the session from a guard the owner set on purpose and leaves the transaction open.</td></tr>
+    <tr><td>A heartbeat <code>select 1</code></td><td>It proves the connection is alive, not the run. The writes use other sessions, so a stalled run keeps writing, or a hung run keeps the lock. A watchdog that checks <code>pg_locks</code> only detects the loss afterwards.</td></tr>
+    <tr><td>Raise the timeout</td><td>It hides every other leaked transaction, and a run of hours needs a value that is no longer a guard.</td></tr>
+    <tr><td>One giant transaction</td><td>It holds a transaction id for hours (vacuum cannot clean up behind it), keeps row locks, and loses all work on failure.</td></tr>
+    <tr><td>Redis, etcd or a lease row</td><td>The holder can lose the lock and keep writing, so the database must check a fencing token. A lease row does, at an extra write per company and one hot row.</td></tr>
+    <tr><td>A row lock or a unique constraint</td><td>A row lock needs a parent row for every company and blocks foreign-key inserts. A unique constraint is a backstop, not exclusion.</td></tr>
+    <tr><td>SERIALIZABLE with retry</td><td>It works (250 rows). Without the lock, REPEATABLE READ misses a company's first build and leaves 500. But 8 different companies at once failed 7 of 8 with no index, 6 of 8 with an index and adjacent ids, and 0 of 8 with an index and spread-out ids. The same 10 companies took 8.8 s with 101 failed attempts, against 5.4 s and none for the lock (single runs).</td></tr>
+    <tr><td>A queue, an idempotent rebuild, the lock on the writes' connection, Kafka partitioning</td><td>Each solves a neighbouring problem. The overlap was two sources wanting the same company, runs wrote different outputs, and a full run is not keyed to one company. A lock on the writes' connection costs parallelism. The last two are reasoned, not tested.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="run-it-yourself">Run it yourself</h2>
+<p>You need Docker (or any Postgres you can throw away), Python 3, and about five minutes.</p>
+<ol>
+  <li><strong>Start a throwaway Postgres.</strong> <code>max_connections</code> must be at least 200 for the timing script.
+<pre><code>docker run --rm -d --name lockdemo -e POSTGRES_PASSWORD=pw -p 55433:5432 postgres:18 -c max_connections=200</code></pre> The <code>postgres:18</code> image was 18.6 when I ran this.</li>
+  <li><strong>Install the dependencies.</strong>
+<pre><code>python -m venv .venv &amp;&amp; . .venv/bin/activate &amp;&amp; pip install "sqlalchemy==2.0.51" psycopg2-binary</code></pre></li>
+  <li><strong>Point the scripts at it.</strong>
+<pre><code>export DSN="postgresql+psycopg2://postgres:pw@localhost:55433/postgres"</code></pre></li>
+  <li><strong>Download the scripts,</strong> which live in one folder (start with its <a href="/assets/scripts/advisory-lock/README.md">README</a>), then run each and compare its output with the saved output next to it.</li>
+  <li><strong>Clean up:</strong> <code>docker stop lockdemo</code>.</li>
+</ol>
+<table>
+  <thead>
+    <tr><th>script</th><th>shows</th><th>time</th><th>compare with</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><a href="/assets/scripts/advisory-lock/reproduce_cases.py"><code>reproduce_cases.py</code></a></td><td>Cases A to E</td><td>30 s, locks only</td><td><a href="/assets/scripts/advisory-lock/expected/reproduce_cases.txt">reproduce_cases.txt</a>, line for line</td></tr>
+    <tr><td><a href="/assets/scripts/advisory-lock/timing_sim.py"><code>timing_sim.py</code></a></td><td>The timing runs and chart</td><td>30 s, locks only</td><td><a href="/assets/scripts/advisory-lock/expected/timing_sim.txt">timing_sim.txt</a>: default 20 of 20 overlapped, none before 10 s; AUTOCOMMIT 0 of 20</td></tr>
+    <tr><td><a href="/assets/scripts/advisory-lock/calibrate.py"><code>calibrate.py</code></a></td><td>The detector check</td><td>11 s, locks only</td><td><a href="/assets/scripts/advisory-lock/expected/calibrate.txt">calibrate.txt</a>: each within about 50 ms of 2.00 s</td></tr>
+    <tr><td><a href="/assets/scripts/advisory-lock/company_design.py"><code>company_design.py</code></a></td><td>Method 4: 500 against 250 rows, the kill test</td><td>25 s, two small tables, dropped after</td><td><a href="/assets/scripts/advisory-lock/expected/company_design.txt">company_design.txt</a>, apart from the waits</td></tr>
+    <tr><td><a href="/assets/scripts/advisory-lock/company_perf.py"><code>company_perf.py</code></a></td><td>Cost per company, SERIALIZABLE false conflicts with adjacent and spread-out ids, SERIALIZABLE against the lock</td><td>1 min, two tables of 1.3 million rows, dropped after</td><td><a href="/assets/scripts/advisory-lock/expected/company_perf.txt">company_perf.txt</a>: seconds move; 7, 6 and 0 of 8 failures; retries against none</td></tr>
+  </tbody>
+</table>
+
+<h2 id="three-runs">Three runs that measured the wrong thing</h2>
+<ul>
+  <li><strong>The mocked tests.</strong> They had no transaction state and no server timeout, so they passed every time and could never have failed. A test on a real Postgres with a 1-second timeout fails on the old code in about a second.</li>
+  <li><strong>The first case D.</strong> It reported the lock held when it should have been lost. Case C's connection had been "closed" with <code>close()</code>, went back to the pool with its session alive, and kept holding the lock under the same key. Now every case uses its own key and ends its session with <code>conn.invalidate()</code>.</li>
+  <li><strong>The first SERIALIZABLE run.</strong> 6 of 8 different companies failed, which I read as SERIALIZABLE confusing unrelated companies. The 8 ids were adjacent, so their index entries shared pages. With spread-out ids, 0 of 8 failed. I had measured my test data.</li>
+</ul>
+
+<h2 id="what-i-did-not-test">What I did not test, and caveats</h2>
+<ul>
+  <li><strong>A real network drop or a failover.</strong> I ended sessions with <code>pg_terminate_backend</code>, the closest local stand-in. The two-hour figure comes from the default keepalive settings.</li>
+  <li><strong>Method 4 beyond one kill point.</strong> I ended the session after the delete and before the commit, and ran several companies per transaction as a cost test, not a failure test.</li>
+  <li><strong>pgbouncer, other drivers, Kafka partitioning, idempotent rebuilds.</strong> pgbouncer is from its documentation, everything ran on psycopg2 under SQLAlchemy 2.0, and the last two are reasoned.</li>
+  <li><strong>Timing and cost numbers</strong> scale minutes to seconds on one machine, with synthetic rows. Real cron and start-up delays are noisier, and a commit costs more on network storage. Numbers move a little from run to run. The shape does not.</li>
+</ul>
+
+
+    </div>
+
+    <footer class="mt-16 border-t border-slate-300 pt-8 text-slate-600">
+      <p>
+        Working on a system with the same failure shapes? I take remote backend contracts from Nepal.
+        <a href="/hire/" class="font-semibold text-amber-700 underline decoration-amber-400 decoration-2 underline-offset-4">How I work with teams</a>
+        ·
+        <a href="/blog/" class="font-semibold text-slate-800 underline decoration-amber-400 decoration-2 underline-offset-4">More notes</a>
+      </p>
+    </footer>
+  </article>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "@id": "https://tsabudh.com.np/blog/your-postgres-advisory-lock-is-gone/#article",
+      "mainEntityOfPage": "https://tsabudh.com.np/blog/your-postgres-advisory-lock-is-gone/",
+      "url": "https://tsabudh.com.np/blog/your-postgres-advisory-lock-is-gone/",
+      "headline": "Your Postgres Lock Has a Hidden Expiry Date",
+      "description": "A Postgres advisory lock vanished mid-job and the log said it was released cleanly. Why, and four ways to hold it, each reproducible.",
+      "datePublished": "2026-11-07",
+      "dateModified": "2026-11-07",
+      "inLanguage": "en",
+      "keywords": "PostgreSQL, advisory lock, pg_try_advisory_lock, pg_advisory_xact_lock, pg_stat_activity, idle_in_transaction_session_timeout, SQLAlchemy, psycopg2, AUTOCOMMIT, pgbouncer, distributed locking, backend engineer Nepal",
+      "image": "https://tsabudh.com.np/assets/images/sabudh.png",
+      "author": { "@id": "https://tsabudh.com.np/#sabudh-thapa" },
+      "publisher": { "@id": "https://tsabudh.com.np/#sabudh-thapa" },
+      "isPartOf": { "@id": "https://tsabudh.com.np/#website" }
+    }
+  </script>
+
+  <main class="px-5">
+    <section class="py-6 flex flex-col gap-10">
+
+        <div class="h-[1px] bg-slate-600 mb-1"></div>
+        <div class="flex justify-between items-center flex-wrap gap-4 max-md:justify-center font-semibold">
+            <div class="flex items-center gap-4">
+
+                <div class="_wrapper">
+
+                    <a href="/"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        Home
+                    </a>
+                </div>
+                <div class="_wrapper">
+
+                    <a href="/about/"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        About
+                    </a>
+                </div>
+                <div class="_wrapper">
+
+                    <a href="/blog/"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        Blog
+                    </a>
+                </div>
+                <div class="_wrapper">
+                    <a href="/resume/"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        Resume
+                    </a>
+                </div>
+                <div class="_wrapper">
+                    <a href="/hire/"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        Hire
+                    </a>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="_wrapper">
+                    <a href="mailto:tsabudh@gmail.com"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        <span>tsabudh</span>&#64;<span>gmail.com</span>
+                    </a>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="_wrapper">
+                    <a href="https://github.com/tsabudh" target="_blank" rel="noopener"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        Github
+                    </a>
+                </div>
+                <div class="_wrapper">
+                    <a href="https://www.linkedin.com/in/tsabudh" target="_blank" rel="noopener"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        Linkedin
+                    </a>
+                </div>
+                <div class="_wrapper">
+                    <a href="https://medium.com/@tsabudh" target="_blank" rel="noopener"
+                        class="relative before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:border-b-2 before:border-amber-400 before:scale-x-0 before:origin-right hover:before:scale-x-100 hover:before:origin-left before:transition-transform before:duration-300">
+                        Medium
+                    </a>
+                </div>
+
+            </div>
+            <p class="basis-full text-center text-sm font-normal text-slate-500">Sabudh Thapa, backend engineer in Kathmandu, Nepal.</p>
+        </div>
+
+    </section>
+</main>
+
+</main>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

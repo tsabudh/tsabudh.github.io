@@ -1,0 +1,4 @@
+cron/default:      20/20 trials overlapped; min 10.19s, max 14.98s; 4 within 1s of the timeout
+cron/autocommit:   0/20 trials overlapped
+event/default:     20/20 trials overlapped; min 10.06s, max 12.67s; 11 within 1s of the timeout
+event/autocommit:  0/20 trials overlapped
