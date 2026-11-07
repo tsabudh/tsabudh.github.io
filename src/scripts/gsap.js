@@ -25,7 +25,65 @@ export function initScrollSmoother() {
     effects: true,
   });
   ScrollTrigger.refresh();
+  guardWrapperScroll();
+  scrollToHash(location.hash, false);
 }
+
+// The smoother wrapper is fixed with overflow:hidden, but the browser still
+// scrolls it for fragment jumps (#id in the URL), find-in-page and focus.
+// That offset stacks on top of the smoother's own (window) scroll and leaves
+// a long blank tail at the end of the page. Move any such offset onto the
+// smoother instead, so there is only ever one scroll position.
+let guardedWrapper = null;
+function guardWrapperScroll() {
+  const wrapper = smoother?.wrapper();
+  if (!wrapper || wrapper === guardedWrapper) return;
+  guardedWrapper = wrapper;
+  wrapper.addEventListener("scroll", () => {
+    const drift = wrapper.scrollTop;
+    if (!drift || !smoother) return;
+    wrapper.scrollTop = 0;
+    smoother.scrollTop(smoother.scrollTop() + drift);
+  });
+}
+
+function targetForHash(hash) {
+  if (!hash || hash === "#") return null;
+  try {
+    return document.getElementById(decodeURIComponent(hash.slice(1)));
+  } catch {
+    return null;
+  }
+}
+
+// Scroll to an in-page anchor through the smoother, honouring scroll-margin-top.
+export function scrollToHash(hash, smooth = true) {
+  const target = targetForHash(hash);
+  if (!target) return false;
+  if (!smoother) {
+    target.scrollIntoView({ behavior: smooth ? "smooth" : "auto" });
+    return true;
+  }
+  const offset = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+  smoother.scrollTo(target, smooth, `top ${offset}px`);
+  return true;
+}
+
+// Same-page anchor links ("#checklist" or "/this/page/#checklist").
+export function isSamePageHashLink(el) {
+  if (!el || el.target === "_blank" || !el.hash) return false;
+  return el.origin === location.origin && el.pathname === location.pathname;
+}
+
+document.addEventListener("click", (event) => {
+  if (event.defaultPrevented || event.button !== 0) return;
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const link = event.target.closest?.("a[href]");
+  if (!isSamePageHashLink(link)) return;
+  if (!scrollToHash(link.hash)) return;
+  event.preventDefault();
+  if (location.hash !== link.hash) history.pushState(history.state, "", link.hash);
+});
 
 export default gsap;
 export { smoother };
