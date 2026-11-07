@@ -1,0 +1,5 @@
+run 0: killed at 2.00s, second session got the lock at 2.008s
+run 1: killed at 2.00s, second session got the lock at 2.052s
+run 2: killed at 2.00s, second session got the lock at 2.006s
+run 3: killed at 2.00s, second session got the lock at 2.053s
+run 4: killed at 2.00s, second session got the lock at 2.004s

@@ -1,0 +1,25 @@
+A. default (autobegin)
+  acquired: True, holder state: idle in transaction
+  t=1s other process gets lock: False
+  t=5s other process gets lock: True
+  holder's next query fails: OperationalError
+B. AUTOCOMMIT
+  acquired: True, holder state: idle
+  t=1s other process gets lock: False
+  t=5s other process gets lock: False
+  holder: alive
+C. commit right after acquire
+  acquired: True, holder state: idle
+  t=1s other process gets lock: False
+  t=5s other process gets lock: False
+  holder: alive
+D. commit, then one more query
+  acquired: True, holder state: idle in transaction
+  t=1s other process gets lock: False
+  t=5s other process gets lock: True
+  holder's next query fails: OperationalError
+E. AUTOCOMMIT, with idle_session_timeout
+  acquired: True, holder state: idle
+  t=1s other process gets lock: False
+  t=5s other process gets lock: True
+  holder's next query fails: OperationalError

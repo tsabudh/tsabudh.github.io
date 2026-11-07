@@ -1,0 +1,47 @@
+expected rows per company: 250
+
+no lock, READ COMMITTED:
+  run1: committed, waited 0.0s, deleted 250
+  run2: committed, waited 0.0s, deleted 0
+  rows afterwards: 500
+xact lock, READ COMMITTED:
+  run1: committed, waited 0.0s, deleted 250
+  run2: committed, waited 0.7s, deleted 250
+  rows afterwards: 250
+xact lock, REPEATABLE READ:
+  run1: committed, waited 0.0s, deleted 250
+  run2: SerializationFailure
+  rows afterwards: 250
+no lock, REPEATABLE READ:
+  run1: committed, waited 0.0s, deleted 250
+  run2: SerializationFailure
+  rows afterwards: 250
+no lock, SERIALIZABLE:
+  run1: committed, waited 0.0s, deleted 250
+  run2: SerializationFailure
+  rows afterwards: 250
+no lock, READ COMMITTED, new company:
+  run1: committed, waited 0.0s, deleted 0
+  run2: committed, waited 0.0s, deleted 0
+  rows afterwards: 500
+no lock, REPEATABLE READ, new company:
+  run1: committed, waited 0.0s, deleted 0
+  run2: committed, waited 0.0s, deleted 0
+  rows afterwards: 500
+no lock, SERIALIZABLE, new company:
+  run1: committed, waited 0.0s, deleted 0
+  run2: SerializationFailure
+  rows afterwards: 250
+xact lock, READ COMMITTED, new company:
+  run1: committed, waited 0.0s, deleted 0
+  run2: committed, waited 0.7s, deleted 250
+  rows afterwards: 250
+
+kill the holder after its delete, before its commit; a second run waits; an observer counts rows every 20 ms
+  holder: OperationalError
+  waiter: committed, waited 0.6s, deleted 250
+  row counts the observer ever saw: [250]; final rows: 250
+
+the idle-in-transaction timeout (1 s) ends a run that sits idle 3 s inside its company transaction
+  run fails with OperationalError; rows afterwards: 250
+  next run: committed, waited 0.0s, deleted 250; rows afterwards: 250
