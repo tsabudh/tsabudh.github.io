@@ -111,7 +111,7 @@ cron/autocommit:   0/20 trials overlapped
 event/default:     20/20 trials overlapped; min 10.06s, max 12.67s; 11 within 1s of the timeout
 event/autocommit:  0/20 trials overlapped</code></pre>
 <p>Cron trials got in across the next 5-second tick, because each short run waits for the tick after the lock dies. Events bunched just after the timeout. None got in before 10 seconds. The loss is deterministic because the timeout is a plain clock, so 20 of 20 is the expected result, not a failure rate. Trials differ only in when the second process happens to poll.</p>
-<h3 id="the-cause">Why the lock vanished: three harmless facts</h3>
+<h3 id="the-cause">Why the lock vanished: three harmless pieces</h3>
 <figure>
 <svg viewBox="0 0 440 285" role="img" aria-labelledby="diagram-title diagram-desc" style="width:100%;height:auto" font-family="inherit">
   <title id="diagram-title">The lock lives on one session and the writes live on others</title>
@@ -136,10 +136,10 @@ event/autocommit:  0/20 trials overlapped</code></pre>
 </figure>
 <ol>
   <li><strong>Drivers open transactions for you.</strong> psycopg2 and psycopg 3 begin a transaction before the first statement, even a plain SELECT, unless autocommit is on. SQLAlchemy 2.0 calls this autobegin. The lock code ran one SELECT and never committed, so the connection sat <code>idle in transaction</code> for the whole run.</li>
-  <li><strong>The database had a 10-minute <code>idle_in_transaction_session_timeout</code>.</strong> Set with <code>ALTER DATABASE</code>, it never appears in application config. Ask the database: <code>select setting, source from pg_settings where name = 'idle_in_transaction_session_timeout'</code>.</li>
+  <li><strong>A 10-minute <code>idle_in_transaction_session_timeout</code> on the database fits every symptom.</strong> Set with <code>ALTER DATABASE</code>, such a timeout never appears in application config. Ask the database: <code>select setting, source from pg_settings where name = 'idle_in_transaction_session_timeout'</code>.</li>
   <li><strong>Ending a session releases its session locks.</strong> That is the documented contract.</li>
 </ol>
-<p>About 10 minutes after the run took the lock, Postgres ended its session and the lock went with it. The run did its real work on other pooled connections, so it kept writing. The next incremental run got <code>true</code> from <code>pg_try_advisory_lock</code> and started. The timeout exists to end forgotten transactions, and it did what it was built to do.</p>
+<p>About 10 minutes after the run took the lock, the database (or something in front of it) ended its session and the lock went with it. The run did its real work on other pooled connections, so it kept writing. The next incremental run got <code>true</code> from <code>pg_try_advisory_lock</code> and started. If it was the database's timeout, it did what it was built to do: end forgotten transactions.</p>
 <p>Two things said something, and neither helped. At the end of the run, the release step called <code>pg_advisory_unlock</code> on a session the server had ended long ago. That raised an error (case A above: the holder's next query fails). The code caught it with <code>except Exception: pass</code>, then logged that the lock was released: a clean release for a lock that was lost. Postgres writes this to the server log for every session it ends this way:</p>
 <pre><code>FATAL:  terminating connection due to idle-in-transaction timeout</code></pre>
 <p>One message goes to a log nobody watches. The other was false.</p>
