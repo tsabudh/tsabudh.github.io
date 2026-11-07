@@ -26,7 +26,30 @@ export function initScrollSmoother() {
   });
   ScrollTrigger.refresh();
   guardWrapperScroll();
-  scrollToHash(location.hash, false);
+  if (scrollToHash(location.hash, false)) settleOnHash(location.hash);
+}
+
+// Web fonts and images that arrive after the first jump change the layout
+// (the advisory-lock post grows by ~740px when its fonts land), leaving the
+// anchor hundreds of pixels off. Jump again once loading is done, unless the
+// reader has started scrolling or the hash has changed meanwhile.
+function settleOnHash(hash) {
+  let readerMoved = false;
+  const events = ["wheel", "touchstart", "keydown", "pointerdown"];
+  const onMove = () => { readerMoved = true; };
+  events.forEach((e) => window.addEventListener(e, onMove, { once: true, passive: true }));
+
+  const pageLoaded = document.readyState === "complete"
+    ? Promise.resolve()
+    : new Promise((resolve) => window.addEventListener("load", resolve, { once: true }));
+  const fontsLoaded = document.fonts?.ready ?? Promise.resolve();
+
+  Promise.all([pageLoaded, fontsLoaded]).then(() => {
+    events.forEach((e) => window.removeEventListener(e, onMove));
+    if (readerMoved || location.hash !== hash) return;
+    ScrollTrigger.refresh();
+    scrollToHash(hash, false);
+  });
 }
 
 // The smoother wrapper is fixed with overflow:hidden, but the browser still
