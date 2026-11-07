@@ -98,7 +98,7 @@
       gtag("config", "G-Y0XSCM2LK7", { send_page_view: false });
     </script>
     
-    <script type="module" crossorigin src="/assets/barba-FVfipmJv.js"></script>
+    <script type="module" crossorigin src="/assets/barba-CchIbhuu.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/barba-DvL8nLT-.css">
   </head>
   <body class="text-slate-950">
@@ -177,8 +177,8 @@
 
     <div class="post-body mt-14 border-t border-slate-300 pt-10">
       
-<p>A job rebuilds per-company tables. It takes a Postgres advisory lock so that two rebuilds never overlap. Then, about ten minutes into a long run, the lock disappears and another run takes it. <code>pg_locks</code> shows no advisory lock while the first run is still writing, and a release step that swallows errors logs that the lock was released, cleanly.</p>
-<p>The lock can be gone for hours.</p>
+<p>A production job of mine rebuilt per-company tables. It took a Postgres advisory lock so that two rebuilds never overlapped. Then, about ten minutes into a long run, the lock disappeared and another run took it. <code>pg_locks</code> showed no advisory lock while the first run was still writing, and a release step that swallowed errors logged that the lock was released, cleanly.</p>
+<p>I can't share that job's data, so everything below is reproduced locally. A lock lost this way stays lost for the rest of the run, and a full run takes hours.</p>
 <p>Nothing raises an error. If anything sets <code>idle_in_transaction_session_timeout</code> on your database (a DBA, a migration, a role setting, a provider default), a session advisory lock taken on a default connection from psycopg2 or SQLAlchemy expires with it, and your application never finds out.</p>
 <p>Check yours in 30 seconds:</p>
 <pre><code>select name, setting, source
@@ -188,7 +188,7 @@ where name in (
   'idle_session_timeout')
 order by name;</code></pre>
 <p>A value above 0 in the first row means a session lock on a default connection can expire. The <a href="#checklist">checklist</a> says what to do about it.</p>
-<p>I reproduced the failure on a local Postgres (<a href="#run-it-yourself">scripts and expected output at the end</a>) and held the same lock four ways, with a second process trying to take it the whole time. Here is what the second process saw:</p>
+<p>On a local Postgres (<a href="#run-it-yourself">scripts and expected output at the end</a>), I held the same lock four ways, with a second process trying to take it the whole time. Here is what the second process saw:</p>
 <table>
   <thead>
     <tr><th>method</th><th>what the second process saw (local, scaled runs)</th></tr>
@@ -307,9 +307,9 @@ event/autocommit:  0/20 trials overlapped</code></pre>
   <li><strong>Ending a session releases its session locks.</strong> That is the documented contract.</li>
 </ol>
 <p>About 10 minutes after the run took the lock, Postgres ended its session and the lock went with it. The run did its real work on other pooled connections, so it kept writing. The next incremental run got <code>true</code> from <code>pg_try_advisory_lock</code> and started. The timeout exists to end forgotten transactions, and it did what it was built to do.</p>
-<p>Two things say something, and neither helps. At the end of the run, the release step calls <code>pg_advisory_unlock</code> on a session the server ended long ago. That raises an error (case A above: the holder's next query fails). Code that catches it with <code>except Exception: pass</code> and then logs that the lock was released reports a clean release for a lock that was lost. Postgres writes this to the server log:</p>
+<p>Two things said something, and neither helped. At the end of the run, the release step called <code>pg_advisory_unlock</code> on a session the server had ended long ago. That raised an error (case A above: the holder's next query fails). The code caught it with <code>except Exception: pass</code>, then logged that the lock was released: a clean release for a lock that was lost. Postgres wrote this to the server log:</p>
 <pre><code>FATAL:  terminating connection due to idle-in-transaction timeout</code></pre>
-<p>One message sits in a log nobody watches. The other is false.</p>
+<p>One message sat in a log nobody watched. The other was false.</p>
 <h3 id="the-clue-was-in-the-timing">How to tell it from a lookalike</h3>
 <p>The timing runs above give the signature. No overlap begins before the timeout, and the first begins at the next trigger after it, so on a 5-minute cron grid the overlaps cluster between minute 10 and minute 15. A race in the lock code would land at any minute. A timer does not. Ten minutes could be another timer, so each lookalike has to be ruled out:</p>
 <table>
@@ -321,7 +321,7 @@ event/autocommit:  0/20 trials overlapped</code></pre>
     <tr><td><code>idle_session_timeout</code></td><td>It ends only sessions outside a transaction, and a default connection is inside one. Check with <code>show idle_session_timeout</code>.</td></tr>
     <tr><td>NAT or firewall dropping idle connections</td><td>The server notices only when keepalive probes fail: over two hours with Linux defaults, so no hard floor at 10 minutes. Check <code>tcp_keepalives_*</code>.</td></tr>
     <tr><td>Load balancer or proxy</td><td>It would also end the AUTOCOMMIT connection, which idles just as long. The reproduction has none.</td></tr>
-    <tr><td>A pooler timeout (pgbouncer <code>idle_transaction_timeout</code>)</td><td>Check where the timeout lives: the database logs the FATAL line below, a pooler logs its own. The reproduction has no pooler.</td></tr>
+    <tr><td>A pooler timeout (pgbouncer <code>idle_transaction_timeout</code>)</td><td>Check where the timeout lives: the database logs the FATAL line above, a pooler logs its own. The reproduction has no pooler.</td></tr>
   </tbody>
 </table>
 <p>A lock that works for 10 minutes beats no lock, but it does harm: everyone believes runs are serialised, so nobody adds another guard or looks for overlaps.</p>
