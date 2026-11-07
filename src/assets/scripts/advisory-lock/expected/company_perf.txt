@@ -1,0 +1,16 @@
+A. 6000 companies, 1,320,000 rows: delete + insert each company
+   one transaction for all companies, no lock                  14.0s
+   one transaction per company, no lock                        21.6s
+   one transaction per company + xact lock                     21.8s
+   50 companies per transaction + xact locks, sorted           15.8s
+   one transaction per company + xact lock, 4 workers           6.1s
+   one transaction per company + xact lock, 8 workers           3.5s
+
+B. 8 concurrent SERIALIZABLE rebuilds of 8 DIFFERENT companies, no lock (every failure is a false conflict)
+   no index, adjacent ids               failed: 7 of 8
+   index, adjacent ids                  failed: 6 of 8
+   index, ids spread across the table   failed: 0 of 8
+
+C. 8 workers each rebuild the same 10 companies (overlapping runs), 0.3 s of work each
+   SERIALIZABLE + retry, no lock      8.8s, failed attempts 101, rows 2200 (expected 2200)
+   READ COMMITTED + xact lock         5.4s, failed attempts   0, rows 2200 (expected 2200)
