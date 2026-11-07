@@ -308,7 +308,7 @@ xact lock, READ COMMITTED:
 <pre><code>python -m venv .venv &amp;&amp; . .venv/bin/activate &amp;&amp; pip install "sqlalchemy==2.0.51" psycopg2-binary</code></pre></li>
   <li><strong>Point the scripts at it.</strong>
 <pre><code>export DSN="postgresql+psycopg2://postgres:pw@localhost:55433/postgres"</code></pre></li>
-  <li><strong>Download the scripts,</strong> which live in one folder (start with its <a href="/assets/scripts/advisory-lock/README.md">README</a>), then run each and compare its output with the saved output next to it.</li>
+  <li><strong>Download the scripts,</strong> which live in one folder (start with its <a href="/assets/scripts/advisory-lock/README.md" target="_blank" rel="noopener">README</a>), then run each and compare its output with the saved output next to it.</li>
   <li><strong>Clean up:</strong> <code>docker stop lockdemo</code>.</li>
 </ol>
 <table>
@@ -316,11 +316,11 @@ xact lock, READ COMMITTED:
     <tr><th>script</th><th>shows</th><th>time</th><th>compare with</th></tr>
   </thead>
   <tbody>
-    <tr><td><a href="/assets/scripts/advisory-lock/reproduce_cases.py"><code>reproduce_cases.py</code></a></td><td>Cases A to E</td><td>30 s, locks only</td><td><a href="/assets/scripts/advisory-lock/expected/reproduce_cases.txt">reproduce_cases.txt</a>, line for line</td></tr>
-    <tr><td><a href="/assets/scripts/advisory-lock/timing_sim.py"><code>timing_sim.py</code></a></td><td>The timing runs and chart</td><td>30 s, locks only</td><td><a href="/assets/scripts/advisory-lock/expected/timing_sim.txt">timing_sim.txt</a>: default 20 of 20 overlapped, none before 10 s; AUTOCOMMIT 0 of 20</td></tr>
-    <tr><td><a href="/assets/scripts/advisory-lock/calibrate.py"><code>calibrate.py</code></a></td><td>The detector check</td><td>11 s, locks only</td><td><a href="/assets/scripts/advisory-lock/expected/calibrate.txt">calibrate.txt</a>: each within about 50 ms of 2.00 s</td></tr>
-    <tr><td><a href="/assets/scripts/advisory-lock/company_design.py"><code>company_design.py</code></a></td><td>Method 4: 500 against 250 rows, the kill test</td><td>25 s, two small tables, dropped after</td><td><a href="/assets/scripts/advisory-lock/expected/company_design.txt">company_design.txt</a>, apart from the waits</td></tr>
-    <tr><td><a href="/assets/scripts/advisory-lock/company_perf.py"><code>company_perf.py</code></a></td><td>Cost per company, SERIALIZABLE false conflicts with adjacent and spread-out ids, SERIALIZABLE against the lock</td><td>1 min, two tables of 1.3 million rows, dropped after</td><td><a href="/assets/scripts/advisory-lock/expected/company_perf.txt">company_perf.txt</a>: seconds move; 7, 6 and 0 of 8 failures; retries against none</td></tr>
+    <tr><td><a href="/assets/scripts/advisory-lock/reproduce_cases.py" target="_blank" rel="noopener"><code>reproduce_cases.py</code></a></td><td>Cases A to E</td><td>30 s, locks only</td><td><a href="/assets/scripts/advisory-lock/expected/reproduce_cases.txt" target="_blank" rel="noopener">reproduce_cases.txt</a>, line for line</td></tr>
+    <tr><td><a href="/assets/scripts/advisory-lock/timing_sim.py" target="_blank" rel="noopener"><code>timing_sim.py</code></a></td><td>The timing runs and chart</td><td>30 s, locks only</td><td><a href="/assets/scripts/advisory-lock/expected/timing_sim.txt" target="_blank" rel="noopener">timing_sim.txt</a>: default 20 of 20 overlapped, none before 10 s; AUTOCOMMIT 0 of 20</td></tr>
+    <tr><td><a href="/assets/scripts/advisory-lock/calibrate.py" target="_blank" rel="noopener"><code>calibrate.py</code></a></td><td>The detector check</td><td>11 s, locks only</td><td><a href="/assets/scripts/advisory-lock/expected/calibrate.txt" target="_blank" rel="noopener">calibrate.txt</a>: each within about 50 ms of 2.00 s</td></tr>
+    <tr><td><a href="/assets/scripts/advisory-lock/company_design.py" target="_blank" rel="noopener"><code>company_design.py</code></a></td><td>Method 4: 500 against 250 rows, the kill test</td><td>25 s, two small tables, dropped after</td><td><a href="/assets/scripts/advisory-lock/expected/company_design.txt" target="_blank" rel="noopener">company_design.txt</a>, apart from the waits</td></tr>
+    <tr><td><a href="/assets/scripts/advisory-lock/company_perf.py" target="_blank" rel="noopener"><code>company_perf.py</code></a></td><td>Cost per company, SERIALIZABLE false conflicts with adjacent and spread-out ids, SERIALIZABLE against the lock</td><td>1 min, two tables of 1.3 million rows, dropped after</td><td><a href="/assets/scripts/advisory-lock/expected/company_perf.txt" target="_blank" rel="noopener">company_perf.txt</a>: seconds move; 7, 6 and 0 of 8 failures; retries against none</td></tr>
   </tbody>
 </table>
 

@@ -21,9 +21,7 @@ initLinkTracking();
 barba.init({
   preventRunning: true,
   prevent: ({ el, event, href }) => {
-    console.log("Preventing navigation for:", href);
-    event.preventDefault();
-    // prevent on hash links
+    // dummy links: swallow the click
     if (href === "#") {
       event.preventDefault();
       return true;
@@ -35,6 +33,20 @@ barba.init({
 
     if (nextNamespace && currentNamespace === nextNamespace) {
       event.preventDefault();
+      return true;
+    }
+
+    // Let the browser handle what is not a page: in-page anchors and plain files
+    // (scripts, text, images, archives). Returning true leaves the click alone;
+    // Barba would otherwise swallow it and try to load the file as a page.
+    const url = new URL(href, window.location.href);
+    const samePage =
+      url.origin === window.location.origin &&
+      url.pathname === window.location.pathname;
+    if (url.hash && samePage) {
+      return true;
+    }
+    if (/\.(py|txt|md|json|csv|pdf|zip|png|jpe?g|gif|webp|svg|xml)$/i.test(url.pathname)) {
       return true;
     }
 
